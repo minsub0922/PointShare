@@ -18,4 +18,6 @@ public interface GenerationContract {
 
         void generateWallet(String password);
     }
+
+
 }

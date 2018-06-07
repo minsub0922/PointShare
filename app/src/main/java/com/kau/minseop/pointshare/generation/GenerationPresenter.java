@@ -22,6 +22,7 @@ public class GenerationPresenter implements GenerationContract.Presenter {
     private final GenerationContract.View mWalletGenerationView;
 
     private String mPassword;
+    private String detailPath;
 
     public GenerationPresenter(GenerationContract.View walletGenerationView, String password) {
         mWalletGenerationView = walletGenerationView;

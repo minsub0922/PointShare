@@ -17,4 +17,11 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:text="@string/textview_generate_wallet"/>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/use_my_wallet_button"
+        android:layout_gravity="center"
+        android:text="use mine"
+        />
 </LinearLayout>

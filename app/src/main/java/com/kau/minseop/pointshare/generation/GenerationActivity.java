@@ -23,7 +23,7 @@ public class GenerationActivity extends AppCompatActivity implements GenerationC
 
     private GenerationContract.Presenter mWalletPresenter;
 
-    private Button mGenerateWalletButton;
+    private Button mGenerateWalletButton, mybtn;
 
     private String mWalletAddress;
 
@@ -34,13 +34,27 @@ public class GenerationActivity extends AppCompatActivity implements GenerationC
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_generation);
-
+        mybtn = findViewById(R.id.use_my_wallet_button);
         mGenerateWalletButton = (Button) findViewById(R.id.generate_wallet_button);
         mPassword = (EditText) findViewById(R.id.password);
+
+        mybtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                    Intent intent = new Intent(GenerationActivity.this, WalletActivity.class);
+                    intent.putExtra("WalletAddress", "alstjq5");
+                    intent.putExtra("password", "0x07bbd6511fd36677bda7452ebf243acdd63f880f");
+                    intent.putExtra("detailPath","UTC--2018-06-07T05-18-20.196--07bbd6511fd36677bda7452ebf243acdd63f880f.json");
+
+                    startActivity(intent);
+                    finish();
+            }
+        });
 
         mGenerateWalletButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 int permissionCheck = ContextCompat.checkSelfPermission(GenerationActivity.this,
                         Manifest.permission.WRITE_EXTERNAL_STORAGE);
                 if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
@@ -50,11 +64,11 @@ public class GenerationActivity extends AppCompatActivity implements GenerationC
                             REQUEST_PERMISSION_WRITE_STORAGE);
                 } else {
                     mWalletPresenter = new GenerationPresenter(GenerationActivity.this,
-                            mPassword.getText().toString());
+                    mPassword.getText().toString());
                     mWalletPresenter.generateWallet(mPassword.getText().toString());
                     Intent intent = new Intent(GenerationActivity.this, WalletActivity.class);
                     intent.putExtra("WalletAddress", mWalletAddress);
-                    intent.putExtra("password",mPassword.getText().toString());
+                    intent.putExtra("password", mPassword.getText().toString());
                     startActivity(intent);
                 }
             }
