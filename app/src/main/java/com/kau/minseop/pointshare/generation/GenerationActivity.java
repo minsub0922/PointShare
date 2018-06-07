@@ -29,6 +29,8 @@ public class GenerationActivity extends AppCompatActivity implements GenerationC
 
     private EditText mPassword;
 
+    private String detailPath;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +71,7 @@ public class GenerationActivity extends AppCompatActivity implements GenerationC
                     Intent intent = new Intent(GenerationActivity.this, WalletActivity.class);
                     intent.putExtra("WalletAddress", mWalletAddress);
                     intent.putExtra("password", mPassword.getText().toString());
+                    intent.putExtra("detailPath",detailPath);
                     startActivity(intent);
                 }
             }
@@ -81,8 +84,9 @@ public class GenerationActivity extends AppCompatActivity implements GenerationC
     }
 
     @Override
-    public void showGeneratedWallet(String address) {
+    public void showGeneratedWallet(String address, String detailPath) {
         mWalletAddress = address;
+        this.detailPath = detailPath;
     }
 
     @Override

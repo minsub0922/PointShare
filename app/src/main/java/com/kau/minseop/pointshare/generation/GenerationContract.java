@@ -11,7 +11,7 @@ public interface GenerationContract {
 
     interface View extends BaseView<Presenter> {
 
-        void showGeneratedWallet(String walletAddress);
+        void showGeneratedWallet(String walletAddress, String detailPath);
     }
 
     interface Presenter extends BasePresenter {

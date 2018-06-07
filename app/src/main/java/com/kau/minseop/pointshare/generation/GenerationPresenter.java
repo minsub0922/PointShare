@@ -43,7 +43,8 @@ public class GenerationPresenter implements GenerationContract.Presenter {
                     WalletUtils.loadCredentials(
                             password,
                             path + "/" + fileName);
-            mWalletGenerationView.showGeneratedWallet(credentials.getAddress());
+            mWalletGenerationView.showGeneratedWallet(credentials.getAddress(), fileName);
+
             Log.e("TAG", "generateWallet: " + credentials.getAddress() + " " + credentials.getEcKeyPair().getPublicKey());
         } catch (NoSuchAlgorithmException
                 | NoSuchProviderException
