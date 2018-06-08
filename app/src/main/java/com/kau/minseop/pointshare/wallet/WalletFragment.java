@@ -89,15 +89,10 @@ public class WalletFragment extends BaseFragment implements View.OnClickListener
         adapter = new WalletRecyclerViewAdapter(modelList);
         rv.setAdapter(adapter);
 
-        modelList.add(new WalletViewHolerModel("","my first wallet","22","123123"));
-        modelList.add(new WalletViewHolerModel("","my second wallet","3333","345345"));
-        adapter.notifyDataSetChanged();
-
-
         attachWallet.setOnClickListener(this);
 
         mRealm = Realm.getDefaultInstance();
-        getWalletInfo();
+        getObject();
 
         web3j = Web3jFactory.build(new HttpService("https://ropsten.infura.io/wd7279F18YpzuVLkfZTk"));
 
@@ -112,27 +107,14 @@ public class WalletFragment extends BaseFragment implements View.OnClickListener
         return v;
     }
 
-    private void getWalletInfo(){
-        /*Bundle extras = getIntent().getExtras();
-        password = extras.getString("password");
-        walletAddress = extras.getString("WalletAddress");
-        detailPath = extras.getString("detailPath");*/
-        WalletModel walletModel = getObject();
-        if (walletModel!=null) {
-            password = walletModel.getPassword();
-            walletAddress = walletModel.getWalletAddress();
-            detailPath = walletModel.getDetailPath();
-            mWalletAddress.setText(walletAddress);
-        }
-    }
-
-    private WalletModel getObject(){
+    private void getObject(){
         mRealm.beginTransaction();
         RealmResults<WalletModel> walletModels = mRealm.where(WalletModel.class).findAll();
         mRealm.commitTransaction();
-        Log.d("TAG", String.valueOf( walletModels.size()));
-        if (walletModels.size()>0) return walletModels.get(0);
-        return null;
+        for (WalletModel model: walletModels){
+            modelList.add(new WalletViewHolerModel("",model.getWalletName(), model.getWalletAddress(), ""));
+        }
+        adapter.notifyDataSetChanged();
     }
 
     private void readyForRequest() throws Exception{
@@ -179,7 +161,8 @@ public class WalletFragment extends BaseFragment implements View.OnClickListener
         onActivityResult(activityResultEvent.getRequestCode(), activityResultEvent.getResultCode(), activityResultEvent.getData());
         Log.d("TAG",String.valueOf( activityResultEvent.getResultCode()));
         if (activityResultEvent.getResultCode()==-1){
-
+            modelList.clear();
+            getObject();
         }
     }
 
