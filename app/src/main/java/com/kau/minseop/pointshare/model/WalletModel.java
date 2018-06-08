@@ -9,11 +9,14 @@ import io.realm.annotations.PrimaryKey;
 
 public class WalletModel extends RealmObject {
     @PrimaryKey
-    private long id;
+    private String walletName;
 
     private String walletAddress;
     private String password;
     private String detailPath;
+
+    public void setWalletName(String walletName){this.walletName = walletName;}
+    public String getWalletName(){return walletName;}
 
     public void setWalletAddress(String walletAddress){this.walletAddress = walletAddress;}
     public String getWalletAddress(){return walletAddress;}

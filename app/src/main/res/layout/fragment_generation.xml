@@ -5,23 +5,24 @@
     android:layout_width="match_parent"
     android:orientation="vertical">
     <EditText
+        android:id="@+id/edt_generate_wallet_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Wallet Name"
+        android:padding="10dp"/>
+
+    <EditText
         android:id="@+id/password"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="textPassword"
         android:hint="@string/textview_password"
         android:padding="10dp"/>
+
     <Button
         android:id="@+id/generate_wallet_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:text="@string/textview_generate_wallet"/>
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/use_my_wallet_button"
-        android:layout_gravity="center"
-        android:text="use mine"
-        />
 </LinearLayout>

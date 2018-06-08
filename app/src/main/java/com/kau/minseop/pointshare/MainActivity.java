@@ -3,28 +3,40 @@ package com.kau.minseop.pointshare;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.v4.app.Fragment;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 
-public class MainActivity extends AppCompatActivity {
+import com.kau.minseop.pointshare.card.CardListFragment;
+import com.kau.minseop.pointshare.wallet.WalletFragment;
 
-    private TextView mTextMessage;
+import io.realm.Realm;
+
+public class MainActivity extends AppCompatActivity {
+    private MenuItem preitem;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+            if (item==preitem) return false;
             switch (item.getItemId()) {
                 case R.id.nav_home:
-                    mTextMessage.setText(R.string.title_home);
+                    replaceViewPager(new CardListFragment());
+                    preitem = item;
                     return true;
                 case R.id.nav_cardlist:
-                    mTextMessage.setText(R.string.title_cardlist);
+                    replaceViewPager(new CardListFragment());
+                    preitem = item;
                     return true;
                 case R.id.nav_mypage:
-                    mTextMessage.setText(R.string.title_mypage);
+                    replaceViewPager(new WalletFragment());
+                    preitem = item;
                     return true;
             }
             return false;
@@ -36,9 +48,25 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mTextMessage = (TextView) findViewById(R.id.message);
+        Realm.init(this);
+        replaceViewPager(new CardListFragment());
+
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+    }
+
+    private boolean replaceViewPager(@NonNull Fragment fragment) {
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.main_activity_fragment_container, fragment)
+                .commit();
+        return true;
+    }
+
+    public boolean attachViewPager(@NonNull Fragment fragment){
+        getSupportFragmentManager().beginTransaction()
+                .attach(fragment)
+                .commit();
+        return true;
     }
 
 }

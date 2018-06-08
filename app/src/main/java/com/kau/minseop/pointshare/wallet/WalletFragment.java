@@ -4,20 +4,30 @@ import android.annotation.SuppressLint;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.widget.ExpandableListAdapter;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 
 import com.kau.minseop.pointshare.Contract;
+import com.kau.minseop.pointshare.MainActivity;
 import com.kau.minseop.pointshare.R;
+import com.kau.minseop.pointshare.adapter.WalletRecyclerViewAdapter;
+import com.kau.minseop.pointshare.generation.GenerationFragment;
 import com.kau.minseop.pointshare.greeter.Greeter;
+import com.kau.minseop.pointshare.model.WalletModel;
+import com.kau.minseop.pointshare.model.WalletViewHolerModel;
+import com.kenai.jffi.Main;
 
-import org.web3j.crypto.CipherException;
 import org.web3j.crypto.Credentials;
-import org.web3j.crypto.Wallet;
 import org.web3j.crypto.WalletUtils;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.Web3jFactory;
@@ -25,7 +35,6 @@ import org.web3j.protocol.core.DefaultBlockParameterName;
 import org.web3j.protocol.core.methods.response.EthGetBalance;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.web3j.protocol.core.methods.response.Web3ClientVersion;
-import org.web3j.protocol.exceptions.TransactionException;
 import org.web3j.protocol.http.HttpService;
 import org.web3j.tx.ManagedTransaction;
 import org.web3j.tx.Transfer;
@@ -35,19 +44,20 @@ import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Future;
 
-import javax.crypto.Cipher;
-
-import rx.exceptions.Exceptions;
+import io.realm.Realm;
+import io.realm.RealmResults;
 
 /**
  * Created by eirlis on 29.06.17.
  */
 
-public class WalletActivity extends AppCompatActivity {
+public class WalletFragment extends Fragment {
 
-    public static final String TAG = WalletActivity.class.getName();
+    public static final String TAG = WalletFragment.class.getName();
 
     private TextView mWalletAddress;
     private TextView mBalance;
@@ -57,35 +67,72 @@ public class WalletActivity extends AppCompatActivity {
     private String detailPath;
     private Web3j web3j;
     private Credentials credentials;
+    private Realm mRealm;
     private String contractAddress = "0x099a1a124c9b2fce8b3ddaf77d16faca3e1f79bb";
+    private Button attachWallet;
+    private RecyclerView rv;
+    private WalletRecyclerViewAdapter adapter;
+    private final List<WalletViewHolerModel> modelList = new ArrayList<>();
 
-
+    @SuppressLint("StaticFieldLeak")
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_wallet);
-        mWalletAddress = (TextView) findViewById(R.id.account_address);
-        mBalance = (TextView) findViewById(R.id.wallet_balance);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        final View v = inflater.inflate(R.layout.fragment_wallet, container, false);
+        mWalletAddress = (TextView) v.findViewById(R.id.account_address);
+        mBalance = (TextView) v.findViewById(R.id.wallet_balance);
+        rv = v.findViewById(R.id.rv_fragment_wallet);
+        rv.setLayoutManager(new LinearLayoutManager(getActivity()));
 
+        adapter = new WalletRecyclerViewAdapter(modelList);
+        rv.setAdapter(adapter);
+
+        modelList.add(new WalletViewHolerModel("","my first wallet","22","123123"));
+        modelList.add(new WalletViewHolerModel("","my second wallet","3333","345345"));
+        adapter.notifyDataSetChanged();
+
+        attachWallet = v.findViewById(R.id.btn_attach_wallet);
+        attachWallet.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new MainActivity().attachViewPager(new GenerationFragment());
+            }
+        });
+        mRealm = Realm.getDefaultInstance();
         getWalletInfo();
-
         web3j = Web3jFactory.build(new HttpService("https://ropsten.infura.io/wd7279F18YpzuVLkfZTk"));
 
         try {
-            readyForRequest();
-            getWalletBallance();
-
+         //   readyForRequest();
+           // getWalletBallance();
         } catch (Exception e) {
             e.printStackTrace();
             Log.d("TAG", "Exception : " + e);
         }
+
+        return v;
     }
 
     private void getWalletInfo(){
-        Bundle extras = getIntent().getExtras();
+        /*Bundle extras = getIntent().getExtras();
         password = extras.getString("password");
         walletAddress = extras.getString("WalletAddress");
-        detailPath = extras.getString("detailPath");
+        detailPath = extras.getString("detailPath");*/
+        WalletModel walletModel = getObject();
+        if (walletModel!=null) {
+            password = walletModel.getPassword();
+            walletAddress = walletModel.getWalletAddress();
+            detailPath = walletModel.getDetailPath();
+            mWalletAddress.setText(walletAddress);
+        }
+    }
+
+    private WalletModel getObject(){
+        mRealm.beginTransaction();
+        RealmResults<WalletModel> walletModels = mRealm.where(WalletModel.class).findAll();
+        mRealm.commitTransaction();
+        Log.d("TAG", String.valueOf( walletModels.size()));
+        if (walletModels.size()>0) return walletModels.get(0);
+        return null;
     }
 
     private void readyForRequest() throws Exception{
@@ -113,17 +160,30 @@ public class WalletActivity extends AppCompatActivity {
                 + transferReceipt.get());
     }
 
-    private void getWalletBallance() throws Exception{
+    @SuppressLint("StaticFieldLeak")
+    private void getWalletBallance() {
         //GetMyBalance
-        EthGetBalance ethGetBalance = web3j
-                .ethGetBalance(walletAddress, DefaultBlockParameterName.LATEST)
-                .sendAsync()
-                .get();
-        BigInteger wei = ethGetBalance.getBalance();
-        balance = wei.toString();
-        mBalance.setText(balance);
+        new AsyncTask () {
+            @Override
+            protected Object doInBackground(Object[] objects) {
+                BigInteger ethGetBalance = null;
 
-        Log.d("TAG", "The balance of my Wallet: "+wei.toString());
+                try {
+                    ethGetBalance = web3j
+                            .ethGetBalance(walletAddress, DefaultBlockParameterName.LATEST)
+                            .send()
+                            .getBalance();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                BigInteger wei = ethGetBalance;
+                balance = wei.toString();
+                mBalance.setText(balance);
+                Log.d("TAG", "The balance of my Wallet: "+wei.toString());
+                return null;
+            }
+        }.execute();
     }
 
     @SuppressLint("StaticFieldLeak")
