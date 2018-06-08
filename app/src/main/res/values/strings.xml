@@ -2,9 +2,12 @@
     <string name="app_name">PointShare</string>
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
+    <string name="title_cardlist">Card List</string>
+    <string name="title_mypage">My Page</string>
     <string name="title_notifications">Notifications</string>
     <string name="textview_generate_wallet">Generate wallet</string>
     <string name="textview_password">Password</string>
     <string name="textview_etherbase">Etherbase</string>
     <string name="textview_account_address">Account address</string>
+    <string name="title_activity_main">MainActivity</string>
 </resources>

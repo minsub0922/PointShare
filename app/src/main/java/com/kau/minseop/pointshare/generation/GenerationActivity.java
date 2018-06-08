@@ -100,9 +100,6 @@ public class GenerationActivity extends AppCompatActivity implements GenerationC
             WalletModel walletModel = getObject();
             if (walletModel!=null) {
                 Intent intent = new Intent(GenerationActivity.this, WalletActivity.class);
-              /*  intent.putExtra("WalletAddress", "alstjq5");
-                intent.putExtra("password", "0x07bbd6511fd36677bda7452ebf243acdd63f880f");
-                intent.putExtra("detailPath", "UTC--2018-06-07T05-18-20.196--07bbd6511fd36677bda7452ebf243acdd63f880f.json");*/
                 intent.putExtra("WalletAddress", walletModel.getWalletAddress());
                 intent.putExtra("password", walletModel.getPassword());
                 intent.putExtra("detailPath", walletModel.getDetailPath());
