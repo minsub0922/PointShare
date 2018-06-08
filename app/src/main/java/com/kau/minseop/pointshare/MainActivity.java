@@ -1,5 +1,6 @@
 package com.kau.minseop.pointshare;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -12,6 +13,8 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.kau.minseop.pointshare.card.CardListFragment;
+import com.kau.minseop.pointshare.event.ActivityResultEvent;
+import com.kau.minseop.pointshare.wallet.BusProvider;
 import com.kau.minseop.pointshare.wallet.WalletFragment;
 
 import io.realm.Realm;
@@ -62,11 +65,9 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    public boolean attachViewPager(@NonNull Fragment fragment){
-        getSupportFragmentManager().beginTransaction()
-                .attach(fragment)
-                .commit();
-        return true;
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        BusProvider.getInstance().post(new ActivityResultEvent(requestCode, resultCode, data));
     }
-
 }

@@ -1,6 +1,8 @@
 package com.kau.minseop.pointshare.wallet;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
@@ -17,22 +19,22 @@ import android.widget.Button;
 import android.widget.TextView;
 
 
+import com.kau.minseop.pointshare.BaseFragment;
 import com.kau.minseop.pointshare.Contract;
-import com.kau.minseop.pointshare.MainActivity;
 import com.kau.minseop.pointshare.R;
 import com.kau.minseop.pointshare.adapter.WalletRecyclerViewAdapter;
-import com.kau.minseop.pointshare.generation.GenerationFragment;
+import com.kau.minseop.pointshare.event.ActivityResultEvent;
+import com.kau.minseop.pointshare.generation.GenerationActivity;
 import com.kau.minseop.pointshare.greeter.Greeter;
 import com.kau.minseop.pointshare.model.WalletModel;
 import com.kau.minseop.pointshare.model.WalletViewHolerModel;
-import com.kenai.jffi.Main;
+import com.squareup.otto.Subscribe;
 
 import org.web3j.crypto.Credentials;
 import org.web3j.crypto.WalletUtils;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.Web3jFactory;
 import org.web3j.protocol.core.DefaultBlockParameterName;
-import org.web3j.protocol.core.methods.response.EthGetBalance;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.web3j.protocol.core.methods.response.Web3ClientVersion;
 import org.web3j.protocol.http.HttpService;
@@ -55,7 +57,7 @@ import io.realm.RealmResults;
  * Created by eirlis on 29.06.17.
  */
 
-public class WalletFragment extends Fragment {
+public class WalletFragment extends BaseFragment implements View.OnClickListener {
 
     public static final String TAG = WalletFragment.class.getName();
 
@@ -80,9 +82,10 @@ public class WalletFragment extends Fragment {
         final View v = inflater.inflate(R.layout.fragment_wallet, container, false);
         mWalletAddress = (TextView) v.findViewById(R.id.account_address);
         mBalance = (TextView) v.findViewById(R.id.wallet_balance);
+        attachWallet = v.findViewById(R.id.btn_attach_wallet);
         rv = v.findViewById(R.id.rv_fragment_wallet);
-        rv.setLayoutManager(new LinearLayoutManager(getActivity()));
 
+        rv.setLayoutManager(new LinearLayoutManager(getActivity()));
         adapter = new WalletRecyclerViewAdapter(modelList);
         rv.setAdapter(adapter);
 
@@ -90,15 +93,12 @@ public class WalletFragment extends Fragment {
         modelList.add(new WalletViewHolerModel("","my second wallet","3333","345345"));
         adapter.notifyDataSetChanged();
 
-        attachWallet = v.findViewById(R.id.btn_attach_wallet);
-        attachWallet.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                new MainActivity().attachViewPager(new GenerationFragment());
-            }
-        });
+
+        attachWallet.setOnClickListener(this);
+
         mRealm = Realm.getDefaultInstance();
         getWalletInfo();
+
         web3j = Web3jFactory.build(new HttpService("https://ropsten.infura.io/wd7279F18YpzuVLkfZTk"));
 
         try {
@@ -146,19 +146,7 @@ public class WalletFragment extends Fragment {
         mWalletAddress.setText(walletAddress);
     }
 
-    private void sendToWallet() throws Exception{
-        Log.d("TAG","Sending 1 Wei ("
-                + Convert.fromWei("1", Convert.Unit.ETHER).toPlainString() + " Ether)");
 
-        Future<TransactionReceipt> transferReceipt = Transfer.sendFunds(
-                web3j, credentials,
-                "0xb3FA37CA8918432cAC914C40f8C4748a6dBd0fA4",  // you can put any address here
-                BigDecimal.ONE, Convert.Unit.WEI)  // 1 wei = 10^-18 Ether
-                .sendAsync();
-        Log.d("TAG","Transaction complete, view it at https://rinkeby.etherscan.io/tx/"
-                //+ transferReceipt.getTransactionHash());
-                + transferReceipt.get());
-    }
 
     @SuppressLint("StaticFieldLeak")
     private void getWalletBallance() {
@@ -185,6 +173,16 @@ public class WalletFragment extends Fragment {
             }
         }.execute();
     }
+
+    @Subscribe
+    public void onActivityResult(ActivityResultEvent activityResultEvent) {
+        onActivityResult(activityResultEvent.getRequestCode(), activityResultEvent.getResultCode(), activityResultEvent.getData());
+        Log.d("TAG",String.valueOf( activityResultEvent.getResultCode()));
+        if (activityResultEvent.getResultCode()==-1){
+
+        }
+    }
+
 
     @SuppressLint("StaticFieldLeak")
     private void generateNewContract(){
@@ -225,5 +223,24 @@ public class WalletFragment extends Fragment {
                 super.onCancelled();
             }
         }.execute();
+    }
+
+    private void sendToWallet() throws Exception{
+        Log.d("TAG","Sending 1 Wei ("
+                + Convert.fromWei("1", Convert.Unit.ETHER).toPlainString() + " Ether)");
+
+        Future<TransactionReceipt> transferReceipt = Transfer.sendFunds(
+                web3j, credentials,
+                "0xb3FA37CA8918432cAC914C40f8C4748a6dBd0fA4",  // you can put any address here
+                BigDecimal.ONE, Convert.Unit.WEI)  // 1 wei = 10^-18 Ether
+                .sendAsync();
+        Log.d("TAG","Transaction complete, view it at https://rinkeby.etherscan.io/tx/"
+                //+ transferReceipt.getTransactionHash());
+                + transferReceipt.get());
+    }
+
+    @Override
+    public void onClick(View v) {
+        if(v.getId()==R.id.btn_attach_wallet) startActivityForResult(new Intent(getActivity(), GenerationActivity.class),1);
     }
 }

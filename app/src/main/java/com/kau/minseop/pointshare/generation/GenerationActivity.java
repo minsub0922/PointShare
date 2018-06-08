@@ -1,55 +1,50 @@
 package com.kau.minseop.pointshare.generation;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import com.kau.minseop.pointshare.R;
 import com.kau.minseop.pointshare.model.WalletModel;
-import com.kau.minseop.pointshare.wallet.WalletFragment;
 
 import io.realm.Realm;
 import io.realm.RealmResults;
 
-public class GenerationFragment extends Fragment implements GenerationContract.View, View.OnClickListener {
+public class GenerationActivity extends AppCompatActivity implements GenerationContract.View, View.OnClickListener {
 
-    public static final String TAG = GenerationFragment.class.getName();
+    public static final String TAG = GenerationActivity.class.getName();
     private static final int REQUEST_PERMISSION_WRITE_STORAGE = 0;
     private GenerationContract.Presenter mWalletPresenter;
     private Button mGenerateWalletButton;
     private String mWalletAddress;
     private EditText mPassword, mWalletName;
     private String detailPath;
-        private Realm mRealm;
-
+    private Realm mRealm;
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        final View v = inflater.inflate(R.layout.fragment_generation, container, false);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
-        mGenerateWalletButton = (Button) v.findViewById(R.id.generate_wallet_button);
-        mPassword = (EditText) v.findViewById(R.id.password);
-        mWalletName = v.findViewById(R.id.edt_generate_wallet_name);
+        setContentView(R.layout.activity_generation);
+        mGenerateWalletButton = (Button) findViewById(R.id.generate_wallet_button);
+        mPassword = (EditText) findViewById(R.id.password);
+        mWalletName = findViewById(R.id.edt_generate_wallet_name);
 
-        Realm.init(getActivity());
+        //Realm.init(this);
         mRealm = Realm.getDefaultInstance();
 
         mGenerateWalletButton.setOnClickListener(this);
-        return v;
     }
 
     @Override
@@ -80,28 +75,28 @@ public class GenerationFragment extends Fragment implements GenerationContract.V
 
     @Override
     public void onClick(View v) {
-        int permissionCheck = ContextCompat.checkSelfPermission(getActivity(),
+        int permissionCheck = ContextCompat.checkSelfPermission(this,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE);
         if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(
-                    getActivity(),
+                    this,
                     new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
                     REQUEST_PERMISSION_WRITE_STORAGE);
         }
         else if (v.getId() == R.id.generate_wallet_button){
-            mWalletPresenter = new GenerationPresenter(GenerationFragment.this, mPassword.getText().toString());
+            mWalletPresenter = new GenerationPresenter(GenerationActivity.this, mPassword.getText().toString());
             mWalletPresenter.generateWallet(mPassword.getText().toString());
             createObject(mWalletAddress, mPassword.getText().toString(), detailPath);
         }/*else if (v.getId()==R.id.use_my_wallet_button){
             WalletModel walletModel = getObject();
             if (walletModel!=null) {
-                Intent intent = new Intent(GenerationFragment.this, WalletFragment.class);
+                Intent intent = new Intent(GenerationActivity.this, WalletFragment.class);
                 intent.putExtra("WalletAddress", walletModel.getWalletAddress());
                 intent.putExtra("password", walletModel.getPassword());
                 intent.putExtra("detailPath", walletModel.getDetailPath());
                 startActivity(intent);
                 finish();
-            }else Toast.makeText(GenerationFragment.this,"지갑을 생성해 주십시오.", Toast.LENGTH_SHORT).show();
+            }else Toast.makeText(GenerationActivity.this,"지갑을 생성해 주십시오.", Toast.LENGTH_SHORT).show();
         }*/
     }
 
@@ -109,18 +104,22 @@ public class GenerationFragment extends Fragment implements GenerationContract.V
         mRealm.beginTransaction();
         RealmResults <WalletModel> walletModels = mRealm.where(WalletModel.class).findAll();
         WalletModel walletModel;
-        if (walletModels.size()!=0){
+        /*if (walletModels.size()!=0){
             walletModel = walletModels.get(0);
         }
         else {
             walletModel = mRealm.createObject(WalletModel.class, mWalletName.getText().toString());
-        }
-        walletModel.setWalletName(mWalletName.getText().toString());
+        }*/
+        walletModel = mRealm.createObject(WalletModel.class, mWalletName.getText().toString());
+        //walletModel.setWalletName(mWalletName.getText().toString());
         walletModel.setWalletAddress(mWalletAddress);
         walletModel.setPassword(mPassword);
         walletModel.setDetailPath(detailPath);
         mRealm.commitTransaction();
-        Toast.makeText(getActivity(), "your account is set",Toast.LENGTH_SHORT).show();
+        Log.d("TAG","your account is set:  "+walletModel);
+        Intent returnIntent = new Intent();
+        setResult(Activity.RESULT_OK,returnIntent);
+        finish();
     }
 
     private WalletModel getObject(){
