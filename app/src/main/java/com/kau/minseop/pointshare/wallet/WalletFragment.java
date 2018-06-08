@@ -262,7 +262,7 @@ public class WalletFragment extends BaseFragment implements View.OnClickListener
 
             // showing snack bar with Undo option
             Snackbar snackbar = Snackbar
-                    .make(coordinatorLayout, name + "removed from your Wallet!", Snackbar.LENGTH_LONG);
+                    .make(coordinatorLayout, "your wallet '"+name + "' has been removed from your Wallet!", Snackbar.LENGTH_LONG);
             snackbar.setAction("UNDO", new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

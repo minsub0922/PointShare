@@ -102,20 +102,20 @@ public class GenerationActivity extends Activity implements GenerationContract.V
 
     private void createObject(String mWalletAddress, String mPassword, String detailPath){
         mRealm.beginTransaction();
-
+        Intent returnIntent = new Intent();
         RealmResults <WalletModel> walletModels = mRealm.where(WalletModel.class).findAll();
         WalletModel walletModel;
-        walletModel = mRealm.createObject(WalletModel.class, mWalletName.getText().toString()); //primary key
-        walletModel.setWalletAddress(mWalletAddress);
-        walletModel.setPassword(mPassword);
-        walletModel.setDetailPath(detailPath);
-
+        try {
+            walletModel = mRealm.createObject(WalletModel.class, mWalletName.getText().toString()); //primary key
+            walletModel.setWalletAddress(mWalletAddress);
+            walletModel.setPassword(mPassword);
+            walletModel.setDetailPath(detailPath);
+            Log.d("TAG","your account is set:  "+walletModel);
+            setResult(Activity.RESULT_OK,returnIntent);
+        }catch (Exception e){
+            Toast.makeText(GenerationActivity.this, "the Name already exist", Toast.LENGTH_SHORT).show();
+        }
         mRealm.commitTransaction();
-
-        Log.d("TAG","your account is set:  "+walletModel);
-
-        Intent returnIntent = new Intent();
-        setResult(Activity.RESULT_OK,returnIntent);
         finish();
     }
 }

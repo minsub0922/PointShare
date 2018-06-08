@@ -9,7 +9,7 @@ import io.realm.annotations.PrimaryKey;
 
 public class WalletModel extends RealmObject {
     @PrimaryKey
-    private String walletName;
+    public String walletName;
 
     private String walletAddress;
     private String password;

@@ -12,9 +12,13 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.kau.minseop.pointshare.R;
+import com.kau.minseop.pointshare.model.WalletModel;
 import com.kau.minseop.pointshare.model.WalletViewHolerModel;
 
 import java.util.List;
+
+import io.realm.Realm;
+import io.realm.RealmResults;
 
 /**
  * Created by minseop on 2018-06-08.
@@ -56,8 +60,18 @@ public class WalletRecyclerViewAdapter extends  RecyclerView.Adapter<WalletRecyc
     public int getItemCount() {return modelList.size();}
 
     public void removeItem(int position) {
+        removeRealmObject(modelList.get(position));
         modelList.remove(position);
         notifyItemRemoved(position);
+
+    }
+
+    private void removeRealmObject(WalletViewHolerModel model){
+        Realm mRealm = Realm.getDefaultInstance();
+        mRealm.beginTransaction();
+        RealmResults<WalletModel> rows = mRealm.where(WalletModel.class).equalTo("walletName",model.getWalletName()).findAll();
+        rows.deleteAllFromRealm();
+        mRealm.commitTransaction();
     }
 
     public void restoreItem(WalletViewHolerModel item, int position) {
