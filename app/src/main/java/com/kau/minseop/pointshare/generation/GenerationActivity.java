@@ -11,6 +11,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -21,7 +23,7 @@ import com.kau.minseop.pointshare.model.WalletModel;
 import io.realm.Realm;
 import io.realm.RealmResults;
 
-public class GenerationActivity extends AppCompatActivity implements GenerationContract.View, View.OnClickListener {
+public class GenerationActivity extends Activity implements GenerationContract.View, View.OnClickListener {
 
     public static final String TAG = GenerationActivity.class.getName();
     private static final int REQUEST_PERMISSION_WRITE_STORAGE = 0;
@@ -35,16 +37,25 @@ public class GenerationActivity extends AppCompatActivity implements GenerationC
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setActivitySize();
 
-        setContentView(R.layout.activity_generation);
         mGenerateWalletButton = (Button) findViewById(R.id.generate_wallet_button);
         mPassword = (EditText) findViewById(R.id.password);
         mWalletName = findViewById(R.id.edt_generate_wallet_name);
 
-        //Realm.init(this);
         mRealm = Realm.getDefaultInstance();
-
         mGenerateWalletButton.setOnClickListener(this);
+    }
+
+    private void setActivitySize(){
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        WindowManager.LayoutParams  layoutParams = new WindowManager.LayoutParams();
+        layoutParams.flags  = WindowManager.LayoutParams.FLAG_DIM_BEHIND;
+        layoutParams.dimAmount  = 0.7f;
+        getWindow().setAttributes(layoutParams);
+        setContentView(R.layout.activity_generation);
+        getWindow().getAttributes().width   = (int)( this.getResources().getDisplayMetrics().widthPixels * 0.9);
+        getWindow().getAttributes().height  = (int)(this.getResources().getDisplayMetrics().heightPixels * 0.4);
     }
 
     @Override
@@ -64,7 +75,6 @@ public class GenerationActivity extends AppCompatActivity implements GenerationC
         switch (requestCode) {
             case REQUEST_PERMISSION_WRITE_STORAGE: {
                 if (grantResults.length == 0 || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-
                 } else {
                     mWalletPresenter.generateWallet(mPassword.getText().toString());
                 }
@@ -87,48 +97,25 @@ public class GenerationActivity extends AppCompatActivity implements GenerationC
             mWalletPresenter = new GenerationPresenter(GenerationActivity.this, mPassword.getText().toString());
             mWalletPresenter.generateWallet(mPassword.getText().toString());
             createObject(mWalletAddress, mPassword.getText().toString(), detailPath);
-        }/*else if (v.getId()==R.id.use_my_wallet_button){
-            WalletModel walletModel = getObject();
-            if (walletModel!=null) {
-                Intent intent = new Intent(GenerationActivity.this, WalletFragment.class);
-                intent.putExtra("WalletAddress", walletModel.getWalletAddress());
-                intent.putExtra("password", walletModel.getPassword());
-                intent.putExtra("detailPath", walletModel.getDetailPath());
-                startActivity(intent);
-                finish();
-            }else Toast.makeText(GenerationActivity.this,"지갑을 생성해 주십시오.", Toast.LENGTH_SHORT).show();
-        }*/
+        }
     }
 
     private void createObject(String mWalletAddress, String mPassword, String detailPath){
         mRealm.beginTransaction();
+
         RealmResults <WalletModel> walletModels = mRealm.where(WalletModel.class).findAll();
         WalletModel walletModel;
-        /*if (walletModels.size()!=0){
-            walletModel = walletModels.get(0);
-        }
-        else {
-            walletModel = mRealm.createObject(WalletModel.class, mWalletName.getText().toString());
-        }*/
-        walletModel = mRealm.createObject(WalletModel.class, mWalletName.getText().toString());
-        //walletModel.setWalletName(mWalletName.getText().toString());
+        walletModel = mRealm.createObject(WalletModel.class, mWalletName.getText().toString()); //primary key
         walletModel.setWalletAddress(mWalletAddress);
         walletModel.setPassword(mPassword);
         walletModel.setDetailPath(detailPath);
+
         mRealm.commitTransaction();
+
         Log.d("TAG","your account is set:  "+walletModel);
+
         Intent returnIntent = new Intent();
         setResult(Activity.RESULT_OK,returnIntent);
         finish();
-    }
-
-    private WalletModel getObject(){
-        mRealm.beginTransaction();
-        RealmResults <WalletModel> walletModels = mRealm.where(WalletModel.class).findAll();
-        mRealm.commitTransaction();
-        Log.d("TAG", String.valueOf( walletModels.size()));
-        Log.d("TAG", String.valueOf( walletModels.get(0)));
-        if (walletModels.size()>0) return walletModels.get(0);
-        return null;
     }
 }

@@ -3,14 +3,20 @@ package com.kau.minseop.pointshare.wallet;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,6 +32,7 @@ import com.kau.minseop.pointshare.adapter.WalletRecyclerViewAdapter;
 import com.kau.minseop.pointshare.event.ActivityResultEvent;
 import com.kau.minseop.pointshare.generation.GenerationActivity;
 import com.kau.minseop.pointshare.greeter.Greeter;
+import com.kau.minseop.pointshare.helper.RecyclerItemTouchHelper;
 import com.kau.minseop.pointshare.model.WalletModel;
 import com.kau.minseop.pointshare.model.WalletViewHolerModel;
 import com.squareup.otto.Subscribe;
@@ -57,12 +64,11 @@ import io.realm.RealmResults;
  * Created by eirlis on 29.06.17.
  */
 
-public class WalletFragment extends BaseFragment implements View.OnClickListener {
+public class WalletFragment extends BaseFragment implements View.OnClickListener , RecyclerItemTouchHelper.RecyclerItemTouchHelperListener {
 
     public static final String TAG = WalletFragment.class.getName();
 
-    private TextView mWalletAddress;
-    private TextView mBalance;
+    private CoordinatorLayout coordinatorLayout;
     private String balance;
     private String password;
     private String walletAddress;
@@ -80,14 +86,10 @@ public class WalletFragment extends BaseFragment implements View.OnClickListener
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View v = inflater.inflate(R.layout.fragment_wallet, container, false);
-        mWalletAddress = (TextView) v.findViewById(R.id.account_address);
-        mBalance = (TextView) v.findViewById(R.id.wallet_balance);
         attachWallet = v.findViewById(R.id.btn_attach_wallet);
-        rv = v.findViewById(R.id.rv_fragment_wallet);
+        coordinatorLayout = v.findViewById(R.id.coordinatorlayout);
 
-        rv.setLayoutManager(new LinearLayoutManager(getActivity()));
-        adapter = new WalletRecyclerViewAdapter(modelList);
-        rv.setAdapter(adapter);
+        buildRecyclerView(v);
 
         attachWallet.setOnClickListener(this);
 
@@ -105,6 +107,26 @@ public class WalletFragment extends BaseFragment implements View.OnClickListener
         }
 
         return v;
+    }
+
+    private void buildRecyclerView(View v){
+        rv = v.findViewById(R.id.rv_fragment_wallet);
+        rv.setLayoutManager(new LinearLayoutManager(getActivity()));
+        adapter = new WalletRecyclerViewAdapter(modelList);
+        rv.setItemAnimator(new DefaultItemAnimator());
+
+        rv.setAdapter(adapter);
+
+        ItemTouchHelper.SimpleCallback itemTouchHelperCallback = new RecyclerItemTouchHelper(0, ItemTouchHelper.LEFT, this);
+        new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(rv);
+
+        adapter.setOnItemClickListener(new WalletRecyclerViewAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(int position) {
+                WalletViewHolerModel model =  modelList.get(position);
+                Log.d("TAG",model.getWalletName());
+            }
+        });
     }
 
     private void getObject(){
@@ -125,7 +147,6 @@ public class WalletFragment extends BaseFragment implements View.OnClickListener
         File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
         credentials = WalletUtils.loadCredentials(password, path+"/"+detailPath);
         Log.d("TAG","Credentials loaded; wallet address :  "+credentials.getAddress());
-        mWalletAddress.setText(walletAddress);
     }
 
 
@@ -149,7 +170,6 @@ public class WalletFragment extends BaseFragment implements View.OnClickListener
 
                 BigInteger wei = ethGetBalance;
                 balance = wei.toString();
-                mBalance.setText(balance);
                 Log.d("TAG", "The balance of my Wallet: "+wei.toString());
                 return null;
             }
@@ -225,5 +245,33 @@ public class WalletFragment extends BaseFragment implements View.OnClickListener
     @Override
     public void onClick(View v) {
         if(v.getId()==R.id.btn_attach_wallet) startActivityForResult(new Intent(getActivity(), GenerationActivity.class),1);
+    }
+
+    @Override
+    public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction, int position) {
+        if (viewHolder instanceof WalletRecyclerViewAdapter.WalletViewHoler) {
+            // get the removed item name to display it in snack bar
+            String name = modelList.get(viewHolder.getAdapterPosition()).getWalletName();
+
+            // backup of removed item for undo purpose
+            final WalletViewHolerModel deletedItem = modelList.get(viewHolder.getAdapterPosition());
+            final int deletedIndex = viewHolder.getAdapterPosition();
+
+            // remove the item from recycler view
+            adapter.removeItem(viewHolder.getAdapterPosition());
+
+            // showing snack bar with Undo option
+            Snackbar snackbar = Snackbar
+                    .make(coordinatorLayout, name + "removed from your Wallet!", Snackbar.LENGTH_LONG);
+            snackbar.setAction("UNDO", new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    // undo is selected, restore the deleted item
+                    adapter.restoreItem(deletedItem, deletedIndex);
+                }
+            });
+            snackbar.setActionTextColor(Color.YELLOW);
+            snackbar.show();
+        }
     }
 }

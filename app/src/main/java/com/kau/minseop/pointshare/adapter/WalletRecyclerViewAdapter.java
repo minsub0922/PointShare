@@ -1,11 +1,14 @@
 package com.kau.minseop.pointshare.adapter;
 
+import android.content.ClipData;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.kau.minseop.pointshare.R;
@@ -19,7 +22,15 @@ import java.util.List;
 
 public class WalletRecyclerViewAdapter extends  RecyclerView.Adapter<WalletRecyclerViewAdapter.WalletViewHoler>{
 
+    private OnItemClickListener mListener;
     private final List<WalletViewHolerModel> modelList;
+
+    public interface OnItemClickListener{
+        void onItemClick(int position);
+    }
+    public void setOnItemClickListener(OnItemClickListener listener){
+        mListener = listener;
+    }
 
     public WalletRecyclerViewAdapter(List<WalletViewHolerModel> modelList) {
         this.modelList = modelList;
@@ -30,7 +41,7 @@ public class WalletRecyclerViewAdapter extends  RecyclerView.Adapter<WalletRecyc
     public WalletViewHoler onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         final LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         final View view = inflater.inflate(R.layout.model_wallet_viewholer, parent, false);
-        return new WalletViewHoler(view);
+        return new WalletViewHoler(view, mListener);
     }
 
     @Override
@@ -44,18 +55,46 @@ public class WalletRecyclerViewAdapter extends  RecyclerView.Adapter<WalletRecyc
     @Override
     public int getItemCount() {return modelList.size();}
 
-    static class WalletViewHoler extends RecyclerView.ViewHolder{
+    public void removeItem(int position) {
+        modelList.remove(position);
+        notifyItemRemoved(position);
+    }
+
+    public void restoreItem(WalletViewHolerModel item, int position) {
+        modelList.add(position, item);
+        // notify item added by position
+        notifyItemInserted(position);
+    }
+
+
+    public static class WalletViewHoler extends RecyclerView.ViewHolder{
 
         private ImageView imageView;
         private TextView txt_walletName, txt_walletAddress, txt_walletBalance;
+        public RelativeLayout viewForeground;
+        public ConstraintLayout viewBackground;
 
-        public WalletViewHoler(View itemView) {
+        public WalletViewHoler(View itemView, OnItemClickListener listener) {
             super(itemView);
 
             imageView = itemView.findViewById(R.id.img_model_wallet_viewholder);
             txt_walletName = itemView.findViewById(R.id.txt_model_walletname);
             txt_walletAddress= itemView.findViewById(R.id.txt_model_walletaddress);
             txt_walletBalance= itemView.findViewById(R.id.txt_model_walletbalance);
+            viewBackground = itemView.findViewById(R.id.view_background);
+            viewForeground = itemView.findViewById(R.id.view_foreground);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (listener != null){
+                        int position = getAdapterPosition();
+                        if (position != RecyclerView.NO_POSITION){
+                            listener.onItemClick(position);
+                        }
+                    }
+                }
+            });
         }
     }
 }
