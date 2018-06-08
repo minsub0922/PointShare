@@ -74,13 +74,14 @@ public class WalletFragment extends BaseFragment implements View.OnClickListener
     private String walletAddress;
     private String detailPath;
     private Web3j web3j;
-    private Credentials credentials;
+    private List<Credentials> credentials;
     private Realm mRealm;
     private String contractAddress = "0x099a1a124c9b2fce8b3ddaf77d16faca3e1f79bb";
     private Button attachWallet;
     private RecyclerView rv;
     private WalletRecyclerViewAdapter adapter;
     private final List<WalletViewHolerModel> modelList = new ArrayList<>();
+    private boolean isFirst = true;
 
     @SuppressLint("StaticFieldLeak")
     @Override
@@ -94,6 +95,7 @@ public class WalletFragment extends BaseFragment implements View.OnClickListener
         attachWallet.setOnClickListener(this);
 
         mRealm = Realm.getDefaultInstance();
+
         getObject();
 
         web3j = Web3jFactory.build(new HttpService("https://ropsten.infura.io/wd7279F18YpzuVLkfZTk"));
@@ -107,6 +109,17 @@ public class WalletFragment extends BaseFragment implements View.OnClickListener
         }
 
         return v;
+    }
+
+    private void getClientVersion(){
+        Web3ClientVersion web3ClientVersion = null;
+        try {
+            web3ClientVersion = web3j.web3ClientVersion().send();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        String clientVersion = web3ClientVersion.getWeb3ClientVersion();
+        Log.d("TAG", "Connected to Ethereum client version: " + clientVersion);
     }
 
     private void buildRecyclerView(View v){
@@ -133,45 +146,60 @@ public class WalletFragment extends BaseFragment implements View.OnClickListener
         mRealm.beginTransaction();
         RealmResults<WalletModel> walletModels = mRealm.where(WalletModel.class).findAll();
         mRealm.commitTransaction();
-        for (WalletModel model: walletModels){
-            modelList.add(new WalletViewHolerModel("",model.getWalletName(), model.getWalletAddress(), ""));
+        for (int i =0; i<walletModels.size(); i++){
+            modelList.add(new WalletViewHolerModel("",walletModels.get(i).getWalletName(), walletModels.get(i).getWalletAddress(), ""));
+            readyForRequest(walletModels.get(i).getPassword(), walletModels.get(i).getDetailPath());
+            getWalletBallance(i);
+            Log.d("TAG", String.valueOf(walletModels.get(i)));
         }
         adapter.notifyDataSetChanged();
+
     }
 
-    private void readyForRequest() throws Exception{
+    private void readyForRequest(String pwd, String detailpath){
         //start sending request
-        Web3ClientVersion web3ClientVersion = web3j.web3ClientVersion().sendAsync().get();
-        String clientVersion = web3ClientVersion.getWeb3ClientVersion();
-        Log.d("TAG", "Connected to Ethereum client version: " + clientVersion);
-        File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-        credentials = WalletUtils.loadCredentials(password, path+"/"+detailPath);
-        Log.d("TAG","Credentials loaded; wallet address :  "+credentials.getAddress());
-    }
+        new AsyncTask(){
+            @Override
+            protected Object doInBackground(Object[] objects) {
+                try {
+                    File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+                    credentials.add(WalletUtils.loadCredentials(pwd, path+"/"+detailpath));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+        }.execute();
 
+
+    }
 
 
     @SuppressLint("StaticFieldLeak")
-    private void getWalletBallance() {
+    private void getWalletBallance(int position) {
         //GetMyBalance
         new AsyncTask () {
             @Override
             protected Object doInBackground(Object[] objects) {
                 BigInteger ethGetBalance = null;
-
                 try {
                     ethGetBalance = web3j
-                            .ethGetBalance(walletAddress, DefaultBlockParameterName.LATEST)
+                            .ethGetBalance(modelList.get(position).getWalletAddress(), DefaultBlockParameterName.LATEST)
                             .send()
                             .getBalance();
+                    BigInteger wei = ethGetBalance;
+                    balance = wei.toString();
+                    modelList.get(position).setWalletBalance(balance);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-
-                BigInteger wei = ethGetBalance;
-                balance = wei.toString();
-                Log.d("TAG", "The balance of my Wallet: "+wei.toString());
                 return null;
+            }
+
+            @Override
+            protected void onPostExecute(Object o) {
+                super.onPostExecute(o);
+                if (position==modelList.size()-1) adapter.notifyDataSetChanged();
             }
         }.execute();
     }
@@ -181,8 +209,13 @@ public class WalletFragment extends BaseFragment implements View.OnClickListener
         onActivityResult(activityResultEvent.getRequestCode(), activityResultEvent.getResultCode(), activityResultEvent.getData());
         Log.d("TAG",String.valueOf( activityResultEvent.getResultCode()));
         if (activityResultEvent.getResultCode()==-1){
-            modelList.clear();
-            getObject();
+            mRealm.beginTransaction();
+            RealmResults<WalletModel> walletModels = mRealm.where(WalletModel.class).findAll();
+            mRealm.commitTransaction();
+            WalletModel model = walletModels.get(walletModels.size()-1);
+            modelList.add(new WalletViewHolerModel("",model.getWalletName(), model.getWalletAddress(), "0"));
+            adapter.notifyDataSetChanged();
+            readyForRequest(model.getPassword(),model.getDetailPath());
         }
     }
 
@@ -201,7 +234,7 @@ public class WalletFragment extends BaseFragment implements View.OnClickListener
                 Greeter contract = null;
                 try {
                     contract = Greeter.deploy(
-                            web3j, credentials,
+                            web3j, credentials.get(0),
                             ManagedTransaction.GAS_PRICE, Contract.GAS_LIMIT,
                             "Hello blockchain world!").send();
 
@@ -233,7 +266,7 @@ public class WalletFragment extends BaseFragment implements View.OnClickListener
                 + Convert.fromWei("1", Convert.Unit.ETHER).toPlainString() + " Ether)");
 
         Future<TransactionReceipt> transferReceipt = Transfer.sendFunds(
-                web3j, credentials,
+                web3j, credentials.get(0),
                 "0xb3FA37CA8918432cAC914C40f8C4748a6dBd0fA4",  // you can put any address here
                 BigDecimal.ONE, Convert.Unit.WEI)  // 1 wei = 10^-18 Ether
                 .sendAsync();
