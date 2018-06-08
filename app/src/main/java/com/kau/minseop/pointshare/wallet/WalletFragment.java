@@ -114,7 +114,7 @@ public class WalletFragment extends BaseFragment implements View.OnClickListener
         rv.setLayoutManager(new LinearLayoutManager(getActivity()));
         adapter = new WalletRecyclerViewAdapter(modelList);
         rv.setItemAnimator(new DefaultItemAnimator());
-
+        rv.setNestedScrollingEnabled(false);
         rv.setAdapter(adapter);
 
         ItemTouchHelper.SimpleCallback itemTouchHelperCallback = new RecyclerItemTouchHelper(0, ItemTouchHelper.LEFT, this);
