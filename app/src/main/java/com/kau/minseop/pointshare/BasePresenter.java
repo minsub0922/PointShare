@@ -5,6 +5,5 @@ package com.kau.minseop.pointshare;
  */
 
 public interface BasePresenter {
-
     void start();
 }
