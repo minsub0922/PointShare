@@ -1,6 +1,7 @@
 pragma solidity ^0.4.2;
 
-// Modified Greeter contract. Based on example at https://www.ethereum.org/greeter.
+// Example taken from https://www.ethereum.org/greeter, also used in
+// https://github.com/ethereum/go-ethereum/wiki/Contract-Tutorial#your-first-citizen-the-greeter
 
 contract mortal {
     /* Define variable owner of the type address*/
@@ -22,19 +23,8 @@ contract greeter is mortal {
         greeting = _greeting;
     }
 
-    function newGreeting(string _greeting) public {
-        Modified(greeting, _greeting, greeting, _greeting);
-        greeting = _greeting;
-    }
-
     /* main function */
     function greet() constant returns (string) {
         return greeting;
     }
-
-    /* we include indexed events to demonstrate the difference that can be
-    captured versus non-indexed */
-    event Modified(
-            string indexed oldGreetingIdx, string indexed newGreetingIdx,
-            string oldGreeting, string newGreeting);
 }

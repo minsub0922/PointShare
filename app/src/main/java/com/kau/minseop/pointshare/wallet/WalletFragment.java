@@ -1,7 +1,6 @@
 package com.kau.minseop.pointshare.wallet;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
@@ -11,9 +10,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
@@ -22,7 +19,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.TextView;
 
 
 import com.kau.minseop.pointshare.BaseFragment;
@@ -31,7 +27,7 @@ import com.kau.minseop.pointshare.R;
 import com.kau.minseop.pointshare.adapter.WalletRecyclerViewAdapter;
 import com.kau.minseop.pointshare.event.ActivityResultEvent;
 import com.kau.minseop.pointshare.generation.GenerationActivity;
-import com.kau.minseop.pointshare.greeter.Greeter;
+import com.kau.minseop.pointshare.contract.Greeter;
 import com.kau.minseop.pointshare.helper.RecyclerItemTouchHelper;
 import com.kau.minseop.pointshare.model.WalletModel;
 import com.kau.minseop.pointshare.model.WalletViewHolerModel;
@@ -55,6 +51,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import io.realm.Realm;
@@ -74,10 +71,10 @@ public class WalletFragment extends BaseFragment implements View.OnClickListener
     private String walletAddress;
     private String detailPath;
     private Web3j web3j;
-    private List<Credentials> credentials;
+    private List<Credentials> credentials = new ArrayList<>();
     private Realm mRealm;
     private String contractAddress = "0x099a1a124c9b2fce8b3ddaf77d16faca3e1f79bb";
-    private Button attachWallet;
+    private Button attachWallet, attachContract;
     private RecyclerView rv;
     private WalletRecyclerViewAdapter adapter;
     private final List<WalletViewHolerModel> modelList = new ArrayList<>();
@@ -88,29 +85,32 @@ public class WalletFragment extends BaseFragment implements View.OnClickListener
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View v = inflater.inflate(R.layout.fragment_wallet, container, false);
         attachWallet = v.findViewById(R.id.btn_attach_wallet);
+        attachContract = v.findViewById(R.id.btn_attach_contract);
         coordinatorLayout = v.findViewById(R.id.coordinatorlayout);
-
+        web3j = Web3jFactory.build(new HttpService("https://ropsten.infura.io/wd7279F18YpzuVLkfZTk"));
         buildRecyclerView(v);
-
         attachWallet.setOnClickListener(this);
+        attachContract.setOnClickListener(this);
 
         mRealm = Realm.getDefaultInstance();
 
+        getClientVersion();
         getObject();
-
-        web3j = Web3jFactory.build(new HttpService("https://ropsten.infura.io/wd7279F18YpzuVLkfZTk"));
 
         return v;
     }
 
     private void getClientVersion(){
         Web3ClientVersion web3ClientVersion = null;
+        String clientVersion = null;
         try {
-            web3ClientVersion = web3j.web3ClientVersion().send();
-        } catch (IOException e) {
+            web3ClientVersion = web3j.web3ClientVersion().sendAsync().get();
+            clientVersion = web3ClientVersion.getWeb3ClientVersion();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
             e.printStackTrace();
         }
-        String clientVersion = web3ClientVersion.getWeb3ClientVersion();
         Log.d("TAG", "Connected to Ethereum client version: " + clientVersion);
     }
 
@@ -147,6 +147,7 @@ public class WalletFragment extends BaseFragment implements View.OnClickListener
         adapter.notifyDataSetChanged();
     }
 
+    @SuppressLint("StaticFieldLeak")
     private void readyForRequest(String pwd, String detailpath){
         //start sending request
         new AsyncTask(){
@@ -157,6 +158,7 @@ public class WalletFragment extends BaseFragment implements View.OnClickListener
                     credentials.add(WalletUtils.loadCredentials(pwd, path+"/"+detailpath));
                 } catch (Exception e) {
                     e.printStackTrace();
+                    Log.d("TAG","no/.???"+String.valueOf(e));
                 }
                 return null;
             }
@@ -207,44 +209,27 @@ public class WalletFragment extends BaseFragment implements View.OnClickListener
         }
     }
 
-
-    @SuppressLint("StaticFieldLeak")
     private void generateNewContract(){
-        // Now lets deploy a smart contract
-        Log.d("TAG", "Deploying smart contract");
-        new AsyncTask<String, Void, String> (){
+        new AsyncTask(){
             @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
-            }
-            @Override
-            protected String doInBackground(String... params) {
+            protected Object doInBackground(Object[] objects) {
+                Log.d("TAG", "Deploying smart contract");
                 Greeter contract = null;
                 try {
+                    Log.d("TAG", String.valueOf(credentials.size()));
                     contract = Greeter.deploy(
-                            web3j, credentials.get(0),
+                            web3j, credentials.get(1),
                             ManagedTransaction.GAS_PRICE, Contract.GAS_LIMIT,
                             "Hello blockchain world!").send();
-
                     String contractAddress = contract.getContractAddress();
                     Log.d("TAG","Smart contract deployed to address " + contractAddress);
                     Log.d("TAG","View contract at https://ropsten.etherscan.io/address/" + contractAddress);
                     Log.d("TAG","Value stored in remote smart contract: " + contract.greet().send());
                 } catch (Exception e) {
                     e.printStackTrace();
+                    Log.d("TAG", String.valueOf(e));
                 }
                 return null;
-            }
-            @Override
-            protected void onPostExecute(String result) {
-                super.onPostExecute(result);
-                if(result != null){
-                    Log.d("ASYNC", "result = " + result);
-                }
-            }
-            @Override
-            protected void onCancelled() {
-                super.onCancelled();
             }
         }.execute();
     }
@@ -266,6 +251,7 @@ public class WalletFragment extends BaseFragment implements View.OnClickListener
     @Override
     public void onClick(View v) {
         if(v.getId()==R.id.btn_attach_wallet) startActivityForResult(new Intent(getActivity(), GenerationActivity.class),1);
+        else if (v.getId()==R.id.btn_attach_contract) generateNewContract();
     }
 
     @Override
