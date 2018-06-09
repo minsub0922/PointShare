@@ -100,14 +100,6 @@ public class WalletFragment extends BaseFragment implements View.OnClickListener
 
         web3j = Web3jFactory.build(new HttpService("https://ropsten.infura.io/wd7279F18YpzuVLkfZTk"));
 
-        try {
-         //   readyForRequest();
-           // getWalletBallance();
-        } catch (Exception e) {
-            e.printStackTrace();
-            Log.d("TAG", "Exception : " + e);
-        }
-
         return v;
     }
 
@@ -153,7 +145,6 @@ public class WalletFragment extends BaseFragment implements View.OnClickListener
             Log.d("TAG", String.valueOf(walletModels.get(i)));
         }
         adapter.notifyDataSetChanged();
-
     }
 
     private void readyForRequest(String pwd, String detailpath){
@@ -170,10 +161,7 @@ public class WalletFragment extends BaseFragment implements View.OnClickListener
                 return null;
             }
         }.execute();
-
-
     }
-
 
     @SuppressLint("StaticFieldLeak")
     private void getWalletBallance(int position) {

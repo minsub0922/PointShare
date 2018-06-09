@@ -5,15 +5,12 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.TextView;
 
-import com.kau.minseop.pointshare.card.CardListFragment;
+import com.kau.minseop.pointshare.cardlist.CardListFragment;
 import com.kau.minseop.pointshare.event.ActivityResultEvent;
+import com.kau.minseop.pointshare.shop.ShopFragment;
 import com.kau.minseop.pointshare.wallet.BusProvider;
 import com.kau.minseop.pointshare.wallet.WalletFragment;
 
@@ -30,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
             if (item==preitem) return false;
             switch (item.getItemId()) {
                 case R.id.nav_home:
-                    replaceViewPager(new CardListFragment());
+                    replaceViewPager(new ShopFragment());
                     preitem = item;
                     return true;
                 case R.id.nav_cardlist:

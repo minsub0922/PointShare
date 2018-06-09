@@ -1,4 +1,4 @@
-package com.kau.minseop.pointshare.card;
+package com.kau.minseop.pointshare.cardlist;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -7,21 +7,15 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
+import com.kau.minseop.pointshare.BaseFragment;
 import com.kau.minseop.pointshare.R;
-import com.kau.minseop.pointshare.wallet.WalletFragment;
-
-import org.web3j.crypto.Credentials;
-import org.web3j.protocol.Web3j;
-
-import io.realm.Realm;
 
 /**
  * Created by minseop on 2018-06-08.
  */
 
-public class CardListFragment extends Fragment {
+public class CardListFragment extends BaseFragment {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
