@@ -23,7 +23,7 @@ public class ShopFragment extends BaseFragment {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        final View v = inflater.inflate(R.layout.fragment_cardlist, container, false);
+        final View v = inflater.inflate(R.layout.fragment_shop, container, false);
 
         buildRecyclerView(v);
 
