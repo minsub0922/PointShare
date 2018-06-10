@@ -53,9 +53,11 @@ public class CardlistRecyclerViewAdapter extends RecyclerView.Adapter<CardlistRe
     public void onBindViewHolder(ItemViewHolder holder, int position) {
         if(mItems.get(position).getCardType().equals("HappyPoint")){
             holder.itemView.setBackgroundResource(R.drawable.happypoint);
+            holder.itemView.findViewById(R.id.cardtypeImage).setBackgroundResource(R.drawable.happypointlogo);
         }
         else if(mItems.get(position).getCardType().equals("CU")){
             holder.itemView.setBackgroundResource(R.drawable.cu);
+            holder.itemView.findViewById(R.id.cardtypeImage).setBackgroundResource(R.drawable.culogo);
         }
         else if(mItems.get(position).getCardType().equals("CJONE")){
             holder.itemView.setBackgroundResource(R.drawable.cjone);
