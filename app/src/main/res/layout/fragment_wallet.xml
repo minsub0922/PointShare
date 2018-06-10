@@ -46,19 +46,6 @@
             android:layout_height="wrap_content"
             android:id="@+id/btn_attach_contract"
             android:text="CREATE NEW CONTRACT"/>
-        <Button
-            android:layout_marginTop="30dp"
-            android:id="@+id/btn_get_contract"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="GET MY CONTRACT"/>
-
-        <Button
-            android:id="@+id/btn_set_contract"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
-            android:text="SET MY CONTRACT" />
     </LinearLayout>
     </ScrollView>
 </android.support.design.widget.CoordinatorLayout>

@@ -51,15 +51,15 @@ public class CardlistRecyclerViewAdapter extends RecyclerView.Adapter<CardlistRe
     // View 의 내용을 해당 포지션의 데이터로 바꿉니다.
     @Override
     public void onBindViewHolder(ItemViewHolder holder, int position) {
-        if(mItems.get(position).getCardType().equals("HappyPoint")){
+        if(mItems.get(position).getCardType().contains("HappyPoint")){
             holder.itemView.setBackgroundResource(R.drawable.happypoint);
             holder.itemView.findViewById(R.id.cardtypeImage).setBackgroundResource(R.drawable.happypointlogo);
         }
-        else if(mItems.get(position).getCardType().equals("CU")){
+        else if(mItems.get(position).getCardType().contains("CU")){
             holder.itemView.setBackgroundResource(R.drawable.cu);
             holder.itemView.findViewById(R.id.cardtypeImage).setBackgroundResource(R.drawable.culogo);
         }
-        else if(mItems.get(position).getCardType().equals("CJONE")){
+        else if(mItems.get(position).getCardType().contains("CJONE")){
             holder.itemView.setBackgroundResource(R.drawable.cjone);
             holder.itemView.findViewById(R.id.cardtypeImage).setBackgroundResource(R.drawable.cjlogo);
         }

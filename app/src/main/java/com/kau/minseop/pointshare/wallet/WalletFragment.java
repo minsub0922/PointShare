@@ -75,7 +75,7 @@ public class WalletFragment extends BaseFragment implements View.OnClickListener
     private List<Credentials> credentials = new ArrayList<>();
     private Realm mRealm;
     private String contractAddress = "0xc4f089BC18CF1Ba71249367294C227BdFc9eb236";
-    private Button btn_attachWallet, btn_attachContract, btn_getContract;
+    private Button btn_attachWallet, btn_attachContract;
     private RecyclerView rv;
     private WalletRecyclerViewAdapter adapter;
     private final List<WalletViewHolerModel> modelList = new ArrayList<>();
@@ -105,10 +105,8 @@ public class WalletFragment extends BaseFragment implements View.OnClickListener
     private void buildButtons(View v){
         btn_attachWallet = v.findViewById(R.id.btn_attach_wallet);
         btn_attachContract = v.findViewById(R.id.btn_attach_contract);
-        btn_getContract = v.findViewById(R.id.btn_get_contract);
         btn_attachWallet.setOnClickListener(this);
         btn_attachContract.setOnClickListener(this);
-        btn_getContract.setOnClickListener(this);
     }
 
     private void getClientVersion(){
@@ -264,7 +262,7 @@ public class WalletFragment extends BaseFragment implements View.OnClickListener
     public void onClick(View v) {
         if(v.getId()==R.id.btn_attach_wallet) startActivityForResult(new Intent(getActivity(), GenerationActivity.class),1);
         else if (v.getId()==R.id.btn_attach_contract) generateNewContract();
-        else if (v.getId()==R.id.btn_get_contract) getMyContract();
+        //else if (v.getId()==R.id.btn_get_contract) getMyContract();
     }
 
     @Override
