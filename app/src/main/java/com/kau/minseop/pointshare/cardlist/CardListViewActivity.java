@@ -6,14 +6,27 @@ import android.graphics.Bitmap;
 import android.net.wifi.hotspot2.pps.Credential;
 import android.os.AsyncTask;
 import android.os.Environment;
+import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.MultiFormatWriter;
+import com.google.zxing.WriterException;
+import com.google.zxing.common.BitMatrix;
+import com.journeyapps.barcodescanner.BarcodeEncoder;
 import com.kau.minseop.pointshare.Contract;
 import com.kau.minseop.pointshare.R;
+import com.kau.minseop.pointshare.adapter.CardlistRecyclerViewAdapter;
+import com.kau.minseop.pointshare.adapter.CouponRecyclerViewAdapter;
+import com.kau.minseop.pointshare.model.CardListModel;
+
+import java.util.ArrayList;
 import com.kau.minseop.pointshare.contract.Coupondeal;
 import com.kau.minseop.pointshare.model.CouponModel;
 import com.kau.minseop.pointshare.model.WalletModel;
@@ -35,9 +48,10 @@ import io.realm.Realm;
 import io.realm.RealmResults;
 
 public class CardListViewActivity extends AppCompatActivity {
-
-    TextView cardType;
+    private CouponRecyclerViewAdapter adapter;
+    private ArrayList<CouponModel> mItems = new ArrayList<>();
     private Web3j web3j;
+    TextView cardType;
     TextView cardNum;
     ImageView Im_qrCode;
     private Credentials credential;
@@ -46,13 +60,14 @@ public class CardListViewActivity extends AppCompatActivity {
     private String walletBalance;
     private Coupondeal contract;
     private WalletModel walletModel = new WalletModel();
-
+    private CouponModel couponModel;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_card_list_view);
         cardType = (TextView)findViewById(R.id.cardtype);
         cardNum = (TextView)findViewById(R.id.cardnum);
+        Im_qrCode = (ImageView)findViewById(R.id.qrCode);
 
         web3j = Web3jFactory.build(new HttpService("https://ropsten.infura.io/wd7279F18YpzuVLkfZTk"));
         mRealm = Realm.getDefaultInstance();
@@ -63,11 +78,50 @@ public class CardListViewActivity extends AppCompatActivity {
         String cType = intent.getExtras().getString("cardtype");
         String cNum = intent.getExtras().getString("cardnum");
         String cPassward = intent.getExtras().getString("cardPassward");
+        String cPeriod = intent.getExtras().getString("cardPeriod");
         String qrCode = cNum+cPassward;
 
-        Bitmap bitmap=getIntent().getParcelableExtra("pic");
+        adapter = new CouponRecyclerViewAdapter(mItems);
+        RecyclerView rv;
+        rv = findViewById(R.id.recyclerView);
+        rv.setAdapter(adapter);
+        rv.setLayoutManager(new LinearLayoutManager(this.getApplicationContext()) );
+        setData();
+
+
+        MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
+        try {
+            BitMatrix bitMatrix = multiFormatWriter.encode(qrCode, BarcodeFormat.QR_CODE,200,200);
+            BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
+            Bitmap bitmap = barcodeEncoder.createBitmap(bitMatrix);
+            Im_qrCode.setImageBitmap(bitmap);
+        }catch (WriterException e){
+            e.printStackTrace();
+        }
+
         cardType.setText(cType);
         cardNum.setText(cNum);
+    }
+    private void setData() {
+        mItems.clear();
+        couponModel = new CouponModel("아메리카노M","스타벅스","1000","~2018.11.10");
+        mItems.add(couponModel);
+        couponModel = new CouponModel("체리블라썸M","스타벅스","4000","~2020.12.05");
+        mItems.add(couponModel);
+        couponModel = new CouponModel("그린라떼200ML","스타벅스","2000","~2018.09.10");
+        mItems.add(couponModel);
+        couponModel = new CouponModel("2시간무료이용권","그린카","3000","~2023.12.30");
+        mItems.add(couponModel);
+        couponModel = new CouponModel("3시간이상이용시20%할인권","SOCAR","5000","~2018.07.22");
+        mItems.add(couponModel);
+        couponModel = new CouponModel("신한은행70%환율우대쿠폰","모두투어","2000","~2018.06.07");
+        mItems.add(couponModel);
+        couponModel = new CouponModel("하나은행70%환율우대쿠폰","모두투어","2000","~2019.04.10");
+        mItems.add(couponModel);
+        couponModel = new CouponModel("(스타벅스)콜드브루270ML","GS25","800","~2020.10.05");
+        mItems.add(couponModel);
+        couponModel = new CouponModel("파이크플레이스블랙275ML","GS25","500","~2020.05.24");
+        adapter.notifyDataSetChanged();
     }
 
     private void getWallet(){
