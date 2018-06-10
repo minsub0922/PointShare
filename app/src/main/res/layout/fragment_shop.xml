@@ -5,6 +5,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="15dp"
     >
     <ScrollView
         android:padding="10dp"
@@ -15,6 +16,24 @@
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+            <TextView
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="내 잔액 : "
+                android:textSize="18dp"/>
+                <TextView
+                    android:layout_marginLeft="10dp"
+                    android:layout_gravity="center"
+                    android:textSize="12dp"
+                    android:id="@+id/txt_shop_mywallet_balance"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -24,21 +43,40 @@
                 android:textAllCaps="true"
                 android:textAlignment="center"
                 android:layout_marginBottom="10dp"/>
-
+            <TextView
+                android:text="Coffee"
+                android:textSize="15dp"
+                android:layout_marginBottom="7dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/rv_fragment_shop_coffee"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="15dp"
                 >
             </android.support.v7.widget.RecyclerView>
+            <TextView
+                android:text="Travel"
+                android:textSize="15dp"
+                android:layout_marginBottom="7dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
             <android.support.v7.widget.RecyclerView
-                android:id="@+id/rv_fragment_shop_restaurant"
+                android:id="@+id/rv_fragment_shop_travel"
+                android:layout_marginBottom="15dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 >
             </android.support.v7.widget.RecyclerView>
+            <TextView
+                android:text="Store"
+                android:layout_marginBottom="7dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
             <android.support.v7.widget.RecyclerView
-                android:id="@+id/rv_fragment_shop_gift"
+                android:layout_marginBottom="15dp"
+                android:id="@+id/rv_fragment_shop_store"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 >
