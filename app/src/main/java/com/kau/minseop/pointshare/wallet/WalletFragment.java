@@ -226,7 +226,6 @@ public class WalletFragment extends BaseFragment implements View.OnClickListener
             @Override
             protected Object doInBackground(Object[] objects) {
                 Coupondeal contract = Coupondeal.load(contractAddress, web3j, credentials.get(0),ManagedTransaction.GAS_PRICE, Contract.GAS_LIMIT);
-                TransactionReceipt transactionReceipt = contract.getTransactionReceipt();
 
                 try {
                     Log.d("TAG","asd:  "+ String.valueOf(contract.getCouponList(BigInteger.valueOf(0)).send()));
@@ -282,7 +281,7 @@ public class WalletFragment extends BaseFragment implements View.OnClickListener
     @Override
     public void onClick(View v) {
         if(v.getId()==R.id.btn_attach_wallet) startActivityForResult(new Intent(getActivity(), GenerationActivity.class),1);
-        else if (v.getId()==R.id.btn_attach_contract) generateNewContract();
+       // else if (v.getId()==R.id.btn_attach_contract) generateNewContract();
         else if (v.getId()==R.id.btn_get_contract) getMyContract();
     }
 
