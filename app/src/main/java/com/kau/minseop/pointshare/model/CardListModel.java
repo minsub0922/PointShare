@@ -1,5 +1,7 @@
 package com.kau.minseop.pointshare.model;
 
+import org.web3j.abi.datatypes.Int;
+
 /**
  * Created by khanj on 2018-06-09.
  */
@@ -10,6 +12,7 @@ public class CardListModel {
     private String cardValidityPeriod;
     private String carCVCNum;
     private String cardPassward;
+    private String point="100000";
 
     public CardListModel(String cardType, String cardNum, String cardValidityPeriod, String carCVCNum, String cardPassward){
         this.cardType = cardType ;
@@ -34,4 +37,5 @@ public class CardListModel {
     public String getCardPassward(){
         return cardPassward;
     }
+    public String getPoint(){return point;}
 }

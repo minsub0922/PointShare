@@ -53,8 +53,9 @@ public class CardListFragment extends BaseFragment {
                 //intent.putExtra("items", mItems.get(position));
                 intent.putExtra("cardtype",mItems.get(position).getCardType());
                 intent.putExtra("cardnum",mItems.get(position).getCardNum());
-                startActivity(intent);
+                intent.putExtra("cardPassward",mItems.get(position).getCardPassward());
 
+                startActivity(intent);
             }
         });
         addCard.setOnClickListener(new View.OnClickListener() {
