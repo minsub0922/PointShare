@@ -1,17 +1,26 @@
 package com.kau.minseop.pointshare.cardlist;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.AnimationDrawable;
+import android.graphics.drawable.ColorDrawable;
 import android.net.wifi.hotspot2.pps.Credential;
 import android.os.AsyncTask;
 import android.os.Environment;
+import android.os.Handler;
 import android.provider.ContactsContract;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -54,6 +63,7 @@ public class CardListViewActivity extends AppCompatActivity {
     TextView cardType;
     TextView cardNum;
     ImageView Im_qrCode;
+    private String qrCode;
     private Credentials credential;
     private Realm mRealm;
     private String contractAddress = "0xc4f089BC18CF1Ba71249367294C227BdFc9eb236";
@@ -61,6 +71,11 @@ public class CardListViewActivity extends AppCompatActivity {
     private Coupondeal contract;
     private WalletModel walletModel = new WalletModel();
     private CouponModel couponModel;
+    AppCompatDialog progressDialog;
+
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,7 +86,6 @@ public class CardListViewActivity extends AppCompatActivity {
 
         web3j = Web3jFactory.build(new HttpService("https://ropsten.infura.io/wd7279F18YpzuVLkfZTk"));
         mRealm = Realm.getDefaultInstance();
-
         getWallet();
 
         Intent intent = getIntent();
@@ -79,16 +93,15 @@ public class CardListViewActivity extends AppCompatActivity {
         String cNum = intent.getExtras().getString("cardnum");
         String cPassward = intent.getExtras().getString("cardPassward");
         String cPeriod = intent.getExtras().getString("cardPeriod");
-        String qrCode = cNum+cPassward;
-
+        qrCode= cNum+cPassward;
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                this);
         adapter = new CouponRecyclerViewAdapter(mItems);
         RecyclerView rv;
         rv = findViewById(R.id.recyclerView);
         rv.setAdapter(adapter);
         rv.setLayoutManager(new LinearLayoutManager(this.getApplicationContext()) );
         setData();
-
-
         MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
         try {
             BitMatrix bitMatrix = multiFormatWriter.encode(qrCode, BarcodeFormat.QR_CODE,200,200);
@@ -101,6 +114,44 @@ public class CardListViewActivity extends AppCompatActivity {
 
         cardType.setText(cType);
         cardNum.setText(cNum);
+
+        adapter.setItemClick(new CouponRecyclerViewAdapter.ItemClick() {
+            @Override
+            public void onClick(View view, int position) {
+                // 제목셋팅
+                alertDialogBuilder.setTitle("쿠폰 등록");
+
+                // AlertDialog 셋팅
+                alertDialogBuilder
+                        .setMessage("쿠폰을 정말로 등록할 것입니까?")
+                        .setCancelable(true)
+                        .setPositiveButton("네",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(
+                                            DialogInterface dialog, int id) {
+                                        startProgresss();
+                                        sendCoupon(mItems.get(position),qrCode);
+                                    }
+                                })
+                        .setNegativeButton("취소",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(
+                                            DialogInterface dialog, int id) {
+                                        // 다이얼로그를 취소한다
+                                        dialog.cancel();
+                                    }
+                                });
+
+                // 다이얼로그 생성
+                AlertDialog alertDialog = alertDialogBuilder.create();
+
+                // 다이얼로그 보여주기
+                alertDialog.show();
+
+
+                //mItems.remove(position);
+            }
+        });
     }
     private void setData() {
         mItems.clear();
@@ -128,11 +179,10 @@ public class CardListViewActivity extends AppCompatActivity {
         mRealm.beginTransaction();
         RealmResults<WalletModel> walletModels = mRealm.where(WalletModel.class).findAll();
         mRealm.commitTransaction();
-        if (walletModels.size()<0){
+        if (walletModels.size()>0){
             walletModel = walletModels.get(0);
             readyForRequest(walletModel.getPassword(), walletModel.getDetailPath());
             getWalletBallance(walletModel.getWalletAddress());
-            Log.d("TAG", String.valueOf(walletModel));
         }
     }
 
@@ -152,6 +202,8 @@ public class CardListViewActivity extends AppCompatActivity {
                     walletBalance = wei.toString();
                 } catch (IOException e) {
                     e.printStackTrace();
+                    Log.d("TAG","failed !!! generate Wallet");
+
                 }
                 return null;
             }
@@ -168,8 +220,10 @@ public class CardListViewActivity extends AppCompatActivity {
                     File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
                     credential = WalletUtils.loadCredentials(pwd, path+"/"+detailpath);
                     contract = Coupondeal.load(contractAddress, web3j, credential, ManagedTransaction.GAS_PRICE, Contract.GAS_LIMIT);
+                    Log.d("TAG","done credential");
                 } catch (Exception e) {
                     e.printStackTrace();
+                    Log.d("TAG","failed !!!");
                 }
                 return null;
             }
@@ -177,11 +231,76 @@ public class CardListViewActivity extends AppCompatActivity {
     }
 
     private void sendCoupon(CouponModel couponModel, String qrcode) {
-        try {
-            contract.createCoupon(couponModel.getcName(),couponModel.getCompany(),qrcode,couponModel.getPrice(),couponModel.getDeadline()).send();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        new AsyncTask() {
+            @Override
+            protected Object doInBackground(Object[] objects) {
+                try {
+                    contract = Coupondeal.load(contractAddress, web3j, credential, ManagedTransaction.GAS_PRICE, Contract.GAS_LIMIT);
+                    contract.createCoupon(couponModel.getcName(), couponModel.getCompany(), qrcode, couponModel.getPrice(), couponModel.getDeadline()).send();
+                    Log.d("TAG","잘했어요");
+                    progressOFF();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+        }.execute();
+    }
+    public void startProgresss(){
+        progressON(this,"올리는중...");
     }
 
+    public void progressON(Activity activity, String message) {
+
+        if (activity == null || activity.isFinishing()) {
+            return;
+        }
+
+
+        if (progressDialog != null && progressDialog.isShowing()) {
+            progressSET(message);
+        } else {
+
+            progressDialog = new AppCompatDialog(activity);
+            progressDialog.setCancelable(false);
+            progressDialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+            progressDialog.setContentView(R.layout.progress_loading);
+            progressDialog.show();
+
+        }
+
+
+        final ImageView img_loading_frame = (ImageView) progressDialog.findViewById(R.id.iv_frame_loading);
+        final AnimationDrawable frameAnimation = (AnimationDrawable) img_loading_frame.getBackground();
+        img_loading_frame.post(new Runnable() {
+            @Override
+            public void run() {
+                frameAnimation.start();
+            }
+        });
+
+        TextView tv_progress_message = (TextView) progressDialog.findViewById(R.id.tv_progress_message);
+        if (!TextUtils.isEmpty(message)) {
+            tv_progress_message.setText(message);
+        }
+
+
+    }
+    public void progressSET(String message) {
+
+        if (progressDialog == null || !progressDialog.isShowing()) {
+            return;
+        }
+
+        TextView tv_progress_message = (TextView) progressDialog.findViewById(R.id.tv_progress_message);
+        if (!TextUtils.isEmpty(message)) {
+            tv_progress_message.setText(message);
+        }
+
+    }
+    public void progressOFF() {
+        if (progressDialog != null && progressDialog.isShowing()) {
+            progressDialog.dismiss();
+        }
+    }
 }
