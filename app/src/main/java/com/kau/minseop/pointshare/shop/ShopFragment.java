@@ -2,6 +2,9 @@ package com.kau.minseop.pointshare.shop;
 
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
+import android.app.Activity;
+import android.graphics.drawable.AnimationDrawable;
+import android.graphics.drawable.ColorDrawable;
 import android.net.wifi.hotspot2.pps.Credential;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -9,13 +12,16 @@ import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatDialog;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -71,6 +77,7 @@ public class ShopFragment extends BaseFragment{
     private List<ShoppingModel> coffeeList = new ArrayList<>(), travelList = new ArrayList<>(), storeList = new ArrayList<>();
     private AlertDialog.Builder alertDialogBuilder;
 
+    AppCompatDialog progressDialog;
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View v = inflater.inflate(R.layout.fragment_shop, container, false);
@@ -86,7 +93,9 @@ public class ShopFragment extends BaseFragment{
 
         buildRecyclerView(v);
 
+        startProgresss();
         getCouponList();
+
 
         getWalletBallance(walletModel.getWalletAddress());
 
@@ -123,7 +132,6 @@ public class ShopFragment extends BaseFragment{
         adapter_coffee.setOnItemClickListener(new ShopRecyclerViewAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
-
                 ShoppingModel model = coffeeList.get(position);
 
                 alertDialogBuilder.setTitle(model.getCouponModel().getcName()+" 구매하기");
@@ -141,6 +149,7 @@ public class ShopFragment extends BaseFragment{
                 alertDialogBuilder.create().show();
 
                 Log.d("TAG","get index : "+model.getIndex());
+                Toast.makeText(getActivity(), model.getCouponModel().getcName(), Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -163,6 +172,7 @@ public class ShopFragment extends BaseFragment{
                 alertDialogBuilder.create().show();
 
                 Log.d("TAG","get index : "+model.getIndex());
+                Toast.makeText(getActivity(), model.getCouponModel().getcName(), Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -185,6 +195,7 @@ public class ShopFragment extends BaseFragment{
                 alertDialogBuilder.create().show();
 
                 Log.d("TAG","get index : "+model.getIndex());
+                Toast.makeText(getActivity(), model.getCouponModel().getcName(), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -247,7 +258,7 @@ public class ShopFragment extends BaseFragment{
         new AsyncTask(){
             @Override
             protected Object doInBackground(Object[] objects) {
-                contract = Coupondeal.load(contractAddress, web3j, credential, ManagedTransaction.GAS_PRICE, Contract.GAS_LIMIT);
+                Coupondeal contract = Coupondeal.load(contractAddress, web3j, credential, ManagedTransaction.GAS_PRICE, Contract.GAS_LIMIT);
                 int i=0;
                 try {
                     while(true) {
@@ -257,10 +268,12 @@ public class ShopFragment extends BaseFragment{
                          Log.d("TAG",coupon.getValue3());
                          i++;
                     }
+
                     Log.d("TAG", String.valueOf(i));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+                progressOFF();
                 return null;
             }
 
@@ -272,6 +285,7 @@ public class ShopFragment extends BaseFragment{
                 adapter_travel.notifyDataSetChanged();
             }
         }.execute();
+
     }
 
     private List<ShoppingModel> determineType(String cname){
@@ -308,5 +322,63 @@ public class ShopFragment extends BaseFragment{
                 getWalletBallance(walletModel.getWalletAddress());
             }
         }.execute();
+    }
+
+    public void startProgresss(){
+        progressON(getActivity(),"리스트 받는중...");
+    }
+
+    public void progressON(Activity activity, String message) {
+
+        if (activity == null || activity.isFinishing()) {
+            return;
+        }
+
+
+        if (progressDialog != null && progressDialog.isShowing()) {
+            progressSET(message);
+        } else {
+
+            progressDialog = new AppCompatDialog(activity);
+            progressDialog.setCancelable(false);
+            progressDialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+            progressDialog.setContentView(R.layout.progress_loading);
+            progressDialog.show();
+
+        }
+
+
+        final ImageView img_loading_frame = (ImageView) progressDialog.findViewById(R.id.iv_frame_loading);
+        final AnimationDrawable frameAnimation = (AnimationDrawable) img_loading_frame.getBackground();
+        img_loading_frame.post(new Runnable() {
+            @Override
+            public void run() {
+                frameAnimation.start();
+            }
+        });
+
+        TextView tv_progress_message = (TextView) progressDialog.findViewById(R.id.tv_progress_message);
+        if (!TextUtils.isEmpty(message)) {
+            tv_progress_message.setText(message);
+        }
+
+
+    }
+    public void progressSET(String message) {
+
+        if (progressDialog == null || !progressDialog.isShowing()) {
+            return;
+        }
+
+        TextView tv_progress_message = (TextView) progressDialog.findViewById(R.id.tv_progress_message);
+        if (!TextUtils.isEmpty(message)) {
+            tv_progress_message.setText(message);
+        }
+
+    }
+    public void progressOFF() {
+        if (progressDialog != null && progressDialog.isShowing()) {
+            progressDialog.dismiss();
+        }
     }
 }
