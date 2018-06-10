@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="80dp"
+    android:layout_marginBottom="5dp">
+    <ImageView
+        android:src="@drawable/ic_account_circle"
+        android:layout_marginStart="16dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="5dp"
+        />
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="10dp"
+        android:layout_marginStart="72dp"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/itemCompany"
+            android:textSize="10sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="쿠폰회사" />
+        <TextView
+            android:id="@+id/itemCname"
+            android:textSize="13sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="쿠폰이름 및 price"
+            android:textColor="#111"/>
+        <TextView
+            android:id="@+id/itemPeriod"
+            android:textSize="10sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="쿠폰회사" />
+    </LinearLayout>
+</RelativeLayout>
+
