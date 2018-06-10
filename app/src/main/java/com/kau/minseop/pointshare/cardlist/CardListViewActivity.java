@@ -19,6 +19,7 @@ import android.support.v7.app.AppCompatDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -53,6 +54,10 @@ import java.io.File;
 import java.io.IOException;
 import java.math.BigInteger;
 
+import javax.crypto.Cipher;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
+
 import io.realm.Realm;
 import io.realm.RealmResults;
 
@@ -60,10 +65,11 @@ public class CardListViewActivity extends AppCompatActivity {
     private CouponRecyclerViewAdapter adapter;
     private ArrayList<CouponModel> mItems = new ArrayList<>();
     private Web3j web3j;
-    TextView cardType;
-    TextView cardNum;
-    ImageView Im_qrCode;
+    private TextView cardType;
+    private TextView cardNum;
+    private ImageView Im_qrCode;
     private String qrCode;
+    private String KEY = "199301130922";
     private Credentials credential;
     private Realm mRealm;
     private String contractAddress = "0xc4f089BC18CF1Ba71249367294C227BdFc9eb236";
@@ -71,10 +77,7 @@ public class CardListViewActivity extends AppCompatActivity {
     private Coupondeal contract;
     private WalletModel walletModel = new WalletModel();
     private CouponModel couponModel;
-    AppCompatDialog progressDialog;
-
-
-
+    private AppCompatDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,7 +96,13 @@ public class CardListViewActivity extends AppCompatActivity {
         String cNum = intent.getExtras().getString("cardnum");
         String cPassward = intent.getExtras().getString("cardPassward");
         String cPeriod = intent.getExtras().getString("cardPeriod");
-        qrCode= cNum+cPassward;
+
+        try {
+            qrCode= encrypt( cNum+cPassward, KEY);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
                 this);
         adapter = new CouponRecyclerViewAdapter(mItems);
@@ -123,36 +132,45 @@ public class CardListViewActivity extends AppCompatActivity {
 
                 // AlertDialog 셋팅
                 alertDialogBuilder
-                        .setMessage("쿠폰을 정말로 등록할 것입니까?")
+                        .setMessage("쿠폰을 판매하시겠습니까?")
                         .setCancelable(true)
-                        .setPositiveButton("네",
-                                new DialogInterface.OnClickListener() {
-                                    public void onClick(
-                                            DialogInterface dialog, int id) {
-                                        startProgresss();
-                                        sendCoupon(mItems.get(position),qrCode);
-                                    }
-                                })
-                        .setNegativeButton("취소",
-                                new DialogInterface.OnClickListener() {
-                                    public void onClick(
-                                            DialogInterface dialog, int id) {
-                                        // 다이얼로그를 취소한다
-                                        dialog.cancel();
-                                    }
-                                });
+                        .setPositiveButton("네", new DialogInterface.OnClickListener() {
+                            public void onClick(
+                                    DialogInterface dialog, int id) {
+                                startProgresss();
+                                sendCoupon(mItems.get(position),qrCode);
+                            }
+                        })
+                        .setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                            public void onClick(
+                                DialogInterface dialog, int id) {
+                                // 다이얼로그를 취소한다
+                                dialog.cancel();
+                            }});
 
-                // 다이얼로그 생성
-                AlertDialog alertDialog = alertDialogBuilder.create();
-
-                // 다이얼로그 보여주기
-                alertDialog.show();
-
-
-                //mItems.remove(position);
+                alertDialogBuilder.show();
             }
         });
     }
+
+
+
+
+
+    private static String encrypt(String text, String key) throws Exception {
+        Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+        byte[] keyBytes= new byte[16];
+        byte[] b= key.getBytes("UTF-8");
+        int len= b.length;
+        if (len > keyBytes.length) len = keyBytes.length;
+        System.arraycopy(b, 0, keyBytes, 0, len);
+        SecretKeySpec keySpec = new SecretKeySpec(keyBytes, "AES");
+        IvParameterSpec ivSpec = new IvParameterSpec(keyBytes);
+        cipher.init(Cipher.ENCRYPT_MODE,keySpec,ivSpec);
+        byte[] results = cipher.doFinal(text.getBytes("UTF-8"));
+        return Base64.encodeToString(results, 0);
+    }
+
     private void setData() {
         mItems.clear();
         couponModel = new CouponModel("아메리카노M","스타벅스","1000","~2018.11.10");

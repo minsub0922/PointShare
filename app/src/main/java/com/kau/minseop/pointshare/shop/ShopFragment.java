@@ -17,6 +17,7 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -56,6 +57,10 @@ import java.util.List;
 import java.util.concurrent.Future;
 import java.util.function.LongFunction;
 
+import javax.crypto.Cipher;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
+
 import io.realm.Realm;
 import io.realm.RealmResults;
 
@@ -64,6 +69,7 @@ import io.realm.RealmResults;
  */
 
 public class ShopFragment extends BaseFragment{
+    private String KEY = "199301130922";
     private Realm mRealm;
     private String walletBalance;
     private Credentials credential;
@@ -95,7 +101,6 @@ public class ShopFragment extends BaseFragment{
 
         startProgresss();
         getCouponList();
-
 
         getWalletBallance(walletModel.getWalletAddress());
 
@@ -140,7 +145,7 @@ public class ShopFragment extends BaseFragment{
                         .setCancelable(true)
                         .setPositiveButton("네", new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int id) {
-                                        purchaseCoupon(model.getIndex(),model.getSellerAddress(),model.getCouponModel().getPrice());
+                                        purchaseCoupon(model.getIndex(),model.getSellerAddress(),model.getCouponModel().getPrice(),model.getQrCode());
                                     }
                                 })
                         .setNegativeButton("취소", new DialogInterface.OnClickListener() {
@@ -163,7 +168,7 @@ public class ShopFragment extends BaseFragment{
                         .setCancelable(true)
                         .setPositiveButton("네", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                purchaseCoupon(model.getIndex(),model.getSellerAddress(),model.getCouponModel().getPrice());
+                                purchaseCoupon(model.getIndex(),model.getSellerAddress(),model.getCouponModel().getPrice(), model.getQrCode());
                             }
                         })
                         .setNegativeButton("취소", new DialogInterface.OnClickListener() {
@@ -186,7 +191,7 @@ public class ShopFragment extends BaseFragment{
                         .setCancelable(true)
                         .setPositiveButton("네", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                purchaseCoupon(model.getIndex(),model.getSellerAddress(),model.getCouponModel().getPrice());
+                                purchaseCoupon(model.getIndex(),model.getSellerAddress(),model.getCouponModel().getPrice(), model.getQrCode());
                             }
                         })
                         .setNegativeButton("취소", new DialogInterface.OnClickListener() {
@@ -299,7 +304,7 @@ public class ShopFragment extends BaseFragment{
     }
 
 
-    private void purchaseCoupon(int index, String address, String price){
+    private void purchaseCoupon(int index, String address, String price, String qrcode){
         new AsyncTask(){
             @Override
             protected Object doInBackground(Object[] objects) {
@@ -320,6 +325,11 @@ public class ShopFragment extends BaseFragment{
             @Override
             protected void onPostExecute(Object o) {
                 super.onPostExecute(o);
+                try {
+                    decrypt(qrcode,KEY);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 getWalletBallance(walletModel.getWalletAddress());
             }
         }.execute();
@@ -335,19 +345,15 @@ public class ShopFragment extends BaseFragment{
             return;
         }
 
-
         if (progressDialog != null && progressDialog.isShowing()) {
             progressSET(message);
         } else {
-
             progressDialog = new AppCompatDialog(activity);
             progressDialog.setCancelable(false);
             progressDialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
             progressDialog.setContentView(R.layout.progress_loading);
             progressDialog.show();
-
         }
-
 
         final ImageView img_loading_frame = (ImageView) progressDialog.findViewById(R.id.iv_frame_loading);
         final AnimationDrawable frameAnimation = (AnimationDrawable) img_loading_frame.getBackground();
@@ -357,13 +363,10 @@ public class ShopFragment extends BaseFragment{
                 frameAnimation.start();
             }
         });
-
         TextView tv_progress_message = (TextView) progressDialog.findViewById(R.id.tv_progress_message);
         if (!TextUtils.isEmpty(message)) {
             tv_progress_message.setText(message);
         }
-
-
     }
     public void progressSET(String message) {
 
@@ -382,4 +385,19 @@ public class ShopFragment extends BaseFragment{
             progressDialog.dismiss();
         }
     }
+
+    private static String decrypt(String text, String key) throws Exception {
+        Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+        byte[] keyBytes= new byte[16];
+        byte[] b= key.getBytes("UTF-8");
+        int len= b.length;
+        if (len > keyBytes.length) len = keyBytes.length;
+        System.arraycopy(b, 0, keyBytes, 0, len);
+        SecretKeySpec keySpec = new SecretKeySpec(keyBytes, "AES");
+        IvParameterSpec ivSpec = new IvParameterSpec(keyBytes);
+        cipher.init(Cipher.DECRYPT_MODE,keySpec,ivSpec);
+        byte [] results = cipher.doFinal(Base64.decode(text, 0));
+        return new String(results,"UTF-8");
+    }
+
 }

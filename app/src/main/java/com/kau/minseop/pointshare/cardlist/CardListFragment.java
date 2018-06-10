@@ -44,6 +44,7 @@ public class CardListFragment extends BaseFragment {
         rv = v.findViewById(R.id.recyclerView);
         rv.setAdapter(adapter);
         rv.setLayoutManager(new LinearLayoutManager(this.getContext()) );
+        rv.setNestedScrollingEnabled(false);
         setData();
         addCard = (Button)v.findViewById(R.id.addcard);
         adapter.setItemClick(new CardlistRecyclerViewAdapter.ItemClick() {
