@@ -61,6 +61,7 @@ public class CardlistRecyclerViewAdapter extends RecyclerView.Adapter<CardlistRe
         }
         else if(mItems.get(position).getCardType().equals("CJONE")){
             holder.itemView.setBackgroundResource(R.drawable.cjone);
+            holder.itemView.findViewById(R.id.cardtypeImage).setBackgroundResource(R.drawable.cjlogo);
         }
         holder.cardType.setText(mItems.get(position).getCardType());
         holder.itemView.setOnClickListener(new View.OnClickListener() {
