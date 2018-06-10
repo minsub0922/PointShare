@@ -1,8 +1,13 @@
 [
 	{
 		"constant": false,
-		"inputs": [],
-		"name": "kill",
+		"inputs": [
+			{
+				"name": "x",
+				"type": "uint256"
+			}
+		],
+		"name": "set",
 		"outputs": [],
 		"payable": false,
 		"stateMutability": "nonpayable",
@@ -11,26 +16,15 @@
 	{
 		"constant": true,
 		"inputs": [],
-		"name": "greet",
+		"name": "get",
 		"outputs": [
 			{
 				"name": "",
-				"type": "string"
+				"type": "uint256"
 			}
 		],
 		"payable": false,
 		"stateMutability": "view",
 		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"name": "_greeting",
-				"type": "string"
-			}
-		],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "constructor"
 	}
 ]
