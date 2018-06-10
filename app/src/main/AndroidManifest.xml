@@ -31,7 +31,10 @@
             android:name=".generation.GenerationActivity"
             android:theme="@android:style/Theme.DeviceDefault.Light.Dialog.NoActionBar" />
         <activity android:name=".cardlist.CardListViewActivity" />
-        <activity android:name=".cardlist.AddCardListActivity"></activity>
+        <activity android:name=".cardlist.AddCardListActivity" />
+        <activity
+            android:name=".shop.QRActivity">
+        </activity>
     </application>
 
 </manifest>

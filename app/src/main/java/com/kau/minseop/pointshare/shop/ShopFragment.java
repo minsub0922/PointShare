@@ -3,6 +3,7 @@ package com.kau.minseop.pointshare.shop;
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.net.wifi.hotspot2.pps.Credential;
@@ -82,8 +83,8 @@ public class ShopFragment extends BaseFragment{
     private Coupondeal contract;
     private List<ShoppingModel> coffeeList = new ArrayList<>(), travelList = new ArrayList<>(), storeList = new ArrayList<>();
     private AlertDialog.Builder alertDialogBuilder;
-
     AppCompatDialog progressDialog;
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View v = inflater.inflate(R.layout.fragment_shop, container, false);
@@ -99,7 +100,7 @@ public class ShopFragment extends BaseFragment{
 
         buildRecyclerView(v);
 
-        startProgresss();
+        startProgresss(1);
         getCouponList();
 
         getWalletBallance(walletModel.getWalletAddress());
@@ -305,6 +306,7 @@ public class ShopFragment extends BaseFragment{
 
 
     private void purchaseCoupon(int index, String address, String price, String qrcode){
+        startProgresss(2);
         new AsyncTask(){
             @Override
             protected Object doInBackground(Object[] objects) {
@@ -318,7 +320,9 @@ public class ShopFragment extends BaseFragment{
                     Log.d("TAG", "purchase success!!");
                 } catch (Exception e) {
                     e.printStackTrace();
+
                 }
+                progressOFF();
                 return null;
             }
 
@@ -331,12 +335,20 @@ public class ShopFragment extends BaseFragment{
                     e.printStackTrace();
                 }
                 getWalletBallance(walletModel.getWalletAddress());
+                Intent intent = new Intent(getActivity(),QRActivity.class);
+                intent.putExtra("qrcode","123532323");
+                startActivity(intent);
             }
         }.execute();
     }
 
-    public void startProgresss(){
+    public void startProgresss(int i){
+        if(i==1)
         progressON(getActivity(),"리스트 받는중...");
+        else if(i==2){
+            progressON(getActivity(),"쿠폰 구매중...");
+        }
+
     }
 
     public void progressON(Activity activity, String message) {
@@ -348,6 +360,7 @@ public class ShopFragment extends BaseFragment{
         if (progressDialog != null && progressDialog.isShowing()) {
             progressSET(message);
         } else {
+
             progressDialog = new AppCompatDialog(activity);
             progressDialog.setCancelable(false);
             progressDialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
@@ -399,5 +412,6 @@ public class ShopFragment extends BaseFragment{
         byte [] results = cipher.doFinal(Base64.decode(text, 0));
         return new String(results,"UTF-8");
     }
+
 
 }
