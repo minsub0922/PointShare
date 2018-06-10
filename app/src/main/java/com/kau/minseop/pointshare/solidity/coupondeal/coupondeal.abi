@@ -11,6 +11,10 @@
 		"outputs": [
 			{
 				"name": "",
+				"type": "address"
+			},
+			{
+				"name": "",
 				"type": "string"
 			},
 			{
@@ -44,6 +48,10 @@
 		],
 		"name": "coupons",
 		"outputs": [
+			{
+				"name": "owner",
+				"type": "address"
+			},
 			{
 				"name": "cname",
 				"type": "string"

@@ -17,6 +17,7 @@ contract mortal {
 contract coupondeal is mortal {
 
     struct Coupon {
+        address owner;
         string cname;
         string company;
         string qrcode;
@@ -27,11 +28,11 @@ contract coupondeal is mortal {
     Coupon[] public coupons;
 
     function createCoupon(string _cname, string _company, string _qrcode, string _price, string _deadline ) public {
-        coupons.push(Coupon(_cname, _company, _qrcode, _price, _deadline));
+        coupons.push(Coupon(msg.sender,_cname, _company, _qrcode, _price, _deadline));
     }
     
-    function getCouponList(uint i) constant returns (string, string, string, string, string) {
-        return (coupons[i].cname, coupons[i].company, coupons[i].qrcode, coupons[i].price, coupons[i].deadline);
+    function getCouponList(uint i) constant returns (address,string, string, string, string, string) {
+        return (coupons[i].owner ,coupons[i].cname, coupons[i].company, coupons[i].qrcode, coupons[i].price, coupons[i].deadline);
     }
     
     function buy(uint i) constant returns(string) {

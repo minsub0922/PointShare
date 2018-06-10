@@ -42,7 +42,7 @@ public class CardListViewActivity extends AppCompatActivity {
     ImageView Im_qrCode;
     private Credentials credential;
     private Realm mRealm;
-    private String contractAddress = "0xa22FC7f4129CF00f2661f53c5753a826b2092CF5";
+    private String contractAddress = "0xc4f089BC18CF1Ba71249367294C227BdFc9eb236";
     private String walletBalance;
     private Coupondeal contract;
     private WalletModel walletModel = new WalletModel();
