@@ -65,6 +65,7 @@ public class CardListFragment extends BaseFragment {
             }
         });
         return v;
+        //
     }
     private void setData() {
         mItems.clear();
