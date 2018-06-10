@@ -25,6 +25,7 @@ import com.kau.minseop.pointshare.BaseFragment;
 import com.kau.minseop.pointshare.Contract;
 import com.kau.minseop.pointshare.R;
 import com.kau.minseop.pointshare.adapter.WalletRecyclerViewAdapter;
+import com.kau.minseop.pointshare.contract.Coupondeal;
 import com.kau.minseop.pointshare.event.ActivityResultEvent;
 import com.kau.minseop.pointshare.generation.GenerationActivity;
 import com.kau.minseop.pointshare.contract.Greeter;
@@ -73,7 +74,7 @@ public class WalletFragment extends BaseFragment implements View.OnClickListener
     private Web3j web3j;
     private List<Credentials> credentials = new ArrayList<>();
     private Realm mRealm;
-    private String contractAddress = "0x8beee4eb49a2398C812c29673E60c3282e837e78";
+    private String contractAddress = "0xa22FC7f4129CF00f2661f53c5753a826b2092CF5";
     private Button btn_attachWallet, btn_attachContract, btn_getContract;
     private RecyclerView rv;
     private WalletRecyclerViewAdapter adapter;
@@ -218,15 +219,18 @@ public class WalletFragment extends BaseFragment implements View.OnClickListener
         }
     }
 
+
+
     private void getMyContract(){
         new AsyncTask(){
             @Override
             protected Object doInBackground(Object[] objects) {
-                Greeter contract = Greeter.load(contractAddress, web3j, credentials.get(0),ManagedTransaction.GAS_PRICE, Contract.GAS_LIMIT);
+                Coupondeal contract = Coupondeal.load(contractAddress, web3j, credentials.get(0),ManagedTransaction.GAS_PRICE, Contract.GAS_LIMIT);
                 TransactionReceipt transactionReceipt = contract.getTransactionReceipt();
 
                 try {
-                    Log.d("TAG",contract.greet().send());
+                    Log.d("TAG","asd:  "+ String.valueOf(contract.getCouponList(BigInteger.valueOf(0)).send()));
+                    Log.d("TAG","asd:  "+ String.valueOf(contract.getCouponList(BigInteger.valueOf(1)).send()));
                 } catch (Exception e) {
                     e.printStackTrace();
                     Log.d("TAG", String.valueOf(e));
@@ -241,17 +245,17 @@ public class WalletFragment extends BaseFragment implements View.OnClickListener
             @Override
             protected Object doInBackground(Object[] objects) {
                 Log.d("TAG", "Deploying smart contract");
-                Greeter contract = null;
+                Coupondeal contract = null;
                 try {
                     Log.d("TAG", String.valueOf(credentials.size()));
-                    contract = Greeter.deploy(
+                    contract = Coupondeal.deploy(
                             web3j, credentials.get(0),
-                            ManagedTransaction.GAS_PRICE, Contract.GAS_LIMIT,
-                            "Hello blockchain world!").send();
-                    String contractAddress = contract.getContractAddress();
+                            ManagedTransaction.GAS_PRICE, Contract.GAS_LIMIT).send();
+                    contractAddress = contract.getContractAddress();
                     Log.d("TAG","Smart contract deployed to address " + contractAddress);
                     Log.d("TAG","View contract at https://ropsten.etherscan.io/address/" + contractAddress);
-                    Log.d("TAG","Value stored in remote smart contract: " + contract.greet().send());
+                    Log.d("TAG","Value stored in remote smart contract1: " + contract.createCoupon("asd1","as,d","asd","asd","").send());
+                    Log.d("TAG","Value stored in remote smart contract2: " + contract.createCoupon("asd2","as,d","asd","asd","").send());
                 } catch (Exception e) {
                     e.printStackTrace();
                     Log.d("TAG", String.valueOf(e));
