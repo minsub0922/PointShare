@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.kau.minseop.pointshare.BaseFragment;
 import com.kau.minseop.pointshare.Contract;
 import com.kau.minseop.pointshare.R;
@@ -59,6 +60,7 @@ public class ShopFragment extends BaseFragment{
     private TextView txt_balance;
     private RecyclerView rv_coffee, rv_travel, rv_store;
     private ShopRecyclerViewAdapter adapter_coffee, adapter_travel, adapter_store;
+    private Coupondeal contract;
     private List<ShoppingModel> coffeeList = new ArrayList<>(), travelList = new ArrayList<>(), storeList = new ArrayList<>();
 
     @Override
@@ -112,7 +114,7 @@ public class ShopFragment extends BaseFragment{
             @Override
             public void onItemClick(int position) {
                 ShoppingModel model = coffeeList.get(position);
-                Toast.makeText(getActivity(), model.getCouponModel().getcName(), Toast.LENGTH_SHORT).show();
+                Log.d("TAG","get index : "+model.getIndex());
             }
         });
 
@@ -120,7 +122,7 @@ public class ShopFragment extends BaseFragment{
             @Override
             public void onItemClick(int position) {
                 ShoppingModel model = travelList.get(position);
-                Toast.makeText(getActivity(), model.getCouponModel().getcName(), Toast.LENGTH_SHORT).show();
+                Log.d("TAG","get index : "+model.getIndex());
             }
         });
 
@@ -128,7 +130,7 @@ public class ShopFragment extends BaseFragment{
             @Override
             public void onItemClick(int position) {
                 ShoppingModel model = storeList.get(position);
-                Toast.makeText(getActivity(), model.getCouponModel().getcName(), Toast.LENGTH_SHORT).show();
+                Log.d("TAG","get index : "+model.getIndex());
             }
         });
     }
@@ -191,13 +193,13 @@ public class ShopFragment extends BaseFragment{
         new AsyncTask(){
             @Override
             protected Object doInBackground(Object[] objects) {
-                Coupondeal contract = Coupondeal.load(contractAddress, web3j, credential, ManagedTransaction.GAS_PRICE, Contract.GAS_LIMIT);
+                contract = Coupondeal.load(contractAddress, web3j, credential, ManagedTransaction.GAS_PRICE, Contract.GAS_LIMIT);
                 int i=0;
                 try {
                     while(true) {
                          Tuple6<String, String, String, String, String, String> coupon = contract.getCouponList(BigInteger.valueOf(i)).send();
                          if (coupon==null) break;
-                         determineType(coupon.getValue3()).add(new ShoppingModel(coupon.getValue1(), coupon.getValue4(), new CouponModel(coupon.getValue2(), coupon.getValue3(), coupon.getValue5(), coupon.getValue6())));
+                         determineType(coupon.getValue3()).add(new ShoppingModel(coupon.getValue1(), coupon.getValue4(), i,new CouponModel(coupon.getValue2(), coupon.getValue3(), coupon.getValue5(), coupon.getValue6())));
                          Log.d("TAG",coupon.getValue3());
                          i++;
                     }
@@ -216,7 +218,6 @@ public class ShopFragment extends BaseFragment{
                 adapter_travel.notifyDataSetChanged();
             }
         }.execute();
-
     }
 
     private List<ShoppingModel> determineType(String cname){
@@ -227,5 +228,19 @@ public class ShopFragment extends BaseFragment{
         }else if (cname.contains("그린")||cname.contains("SOCAR")||cname.contains("모두")){
             return travelList;
         }else return coffeeList;
+    }
+
+    private void purchaseCoupon(int index){
+        new AsyncTask(){
+            @Override
+            protected Object doInBackground(Object[] objects) {
+                try {
+                    contract.remove(BigInteger.valueOf(index)).send();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+        }.execute();
     }
 }

@@ -251,8 +251,6 @@ public class WalletFragment extends BaseFragment implements View.OnClickListener
                     contractAddress = contract.getContractAddress();
                     Log.d("TAG","Smart contract deployed to address " + contractAddress);
                     Log.d("TAG","View contract at https://ropsten.etherscan.io/address/" + contractAddress);
-                    Log.d("TAG","Value stored in remote smart contract1: " + contract.createCoupon("asd1","as,d","asd","asd","").send());
-                    Log.d("TAG","Value stored in remote smart contract2: " + contract.createCoupon("asd2","as,d","asd","asd","").send());
                 } catch (Exception e) {
                     e.printStackTrace();
                     Log.d("TAG", String.valueOf(e));

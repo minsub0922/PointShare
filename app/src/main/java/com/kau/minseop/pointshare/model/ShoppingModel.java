@@ -7,11 +7,13 @@ package com.kau.minseop.pointshare.model;
 public class ShoppingModel {
     private String sellerAddress;
     private String qrCode;
+    private int index;
     private CouponModel couponModel;
 
-    public ShoppingModel(String sellerAddress, String qrCode, CouponModel couponModel){
+    public ShoppingModel(String sellerAddress, String qrCode,int index, CouponModel couponModel){
         this.sellerAddress = sellerAddress;
         this.qrCode = qrCode;
+        this.index = index;
         this.couponModel = couponModel;
     }
 
@@ -23,4 +25,6 @@ public class ShoppingModel {
 
     public void setCouponModel(CouponModel couponModel){this.couponModel = couponModel;}
     public CouponModel getCouponModel(){return couponModel;}
+
+    public int getIndex(){return index;}
 }
