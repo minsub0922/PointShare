@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/PointShareProject.iml" filepath="$PROJECT_DIR$/PointShareProject.iml" />
+      <module fileurl="file://$PROJECT_DIR$/PointShare-real.iml" filepath="$PROJECT_DIR$/PointShare-real.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>
