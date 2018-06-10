@@ -1,6 +1,7 @@
 package com.kau.minseop.pointshare.shop;
 
 import android.annotation.SuppressLint;
+import android.net.wifi.hotspot2.pps.Credential;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
@@ -9,6 +10,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,8 +18,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.kau.minseop.pointshare.BaseFragment;
+import com.kau.minseop.pointshare.Contract;
 import com.kau.minseop.pointshare.R;
 import com.kau.minseop.pointshare.adapter.ShopRecyclerViewAdapter;
+import com.kau.minseop.pointshare.contract.Coupondeal;
 import com.kau.minseop.pointshare.model.CouponModel;
 import com.kau.minseop.pointshare.model.ShoppingModel;
 import com.kau.minseop.pointshare.model.WalletModel;
@@ -28,12 +32,15 @@ import org.web3j.protocol.Web3j;
 import org.web3j.protocol.Web3jFactory;
 import org.web3j.protocol.core.DefaultBlockParameterName;
 import org.web3j.protocol.http.HttpService;
+import org.web3j.tuples.generated.Tuple6;
+import org.web3j.tx.ManagedTransaction;
 
 import java.io.File;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.LongFunction;
 
 import io.realm.Realm;
 import io.realm.RealmResults;
@@ -67,9 +74,9 @@ public class ShopFragment extends BaseFragment{
 
         buildRecyclerView(v);
 
+        getCouponList();
 
-
-        test();
+        getWalletBallance(walletModel.getWalletAddress());
 
         return v;
     }
@@ -132,7 +139,6 @@ public class ShopFragment extends BaseFragment{
         mRealm.commitTransaction();
         walletModel = walletModels.get(0);
         readyForRequest(walletModel.getPassword(), walletModel.getDetailPath());
-        getWalletBallance(walletModel.getWalletAddress());
     }
 
     @SuppressLint("StaticFieldLeak")
@@ -181,15 +187,45 @@ public class ShopFragment extends BaseFragment{
         }.execute();
     }
 
-    private void test(){
-        coffeeList.add(new ShoppingModel("", "",new CouponModel("아메리카노","스타벅스","2000","2014-3-3")));
-        storeList.add(new ShoppingModel("", "",new CouponModel("아메리카노","GS25","2000","2014-3-3")));
-        travelList.add(new ShoppingModel("", "",new CouponModel("아메리카노","SOCAR","2000","2014-3-3")));
-        travelList.add(new ShoppingModel("", "",new CouponModel("아메리카노","그린카","2000","2014-3-3")));
-        travelList.add(new ShoppingModel("", "",new CouponModel("아메리카노","SOCAR","2000","2014-3-3")));
-        travelList.add(new ShoppingModel("", "",new CouponModel("아메리카노","SOCAR","2000","2014-3-3")));
-        adapter_store.notifyDataSetChanged();
-        adapter_coffee.notifyDataSetChanged();
-        adapter_travel.notifyDataSetChanged();
+    private void getCouponList(){
+        new AsyncTask(){
+            @Override
+            protected Object doInBackground(Object[] objects) {
+                Coupondeal contract = Coupondeal.load(contractAddress, web3j, credential, ManagedTransaction.GAS_PRICE, Contract.GAS_LIMIT);
+                int i=0;
+                try {
+                    while(true) {
+                         Tuple6<String, String, String, String, String, String> coupon = contract.getCouponList(BigInteger.valueOf(i)).send();
+                         if (coupon==null) break;
+                         determineType(coupon.getValue3()).add(new ShoppingModel(coupon.getValue1(), coupon.getValue4(), new CouponModel(coupon.getValue2(), coupon.getValue3(), coupon.getValue5(), coupon.getValue6())));
+                         Log.d("TAG",coupon.getValue3());
+                         i++;
+                    }
+                    Log.d("TAG", String.valueOf(i));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Object o) {
+                super.onPostExecute(o);
+                adapter_store.notifyDataSetChanged();
+                adapter_coffee.notifyDataSetChanged();
+                adapter_travel.notifyDataSetChanged();
+            }
+        }.execute();
+
+    }
+
+    private List<ShoppingModel> determineType(String cname){
+        if (cname.contains("스타")||cname.contains("TWOSOME")||cname.contains("COFFEEBEAN")){
+            return coffeeList;
+        }else if (cname.contains("GS") || cname.contains("CU") || cname.contains("SEVENELEVEN")){
+            return storeList;
+        }else if (cname.contains("그린")||cname.contains("SOCAR")||cname.contains("모두")){
+            return travelList;
+        }else return coffeeList;
     }
 }

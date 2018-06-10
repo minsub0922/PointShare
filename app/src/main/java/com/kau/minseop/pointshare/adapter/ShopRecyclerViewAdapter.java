@@ -56,7 +56,7 @@ public class ShopRecyclerViewAdapter extends  RecyclerView.Adapter<ShopRecyclerV
     @Override
     public void onBindViewHolder(@NonNull ShopViewHoler holder, int position) {
         final ShoppingModel model = modelList.get(position);
-
+        Log.d("TAG","name of company : "+model.getCouponModel().getCompany());
         if (model.getCouponModel().getCompany().contains("스타")){
             Glide.with(context) .load(R.drawable.starbucks).into(holder.img);
         }else if (model.getCouponModel().getCompany().contains("GS")){
