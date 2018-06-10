@@ -5,10 +5,10 @@ package com.kau.minseop.pointshare.model;
  */
 
 public class CouponModel {
-    String cName;
-    String company;
-    String price;
-    String deadline;
+    String cName="1";
+    String company="1";
+    String price="1";
+    String deadline="1";
 
     public CouponModel(String cName, String company, String price, String deadline){
         this.cName = cName;
