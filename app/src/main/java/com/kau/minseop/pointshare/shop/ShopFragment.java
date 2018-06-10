@@ -298,6 +298,7 @@ public class ShopFragment extends BaseFragment{
         }else return coffeeList;
     }
 
+
     private void purchaseCoupon(int index, String address, String price){
         new AsyncTask(){
             @Override
