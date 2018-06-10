@@ -95,7 +95,7 @@ public class WalletFragment extends BaseFragment implements View.OnClickListener
 
         mRealm = Realm.getDefaultInstance();
 
-        getClientVersion();
+        //getClientVersion();
 
         getObject();
 
@@ -258,20 +258,6 @@ public class WalletFragment extends BaseFragment implements View.OnClickListener
                 return null;
             }
         }.execute();
-    }
-
-    private void sendToWallet() throws Exception{
-        Log.d("TAG","Sending 1 Wei ("
-                + Convert.fromWei("1", Convert.Unit.ETHER).toPlainString() + " Ether)");
-
-        Future<TransactionReceipt> transferReceipt = Transfer.sendFunds(
-                web3j, credentials.get(0),
-                "0xb3FA37CA8918432cAC914C40f8C4748a6dBd0fA4",  // you can put any address here
-                BigDecimal.ONE, Convert.Unit.WEI)  // 1 wei = 10^-18 Ether
-                .sendAsync();
-        Log.d("TAG","Transaction complete, view it at https://rinkeby.etherscan.io/tx/"
-                //+ transferReceipt.getTransactionHash());
-                + transferReceipt.get());
     }
 
     @Override

@@ -1,12 +1,14 @@
 package com.kau.minseop.pointshare.shop;
 
 import android.annotation.SuppressLint;
+import android.content.DialogInterface;
 import android.net.wifi.hotspot2.pps.Credential;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -32,15 +34,20 @@ import org.web3j.crypto.WalletUtils;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.Web3jFactory;
 import org.web3j.protocol.core.DefaultBlockParameterName;
+import org.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.web3j.protocol.http.HttpService;
 import org.web3j.tuples.generated.Tuple6;
 import org.web3j.tx.ManagedTransaction;
+import org.web3j.tx.Transfer;
+import org.web3j.utils.Convert;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Future;
 import java.util.function.LongFunction;
 
 import io.realm.Realm;
@@ -62,6 +69,7 @@ public class ShopFragment extends BaseFragment{
     private ShopRecyclerViewAdapter adapter_coffee, adapter_travel, adapter_store;
     private Coupondeal contract;
     private List<ShoppingModel> coffeeList = new ArrayList<>(), travelList = new ArrayList<>(), storeList = new ArrayList<>();
+    private AlertDialog.Builder alertDialogBuilder;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -69,6 +77,8 @@ public class ShopFragment extends BaseFragment{
 
         web3j = Web3jFactory.build(new HttpService("https://ropsten.infura.io/wd7279F18YpzuVLkfZTk"));
         mRealm = Realm.getDefaultInstance();
+
+        alertDialogBuilder = new AlertDialog.Builder(getActivity());
 
         getMyWallet();
 
@@ -113,7 +123,23 @@ public class ShopFragment extends BaseFragment{
         adapter_coffee.setOnItemClickListener(new ShopRecyclerViewAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
+
                 ShoppingModel model = coffeeList.get(position);
+
+                alertDialogBuilder.setTitle(model.getCouponModel().getcName()+" 구매하기");
+                alertDialogBuilder
+                        .setMessage(model.getCouponModel().getPrice() + "구매하시겠습니까?")
+                        .setCancelable(true)
+                        .setPositiveButton("네", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        purchaseCoupon(model.getIndex(),model.getSellerAddress(),model.getCouponModel().getPrice());
+                                    }
+                                })
+                        .setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {dialog.cancel();}
+                        });
+                alertDialogBuilder.create().show();
+
                 Log.d("TAG","get index : "+model.getIndex());
             }
         });
@@ -122,6 +148,20 @@ public class ShopFragment extends BaseFragment{
             @Override
             public void onItemClick(int position) {
                 ShoppingModel model = travelList.get(position);
+                alertDialogBuilder.setTitle(model.getCouponModel().getcName()+" 구매하기");
+                alertDialogBuilder
+                        .setMessage(model.getCouponModel().getPrice() + "구매하시겠습니까?")
+                        .setCancelable(true)
+                        .setPositiveButton("네", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                purchaseCoupon(model.getIndex(),model.getSellerAddress(),model.getCouponModel().getPrice());
+                            }
+                        })
+                        .setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {dialog.cancel();}
+                        });
+                alertDialogBuilder.create().show();
+
                 Log.d("TAG","get index : "+model.getIndex());
             }
         });
@@ -130,6 +170,20 @@ public class ShopFragment extends BaseFragment{
             @Override
             public void onItemClick(int position) {
                 ShoppingModel model = storeList.get(position);
+                alertDialogBuilder.setTitle(model.getCouponModel().getcName()+" 구매하기");
+                alertDialogBuilder
+                        .setMessage(model.getCouponModel().getPrice() + "구매하시겠습니까?")
+                        .setCancelable(true)
+                        .setPositiveButton("네", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                purchaseCoupon(model.getIndex(),model.getSellerAddress(),model.getCouponModel().getPrice());
+                            }
+                        })
+                        .setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {dialog.cancel();}
+                        });
+                alertDialogBuilder.create().show();
+
                 Log.d("TAG","get index : "+model.getIndex());
             }
         });
@@ -230,16 +284,28 @@ public class ShopFragment extends BaseFragment{
         }else return coffeeList;
     }
 
-    private void purchaseCoupon(int index){
+    private void purchaseCoupon(int index, String address, String price){
         new AsyncTask(){
             @Override
             protected Object doInBackground(Object[] objects) {
                 try {
-                    contract.remove(BigInteger.valueOf(index)).send();
+                    Transfer.sendFunds(
+                            web3j, credential,
+                            address,  // you can put any address here
+                            BigDecimal.valueOf(Double.parseDouble( price)).multiply(BigDecimal.ONE), Convert.Unit.WEI)  // 1 wei = 10^-18 Ether
+                            .send();
+                    contract.remove(BigInteger.valueOf(index)).send();  //delete from the smart contract
+                    Log.d("TAG", "purchase success!!");
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
                 return null;
+            }
+
+            @Override
+            protected void onPostExecute(Object o) {
+                super.onPostExecute(o);
+                getWalletBallance(walletModel.getWalletAddress());
             }
         }.execute();
     }
