@@ -206,10 +206,6 @@ public class ShopFragment extends BaseFragment{
                 try {
                     while(true) {
                          Tuple6<String, String, String, String, String, String> coupon = contract.getCouponList(BigInteger.valueOf(i)).send();
-                         if (coupon==null){
-                             break;
-                         }
-                         determineType(coupon.getValue3()).add(new ShoppingModel(coupon.getValue1(), coupon.getValue4(), new CouponModel(coupon.getValue2(), coupon.getValue3(), coupon.getValue5(), coupon.getValue6())));
                          if (coupon==null) break;
                          determineType(coupon.getValue3()).add(new ShoppingModel(coupon.getValue1(), coupon.getValue4(), i,new CouponModel(coupon.getValue2(), coupon.getValue3(), coupon.getValue5(), coupon.getValue6())));
                          Log.d("TAG",coupon.getValue3());
