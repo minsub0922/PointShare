@@ -10,6 +10,7 @@ import android.net.wifi.hotspot2.pps.Credential;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
@@ -30,6 +31,7 @@ import com.kau.minseop.pointshare.Contract;
 import com.kau.minseop.pointshare.R;
 import com.kau.minseop.pointshare.adapter.ShopRecyclerViewAdapter;
 import com.kau.minseop.pointshare.contract.Coupondeal;
+import com.kau.minseop.pointshare.handler.BackPressHandler;
 import com.kau.minseop.pointshare.model.CouponModel;
 import com.kau.minseop.pointshare.model.ShoppingModel;
 import com.kau.minseop.pointshare.model.WalletModel;
@@ -79,6 +81,8 @@ public class ShopFragment extends BaseFragment{
     private AlertDialog.Builder alertDialogBuilder;
     private boolean doneGetMyWallet = false;
     AppCompatDialog progressDialog;
+    BackPressHandler backPressHandler;
+    Handler mHandler =null;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -103,6 +107,15 @@ public class ShopFragment extends BaseFragment{
         }
 
         return v;
+    }
+    private void timeHandler(AppCompatDialog activity) {
+        mHandler = new Handler();
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                activity.setCancelable(true);
+            }
+        },2000);
     }
 
     private void buildTextView(View v){
@@ -354,13 +367,13 @@ public class ShopFragment extends BaseFragment{
         if (progressDialog != null && progressDialog.isShowing()) {
             progressSET(message);
         } else {
-
             progressDialog = new AppCompatDialog(activity);
             progressDialog.setCancelable(false);
             progressDialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
             progressDialog.setContentView(R.layout.progress_loading);
             progressDialog.show();
         }
+        timeHandler(progressDialog);
 
         final ImageView img_loading_frame = (ImageView) progressDialog.findViewById(R.id.iv_frame_loading);
         final AnimationDrawable frameAnimation = (AnimationDrawable) img_loading_frame.getBackground();
@@ -375,7 +388,7 @@ public class ShopFragment extends BaseFragment{
             tv_progress_message.setText(message);
         }
     }
-    public void progressSET(String message) {
+        public void progressSET(String message) {
 
         if (progressDialog == null || !progressDialog.isShowing()) {
             return;
@@ -387,11 +400,13 @@ public class ShopFragment extends BaseFragment{
         }
 
     }
+
     public void progressOFF() {
         if (progressDialog != null && progressDialog.isShowing()) {
             progressDialog.dismiss();
         }
     }
+
 
     private static String decrypt(String text, String key) throws Exception {
         Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");

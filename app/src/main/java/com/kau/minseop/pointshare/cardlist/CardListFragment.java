@@ -59,7 +59,8 @@ public class CardListFragment extends BaseFragment {
                 intent.putExtra("cardnum",mItems.get(position).getCardNum());
                 intent.putExtra("cardPassward",mItems.get(position).getCardPassward());
                 intent.putExtra("cardPeriod",mItems.get(position).getCardValidityPeriod());
-                startActivity(intent); intent.putExtra("cardtype",mItems.get(position).getCardType());
+                intent.putExtra("cardtype",mItems.get(position).getCardType());
+                startActivity(intent);
 
             }
         });

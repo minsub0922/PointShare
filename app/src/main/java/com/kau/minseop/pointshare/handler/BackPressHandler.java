@@ -2,8 +2,6 @@ package com.kau.minseop.pointshare.handler;
 
 import android.app.Activity;
 
-import com.kau.minseop.pointshare.shop.QRActivity;
-
 /**
  * Created by khanj on 2018-06-11.
  */
@@ -17,14 +15,15 @@ public class BackPressHandler {
         this.activity = context;
     }
 
-    public void onBackPressed(QRActivity qrActivity) {
+    public int onBackPressed(Activity qrActivity) {
         if (System.currentTimeMillis() > backKeyPressedTime + 2000) {
             backKeyPressedTime = System.currentTimeMillis();
-            return;
+            return 0;
         }
         if (System.currentTimeMillis() <= backKeyPressedTime + 2000) {
-            activity.moveTaskToBack(true);
+            return 1;
         }
+        return 1;
     }
 
     public void showGuide() {

@@ -79,6 +79,7 @@ public class CardListViewActivity extends AppCompatActivity {
     private WalletModel walletModel = new WalletModel();
     private CouponModel couponModel;
     private AppCompatDialog progressDialog;
+    Handler mHandler =null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -194,6 +195,7 @@ public class CardListViewActivity extends AppCompatActivity {
         couponModel = new CouponModel("(스타벅스)콜드브루270ML","GS25","800","~2020.10.05");
         mItems.add(couponModel);
         couponModel = new CouponModel("파이크플레이스블랙275ML","GS25","500","~2020.05.24");
+        mItems.add(couponModel);
         adapter.notifyDataSetChanged();
     }
 
@@ -271,7 +273,15 @@ public class CardListViewActivity extends AppCompatActivity {
     public void startProgresss(){
         progressON(this,"올리는중...");
     }
-
+    private void timeHandler(AppCompatDialog activity) {
+        mHandler = new Handler();
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                activity.setCancelable(true);
+            }
+        },2000);
+    }
     public void progressON(Activity activity, String message) {
 
         if (activity == null || activity.isFinishing()) {
@@ -288,6 +298,7 @@ public class CardListViewActivity extends AppCompatActivity {
             progressDialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
             progressDialog.setContentView(R.layout.progress_loading);
             progressDialog.show();
+            timeHandler(progressDialog);
 
         }
 

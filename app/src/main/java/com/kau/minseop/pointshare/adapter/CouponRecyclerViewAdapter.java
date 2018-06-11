@@ -56,6 +56,21 @@ public class CouponRecyclerViewAdapter extends RecyclerView.Adapter<CouponRecycl
         holder.cCompany.setText(mItems.get(position).getCompany());
         holder.cName.setText(mItems.get(position).getcName()+" - "+mItems.get(position).getPrice()+"원" );
         holder.cPeriod.setText(mItems.get(position).getDeadline()+"까지");
+        if(mItems.get(position).getCompany().contains("모두투어")){
+            holder.itemView.findViewById(R.id.couponimg).setBackgroundResource(R.drawable.moducouponjpg);
+        }
+        else  if(mItems.get(position).getCompany().contains("스타벅스")){
+            holder.itemView.findViewById(R.id.couponimg).setBackgroundResource(R.drawable.starbuckscoupon);
+        }
+        else if(mItems.get(position).getCompany().contains("SOCAR")){
+            holder.itemView.findViewById(R.id.couponimg).setBackgroundResource(R.drawable.socarcoupon);
+        }
+        else if(mItems.get(position).getCompany().contains("GS25")){
+            holder.itemView.findViewById(R.id.couponimg).setBackgroundResource(R.drawable.gscoupon);
+        }
+        else  if(mItems.get(position).getCompany().contains("그린카")){
+            holder.itemView.findViewById(R.id.couponimg).setBackgroundResource(R.drawable.greencar);
+        }
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
