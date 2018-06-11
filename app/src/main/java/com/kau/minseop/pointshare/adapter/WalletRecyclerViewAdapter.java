@@ -52,6 +52,8 @@ public class WalletRecyclerViewAdapter extends  RecyclerView.Adapter<WalletRecyc
     public void onBindViewHolder(@NonNull WalletViewHoler holder, int position) {
         final WalletViewHolerModel model = modelList.get(position);
         holder.txt_walletName.setText(model.getWalletName());
+        if (position%2==0) holder.imageView.setImageResource(R.drawable.wallet1);
+        else holder.imageView.setImageResource(R.drawable.wallet2);
         if(model.getWalletBalance()==""){
             holder.txt_walletBalance.setText("getting Balance from the net....");
         }else holder.txt_walletBalance.setText(model.getWalletBalance());
@@ -78,7 +80,6 @@ public class WalletRecyclerViewAdapter extends  RecyclerView.Adapter<WalletRecyc
 
     public void restoreItem(WalletViewHolerModel item, int position) {
         modelList.add(position, item);
-        // notify item added by position
         notifyItemInserted(position);
     }
 

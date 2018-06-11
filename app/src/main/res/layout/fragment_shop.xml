@@ -30,7 +30,8 @@
                     android:scaleType="fitXY"
                     android:src="@drawable/ethereumicon"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/txt_shop_mywallet_balance" />
+                    app:layout_constraintEnd_toStartOf="@+id/txt_shop_mywallet_balance"
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
                     android:id="@+id/txt_shop_mywallet_balance"
