@@ -83,6 +83,7 @@ public class ShopFragment extends BaseFragment{
     private Coupondeal contract;
     private List<ShoppingModel> coffeeList = new ArrayList<>(), travelList = new ArrayList<>(), storeList = new ArrayList<>();
     private AlertDialog.Builder alertDialogBuilder;
+    private boolean doneGetMyWallet = false;
     AppCompatDialog progressDialog;
 
     @Override
@@ -100,10 +101,12 @@ public class ShopFragment extends BaseFragment{
 
         buildRecyclerView(v);
 
-        startProgresss(1);
-        getCouponList();
+        if (doneGetMyWallet) {
+            startProgresss(1);
+            getCouponList();
 
-        getWalletBallance(walletModel.getWalletAddress());
+            getWalletBallance(walletModel.getWalletAddress());
+        }
 
         return v;
     }
@@ -210,8 +213,11 @@ public class ShopFragment extends BaseFragment{
         mRealm.beginTransaction();
         RealmResults<WalletModel> walletModels = mRealm.where(WalletModel.class).findAll();
         mRealm.commitTransaction();
-        walletModel = walletModels.get(0);
-        readyForRequest(walletModel.getPassword(), walletModel.getDetailPath());
+        if (walletModels.size()>0) {
+            doneGetMyWallet =true;
+            walletModel = walletModels.get(0);
+            readyForRequest(walletModel.getPassword(), walletModel.getDetailPath());
+        }
     }
 
     @SuppressLint("StaticFieldLeak")

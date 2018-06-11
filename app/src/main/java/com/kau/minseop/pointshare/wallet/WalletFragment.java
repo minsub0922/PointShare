@@ -1,6 +1,8 @@
 package com.kau.minseop.pointshare.wallet;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
@@ -18,7 +20,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 
 
 import com.kau.minseop.pointshare.BaseFragment;
@@ -39,6 +43,7 @@ import org.web3j.crypto.WalletUtils;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.Web3jFactory;
 import org.web3j.protocol.core.DefaultBlockParameterName;
+import org.web3j.protocol.core.methods.response.EthLog;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.web3j.protocol.core.methods.response.Web3ClientVersion;
 import org.web3j.protocol.http.HttpService;
@@ -109,20 +114,6 @@ public class WalletFragment extends BaseFragment implements View.OnClickListener
         btn_attachContract.setOnClickListener(this);
     }
 
-    private void getClientVersion(){
-        Web3ClientVersion web3ClientVersion = null;
-        String clientVersion = null;
-        try {
-            web3ClientVersion = web3j.web3ClientVersion().sendAsync().get();
-            clientVersion = web3ClientVersion.getWeb3ClientVersion();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
-        Log.d("TAG", "Connected to Ethereum client version: " + clientVersion);
-    }
-
     private void buildRecyclerView(View v){
         rv = v.findViewById(R.id.rv_fragment_wallet);
         rv.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -138,9 +129,83 @@ public class WalletFragment extends BaseFragment implements View.OnClickListener
             @Override
             public void onItemClick(int position) {
                 WalletViewHolerModel model =  modelList.get(position);
-                Log.d("TAG",model.getWalletName());
+                setSeletWalletAdapter(model);
             }
         });
+    }
+
+    private void setSeletWalletAdapter(WalletViewHolerModel model){
+        AlertDialog.Builder alertBuilder =new AlertDialog.Builder(getActivity());
+        alertBuilder.setTitle("보내실 지갑을 선택하십시오.");
+        int index =0;
+
+        final ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.select_dialog_singlechoice);
+        for (int i=0; i<modelList.size(); i++){
+            if (modelList.get(i).getWalletAddress()==model.getWalletAddress()) {
+                index = i;
+                continue;
+            }
+            adapter.add(modelList.get(i).getWalletAddress());
+        }
+
+        alertBuilder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        int finalIndex = index;
+        alertBuilder.setAdapter(adapter, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int position) {
+                String strName = adapter.getItem(position);
+                final EditText et = new EditText(getActivity());
+                AlertDialog.Builder innBuilder = new AlertDialog.Builder(getActivity());
+                innBuilder.setMessage(strName);
+                innBuilder.setTitle("송금할 금액을 입력하십시오.");
+                innBuilder.setView(et);
+                innBuilder.setPositiveButton("송금", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        sendEth(finalIndex, strName, et.getText().toString());
+                        Log.d("TAG", strName+"   "+et.getText().toString());
+                        dialog.dismiss();
+                    }
+                });
+                innBuilder.show();
+                dialog.dismiss();
+            }
+        });
+        alertBuilder.show();
+    }
+
+    private void sendEth(int index, String othersAddress, String price){
+        new AsyncTask(){
+
+            @Override
+            protected Object doInBackground(Object[] objects) {
+                try {
+                    Transfer.sendFunds(
+                            web3j, credentials.get(index),
+                            othersAddress,  // you can put any address here
+                            BigDecimal.valueOf(Double.parseDouble( price)).multiply(BigDecimal.ONE), Convert.Unit.WEI)  // 1 wei = 10^-18 Ether
+                            .send();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Object o) {
+                super.onPostExecute(o);
+                Log.d("TAG","done sned eth!");
+                for (int i=0; i<modelList.size(); i++) getWalletBallance(i);
+            }
+        }.execute();
+
     }
 
     private void getObject(){
@@ -202,10 +267,45 @@ public class WalletFragment extends BaseFragment implements View.OnClickListener
         }.execute();
     }
 
+    @Override
+    public void onClick(View v) {
+        if(v.getId()==R.id.btn_attach_wallet) startActivityForResult(new Intent(getActivity(), GenerationActivity.class),1);
+        else if (v.getId()==R.id.btn_attach_contract) generateNewContract();
+        //else if (v.getId()==R.id.btn_get_contract) getMyContract();
+    }
+
+    @Override
+    public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction, int position) {
+        if (viewHolder instanceof WalletRecyclerViewAdapter.WalletViewHoler) {
+            // get the removed item name to display it in snack bar
+            String name = modelList.get(viewHolder.getAdapterPosition()).getWalletName();
+
+            // backup of removed item for undo purpose
+            final WalletViewHolerModel deletedItem = modelList.get(viewHolder.getAdapterPosition());
+            final int deletedIndex = viewHolder.getAdapterPosition();
+
+            // remove the item from recycler view
+            adapter.removeItem(viewHolder.getAdapterPosition());
+
+            // showing snack bar with Undo option
+            Snackbar snackbar = Snackbar
+                    .make(coordinatorLayout, "your wallet '"+name + "' has been removed from your Wallet!", Snackbar.LENGTH_LONG);
+            snackbar.setAction("UNDO", new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    // undo is selected, restore the deleted item
+                    adapter.restoreItem(deletedItem, deletedIndex);
+                }
+            });
+            snackbar.setActionTextColor(Color.YELLOW);
+            snackbar.show();
+        }
+    }
+
     @Subscribe
     public void onActivityResult(ActivityResultEvent activityResultEvent) {
         onActivityResult(activityResultEvent.getRequestCode(), activityResultEvent.getResultCode(), activityResultEvent.getData());
-        Log.d("TAG",String.valueOf( activityResultEvent.getResultCode()));
+
         if (activityResultEvent.getResultCode()==-1){
             mRealm.beginTransaction();
             RealmResults<WalletModel> walletModels = mRealm.where(WalletModel.class).findAll();
@@ -256,40 +356,5 @@ public class WalletFragment extends BaseFragment implements View.OnClickListener
                 return null;
             }
         }.execute();
-    }
-
-    @Override
-    public void onClick(View v) {
-        if(v.getId()==R.id.btn_attach_wallet) startActivityForResult(new Intent(getActivity(), GenerationActivity.class),1);
-        else if (v.getId()==R.id.btn_attach_contract) generateNewContract();
-        //else if (v.getId()==R.id.btn_get_contract) getMyContract();
-    }
-
-    @Override
-    public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction, int position) {
-        if (viewHolder instanceof WalletRecyclerViewAdapter.WalletViewHoler) {
-            // get the removed item name to display it in snack bar
-            String name = modelList.get(viewHolder.getAdapterPosition()).getWalletName();
-
-            // backup of removed item for undo purpose
-            final WalletViewHolerModel deletedItem = modelList.get(viewHolder.getAdapterPosition());
-            final int deletedIndex = viewHolder.getAdapterPosition();
-
-            // remove the item from recycler view
-            adapter.removeItem(viewHolder.getAdapterPosition());
-
-            // showing snack bar with Undo option
-            Snackbar snackbar = Snackbar
-                    .make(coordinatorLayout, "your wallet '"+name + "' has been removed from your Wallet!", Snackbar.LENGTH_LONG);
-            snackbar.setAction("UNDO", new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    // undo is selected, restore the deleted item
-                    adapter.restoreItem(deletedItem, deletedIndex);
-                }
-            });
-            snackbar.setActionTextColor(Color.YELLOW);
-            snackbar.show();
-        }
     }
 }
