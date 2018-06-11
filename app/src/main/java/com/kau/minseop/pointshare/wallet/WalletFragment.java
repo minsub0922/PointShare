@@ -88,7 +88,7 @@ public class WalletFragment extends BaseFragment implements View.OnClickListener
     private List<Credentials> credentials = new ArrayList<>();
     private Realm mRealm;
     private String contractAddress = "0xc4f089BC18CF1Ba71249367294C227BdFc9eb236";
-    private Button btn_attachWallet, btn_attachContract;
+    private Button btn_attachWallet, btn_attachContract, btn_sendether;
     private RecyclerView rv;
     private WalletRecyclerViewAdapter adapter;
     private final List<WalletViewHolerModel> modelList = new ArrayList<>();
@@ -119,8 +119,10 @@ public class WalletFragment extends BaseFragment implements View.OnClickListener
     private void buildButtons(View v){
         btn_attachWallet = v.findViewById(R.id.btn_attach_wallet);
         btn_attachContract = v.findViewById(R.id.btn_attach_contract);
+        btn_sendether = v.findViewById(R.id.btn_send_ether_other);
         btn_attachWallet.setOnClickListener(this);
         btn_attachContract.setOnClickListener(this);
+        btn_sendether.setOnClickListener(this);
     }
 
     private void buildRecyclerView(View v){
@@ -281,7 +283,44 @@ public class WalletFragment extends BaseFragment implements View.OnClickListener
     public void onClick(View v) {
         if(v.getId()==R.id.btn_attach_wallet) startActivityForResult(new Intent(getActivity(), GenerationActivity.class),1);
         else if (v.getId()==R.id.btn_attach_contract) generateNewContract();
+        else if (v.getId()==R.id.btn_send_ether_other) sendEtherTo();
         //else if (v.getId()==R.id.btn_get_contract) getMyContract();
+    }
+
+    private void sendEtherTo(){
+        final EditText et = new EditText(getActivity());
+        final String[] address = new String[1];
+        AlertDialog.Builder alertBuilder =new AlertDialog.Builder(getActivity());
+        alertBuilder.setTitle("상대방의 지갑주소를 입력해주십시오.");
+        alertBuilder.setView(et);
+
+        alertBuilder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                address[0] =  et.getText().toString();
+                final EditText et = new EditText(getActivity());
+                AlertDialog.Builder innBuilder = new AlertDialog.Builder(getActivity());
+                innBuilder.setTitle("송금할 금액을 입력하십시오.");
+                innBuilder.setView(et);
+                innBuilder.setPositiveButton("송금", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        startProgresss();
+                        sendEth(0, address[0], et.getText().toString());
+                        Log.d("TAG", address[0]+"   "+et.getText().toString());
+                        dialog.dismiss();
+                    }
+                });
+                innBuilder.show();
+                dialog.dismiss();
+            }
+        }). setNegativeButton("취소", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        alertBuilder.show();
     }
 
     @Override

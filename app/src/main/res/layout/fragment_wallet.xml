@@ -50,27 +50,40 @@
 
         </android.support.constraint.ConstraintLayout>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/rv_fragment_wallet"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        >
-
-    </android.support.v7.widget.RecyclerView>
-    <Button
-        android:layout_marginTop="30dp"
-        android:layout_gravity="center"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/btn_attach_wallet"
-        android:text="CREATE NEW WALLET"/>
-        <Button
-            android:layout_marginTop="30dp"
-            android:layout_gravity="center"
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_fragment_wallet"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/btn_attach_contract"
-            android:text="CREATE NEW CONTRACT"/>
+            >
+
+        </android.support.v7.widget.RecyclerView>
+
+        <Button
+            android:layout_marginTop="20dp"
+            android:id="@+id/btn_send_ether_other"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="SEND ETHER TO OTHERS"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+              <Button
+                android:layout_marginTop="10dp"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:id="@+id/btn_attach_wallet"
+                android:text="CREATE WALLET"/>
+            <Button
+                android:layout_marginTop="10dp"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:id="@+id/btn_attach_contract"
+                android:text="CREATE CONTRACT"/>
+        </LinearLayout>
     </LinearLayout>
     </ScrollView>
 </android.support.design.widget.CoordinatorLayout>
