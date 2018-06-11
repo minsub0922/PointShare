@@ -17,11 +17,15 @@ import android.widget.Button;
 import com.kau.minseop.pointshare.BaseFragment;
 import com.kau.minseop.pointshare.R;
 import com.kau.minseop.pointshare.adapter.CardlistRecyclerViewAdapter;
+import com.kau.minseop.pointshare.event.ActivityResultEvent;
 import com.kau.minseop.pointshare.helper.CardListDBHelper;
 import com.kau.minseop.pointshare.model.CardListModel;
+import com.squareup.otto.Subscribe;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+
+import io.realm.RealmResults;
 
 /*
  * Created by minseop on 2018-06-08.
@@ -63,7 +67,7 @@ public class CardListFragment extends BaseFragment {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(),AddCardListActivity.class);
-                startActivity(intent);
+                startActivityForResult(intent,1);
             }
         });
         return v;
@@ -78,5 +82,13 @@ public class CardListFragment extends BaseFragment {
             mItems.add(cards);
         }
         adapter.notifyDataSetChanged();
+    }
+
+    @Subscribe
+    public void onActivityResult(ActivityResultEvent activityResultEvent) {
+        onActivityResult(activityResultEvent.getRequestCode(), activityResultEvent.getResultCode(), activityResultEvent.getData());
+        if (activityResultEvent.getResultCode()==-1){
+            setData();
+        }
     }
 }

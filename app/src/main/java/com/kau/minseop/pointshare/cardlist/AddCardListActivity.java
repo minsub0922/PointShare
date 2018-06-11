@@ -1,5 +1,7 @@
 package com.kau.minseop.pointshare.cardlist;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.support.annotation.IdRes;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -50,7 +52,9 @@ public class AddCardListActivity extends AppCompatActivity {
 
                 dbHelper.insert(cardType,cardNum,cardPeriod,cardCVC,cardPassward);
                 result.setText(dbHelper.getResult());
-
+                Intent returnIntent = new Intent();
+                setResult(Activity.RESULT_OK,returnIntent);
+                finish();
             }
         });
         delete.setOnClickListener(new View.OnClickListener() {
@@ -69,19 +73,9 @@ public class AddCardListActivity extends AppCompatActivity {
         rb2 = findViewById(R.id.btn_radio2);
         rb3 = findViewById(R.id.btn_radio2);
 
-        /*rb1.setOnClickListener(radioButtonClickListener);
-        rb2.setOnClickListener(radioButtonClickListener);
-        rb3.setOnClickListener(radioButtonClickListener);*/
+
         radioGroup.setOnCheckedChangeListener(radioGroupButtonChangeListener);
     }
-
-    /*RadioButton.OnClickListener radioButtonClickListener = new RadioButton.OnClickListener(){
-        @Override
-        public void onClick(View view) {
-
-            Toast.makeText(MainActivity.this, "r_btn1 : "+r_btn1.isChecked() + "r_btn2 : " +r_btn2.isChecked() , Toast.LENGTH_SHORT).show();
-        }
-    };*/
 
     RadioGroup.OnCheckedChangeListener radioGroupButtonChangeListener = new RadioGroup.OnCheckedChangeListener() {
     @Override
