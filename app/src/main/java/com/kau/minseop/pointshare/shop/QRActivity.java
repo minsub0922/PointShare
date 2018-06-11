@@ -1,5 +1,6 @@
 package com.kau.minseop.pointshare.shop;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.support.v7.app.AppCompatActivity;
@@ -15,7 +16,7 @@ import com.google.zxing.common.BitMatrix;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 import com.kau.minseop.pointshare.R;
 
-public class QRActivity extends AppCompatActivity {
+public class QRActivity extends Activity {
     ImageView qrcode;
     @Override
     protected void onCreate(Bundle savedInstanceState) {

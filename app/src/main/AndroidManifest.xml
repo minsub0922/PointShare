@@ -33,7 +33,8 @@
         <activity android:name=".cardlist.CardListViewActivity" />
         <activity android:name=".cardlist.AddCardListActivity" />
         <activity
-            android:name=".shop.QRActivity">
+            android:name=".shop.QRActivity"
+            android:theme="@android:style/Theme.DeviceDefault.Light.Dialog.NoActionBar" >
         </activity>
     </application>
 
