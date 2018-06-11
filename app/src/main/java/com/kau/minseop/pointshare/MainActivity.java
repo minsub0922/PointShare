@@ -7,6 +7,7 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import com.kau.minseop.pointshare.cardlist.CardListFragment;
 import com.kau.minseop.pointshare.event.ActivityResultEvent;
@@ -18,6 +19,7 @@ import io.realm.Realm;
 
 public class MainActivity extends AppCompatActivity {
     private MenuItem preitem;
+    private TextView txt_title;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -28,14 +30,17 @@ public class MainActivity extends AppCompatActivity {
             switch (item.getItemId()) {
                 case R.id.nav_home:
                     replaceViewPager(new ShopFragment());
+                    txt_title.setText("SHOP");
                     preitem = item;
                     return true;
                 case R.id.nav_cardlist:
                     replaceViewPager(new CardListFragment());
+                    txt_title.setText("CARD LIST");
                     preitem = item;
                     return true;
                 case R.id.nav_mypage:
                     replaceViewPager(new WalletFragment());
+                    txt_title.setText("MY PAGE");
                     preitem = item;
                     return true;
             }
@@ -48,8 +53,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        txt_title = findViewById(R.id.txt_main_title);
+
         Realm.init(this);
         replaceViewPager(new ShopFragment());
+        txt_title.setText("SHOP");
 
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
