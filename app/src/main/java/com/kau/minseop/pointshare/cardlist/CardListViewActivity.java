@@ -24,6 +24,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.MultiFormatWriter;
@@ -153,7 +154,10 @@ public class CardListViewActivity extends AppCompatActivity {
         });
     }
 
+    protected void Toastmessage(){
+        Toast.makeText(getApplicationContext(),"등록완료",Toast.LENGTH_LONG).show();
 
+    }
 
 
 

@@ -56,11 +56,11 @@ public class CardListFragment extends BaseFragment {
             public void onClick(View view, int position) {
                 Intent intent = new Intent(getActivity(),CardListViewActivity.class);
                 //intent.putExtra("items", mItems.get(position));
-                intent.putExtra("cardtype",mItems.get(position).getCardType());
                 intent.putExtra("cardnum",mItems.get(position).getCardNum());
                 intent.putExtra("cardPassward",mItems.get(position).getCardPassward());
                 intent.putExtra("cardPeriod",mItems.get(position).getCardValidityPeriod());
-                startActivity(intent);
+                startActivity(intent); intent.putExtra("cardtype",mItems.get(position).getCardType());
+
             }
         });
         addCard.setOnClickListener(new View.OnClickListener() {
@@ -81,6 +81,7 @@ public class CardListFragment extends BaseFragment {
             cards = new CardListModel(cardDBCol[0],cardDBCol[1],cardDBCol[2],cardDBCol[3],cardDBCol[4]);
             mItems.add(cards);
         }
+
         adapter.notifyDataSetChanged();
     }
 

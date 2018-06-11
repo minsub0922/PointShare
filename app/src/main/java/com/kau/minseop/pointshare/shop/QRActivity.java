@@ -15,8 +15,10 @@ import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 import com.kau.minseop.pointshare.R;
+import com.kau.minseop.pointshare.handler.BackPressHandler;
 
 public class QRActivity extends Activity {
+    BackPressHandler backPressHandler;
     ImageView qrcode;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,5 +38,6 @@ public class QRActivity extends Activity {
         }catch (WriterException e){
             e.printStackTrace();
         }
+
     }
 }

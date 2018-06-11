@@ -20,7 +20,7 @@ public class CardListDBHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         // 새로운 테이블 생성
-        db.execSQL("CREATE TABLE CARDLIST (_id INTEGER PRIMARY KEY AUTOINCREMENT, cardType TEXT, cardNum TEXT, cardPeriod TEXT,cardCVC TEXT,cardPassward TEXT);");
+        db.execSQL("CREATE TABLE CARDLIST (_id INTEGER PRIMARY KEY AUTOINCREMENT, cardType TEXT NOT NULL, cardNum TEXT NOT NULL, cardPeriod TEXT NOT NULL,cardCVC TEXT NOT NULL,cardPassward TEXT NOT NULL);");
     }
 
     // DB 업그레이드를 위해 버전이 변경될 때 호출되는 함수

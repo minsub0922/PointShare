@@ -45,6 +45,26 @@ public class AddCardListActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //String cardType = etCardtype.getText().toString();
+                if(etCardNum.getText().toString().length() ==0){
+                    Toast.makeText(AddCardListActivity.this, "카드번호를 입력하세요!", Toast.LENGTH_SHORT).show();
+                    etCardNum.requestFocus();
+                    return;
+                }
+                else if(etCardPeriod.getText().toString().length() ==0){
+                    Toast.makeText(AddCardListActivity.this, "카드 유효기간을 입력하세요!", Toast.LENGTH_SHORT).show();
+                    etCardNum.requestFocus();
+                    return;
+                }
+                else if(etCardCVC.getText().toString().length() ==0){
+                    Toast.makeText(AddCardListActivity.this, "카드cvc번호를 입력하세요!", Toast.LENGTH_SHORT).show();
+                    etCardNum.requestFocus();
+                    return;
+                }
+                else if(etCardPassward.getText().toString().length() ==0){
+                    Toast.makeText(AddCardListActivity.this, "카드비밀번호를 입력하세요!", Toast.LENGTH_SHORT).show();
+                    etCardNum.requestFocus();
+                    return;
+                }
                 String cardNum = etCardNum.getText().toString();
                 String cardPeriod = etCardPeriod.getText().toString();
                 String cardCVC = etCardCVC.getText().toString();
@@ -63,6 +83,8 @@ public class AddCardListActivity extends AppCompatActivity {
            //     String cardType = etCardtype.getText().toString();
                 dbHelper.delete(cardType);
                 result.setText(dbHelper.getResult());
+                Intent returnIntent = new Intent();
+                setResult(Activity.RESULT_OK,returnIntent);
             }
         });
     }
