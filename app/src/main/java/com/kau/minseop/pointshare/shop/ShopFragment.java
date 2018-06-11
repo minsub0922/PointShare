@@ -25,9 +25,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.kau.minseop.pointshare.BaseFragment;
 import com.kau.minseop.pointshare.Contract;
 import com.kau.minseop.pointshare.R;
@@ -42,7 +39,6 @@ import org.web3j.crypto.WalletUtils;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.Web3jFactory;
 import org.web3j.protocol.core.DefaultBlockParameterName;
-import org.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.web3j.protocol.http.HttpService;
 import org.web3j.tuples.generated.Tuple6;
 import org.web3j.tx.ManagedTransaction;
@@ -55,8 +51,6 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Future;
-import java.util.function.LongFunction;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
@@ -157,8 +151,6 @@ public class ShopFragment extends BaseFragment{
                         });
                 alertDialogBuilder.create().show();
 
-                Log.d("TAG","get index : "+model.getIndex());
-                Toast.makeText(getActivity(), model.getCouponModel().getcName(), Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -180,8 +172,6 @@ public class ShopFragment extends BaseFragment{
                         });
                 alertDialogBuilder.create().show();
 
-                Log.d("TAG","get index : "+model.getIndex());
-                Toast.makeText(getActivity(), model.getCouponModel().getcName(), Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -202,9 +192,6 @@ public class ShopFragment extends BaseFragment{
                             public void onClick(DialogInterface dialog, int id) {dialog.cancel();}
                         });
                 alertDialogBuilder.create().show();
-
-                Log.d("TAG","get index : "+model.getIndex());
-                Toast.makeText(getActivity(), model.getCouponModel().getcName(), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -262,6 +249,7 @@ public class ShopFragment extends BaseFragment{
             protected void onPostExecute(Object o) {
                 super.onPostExecute(o);
                 txt_balance.setText(walletBalance);
+                Log.d("TAG","your walletBalance: " + walletBalance);
             }
         }.execute();
     }
@@ -277,7 +265,7 @@ public class ShopFragment extends BaseFragment{
                          Tuple6<String, String, String, String, String, String> coupon = contract.getCouponList(BigInteger.valueOf(i)).send();
                          if (coupon==null) break;
                          determineType(coupon.getValue3()).add(new ShoppingModel(coupon.getValue1(), coupon.getValue4(), i,new CouponModel(coupon.getValue2(), coupon.getValue3(), coupon.getValue5(), coupon.getValue6())));
-                         Log.d("TAG",coupon.getValue3());
+                         //Log.d("TAG",coupon.getValue3());
                          i++;
                     }
 
