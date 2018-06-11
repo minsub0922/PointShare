@@ -77,11 +77,17 @@ public class CardListFragment extends BaseFragment {
     private void setData() {
         mItems.clear();
         String[] cardDB = dbHelper.getResult().split("%");
-        for(int i=0; i<cardDB.length;i++){
-            String[] cardDBCol = cardDB[i].split("@");
-            cards = new CardListModel(cardDBCol[0],cardDBCol[1],cardDBCol[2],cardDBCol[3],cardDBCol[4]);
-            mItems.add(cards);
+        if(dbHelper.getResult().length() == 0){
+            ;
         }
+        else{
+            for(int i=0; i<cardDB.length;i++){
+                String[] cardDBCol = cardDB[i].split("@");
+                cards = new CardListModel(cardDBCol[0],cardDBCol[1],cardDBCol[2],cardDBCol[3],cardDBCol[4]);
+                mItems.add(cards);
+            }
+        }
+
 
         adapter.notifyDataSetChanged();
     }
