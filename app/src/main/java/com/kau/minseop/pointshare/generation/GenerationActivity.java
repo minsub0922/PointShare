@@ -37,6 +37,9 @@ public class GenerationActivity extends Activity implements GenerationContract.V
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        allowExternalStorage();
+
         setActivitySize();
 
         mGenerateWalletButton = (Button) findViewById(R.id.generate_wallet_button);
@@ -45,6 +48,17 @@ public class GenerationActivity extends Activity implements GenerationContract.V
 
         mRealm = Realm.getDefaultInstance();
         mGenerateWalletButton.setOnClickListener(this);
+    }
+
+    private void allowExternalStorage(){
+        int permissionCheck = ContextCompat.checkSelfPermission(this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(
+                    this,
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    REQUEST_PERMISSION_WRITE_STORAGE);
+        }
     }
 
     private void setActivitySize(){
@@ -70,30 +84,21 @@ public class GenerationActivity extends Activity implements GenerationContract.V
         this.detailPath = detailPath;
     }
 
-    @Override
+    /*@Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
             case REQUEST_PERMISSION_WRITE_STORAGE: {
                 if (grantResults.length == 0 || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
                 } else {
-                    mWalletPresenter.generateWallet(mPassword.getText().toString());
                 }
                 break;
             }
         }
-    }
+    }*/
 
     @Override
     public void onClick(View v) {
-        int permissionCheck = ContextCompat.checkSelfPermission(this,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(
-                    this,
-                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                    REQUEST_PERMISSION_WRITE_STORAGE);
-        }
-        else if (v.getId() == R.id.generate_wallet_button){
+        if (v.getId() == R.id.generate_wallet_button){
             mWalletPresenter = new GenerationPresenter(GenerationActivity.this, mPassword.getText().toString());
             mWalletPresenter.generateWallet(mPassword.getText().toString());
             createObject(mWalletAddress, mPassword.getText().toString(), detailPath);

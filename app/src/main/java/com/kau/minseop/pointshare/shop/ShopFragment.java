@@ -76,7 +76,6 @@ public class ShopFragment extends BaseFragment{
     private TextView txt_balance;
     private RecyclerView rv_coffee, rv_travel, rv_store;
     private ShopRecyclerViewAdapter adapter_coffee, adapter_travel, adapter_store;
-    private Coupondeal contract;
     private List<ShoppingModel> coffeeList = new ArrayList<>(), travelList = new ArrayList<>(), storeList = new ArrayList<>();
     private AlertDialog.Builder alertDialogBuilder;
     private boolean doneGetMyWallet = false;
@@ -87,6 +86,8 @@ public class ShopFragment extends BaseFragment{
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View v = inflater.inflate(R.layout.fragment_shop, container, false);
+
+
 
         web3j = Web3jFactory.build(new HttpService("https://ropsten.infura.io/wd7279F18YpzuVLkfZTk"));
         mRealm = Realm.getDefaultInstance();
@@ -149,7 +150,7 @@ public class ShopFragment extends BaseFragment{
             @Override
             public void onItemClick(int position) {
                 ShoppingModel model = coffeeList.get(position);
-
+                Log.d("TAG", String.valueOf(model.getIndex()));
                 alertDialogBuilder.setTitle(model.getCouponModel().getcName()+" 구매하기");
                 alertDialogBuilder
                         .setMessage(model.getCouponModel().getPrice() + "구매하시겠습니까?")
@@ -171,6 +172,7 @@ public class ShopFragment extends BaseFragment{
             @Override
             public void onItemClick(int position) {
                 ShoppingModel model = travelList.get(position);
+                Log.d("TAG", String.valueOf(model.getIndex()));
                 alertDialogBuilder.setTitle(model.getCouponModel().getcName()+" 구매하기");
                 alertDialogBuilder
                         .setMessage(model.getCouponModel().getPrice() + "구매하시겠습니까?")
@@ -192,6 +194,7 @@ public class ShopFragment extends BaseFragment{
             @Override
             public void onItemClick(int position) {
                 ShoppingModel model = storeList.get(position);
+                Log.d("TAG", String.valueOf(model.getIndex()));
                 alertDialogBuilder.setTitle(model.getCouponModel().getcName()+" 구매하기");
                 alertDialogBuilder
                         .setMessage(model.getCouponModel().getPrice() + "구매하시겠습니까?")
@@ -281,7 +284,6 @@ public class ShopFragment extends BaseFragment{
                          //Log.d("TAG",coupon.getValue3());
                          i++;
                     }
-
                     Log.d("TAG", String.valueOf(i));
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -298,7 +300,6 @@ public class ShopFragment extends BaseFragment{
                 adapter_travel.notifyDataSetChanged();
             }
         }.execute();
-
     }
 
     private List<ShoppingModel> determineType(String cname){
@@ -318,6 +319,7 @@ public class ShopFragment extends BaseFragment{
             @Override
             protected Object doInBackground(Object[] objects) {
                 try {
+                    Coupondeal contract = Coupondeal.load(contractAddress, web3j, credential, ManagedTransaction.GAS_PRICE, Contract.GAS_LIMIT);
                     Transfer.sendFunds(
                             web3j, credential,
                             address,  // you can put any address here
@@ -327,7 +329,7 @@ public class ShopFragment extends BaseFragment{
                     Log.d("TAG", "purchase success!!");
                 } catch (Exception e) {
                     e.printStackTrace();
-
+                    Log.d("TAG","wht???????" +e);
                 }
                 progressOFF();
                 return null;
