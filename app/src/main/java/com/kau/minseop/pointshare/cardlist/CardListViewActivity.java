@@ -138,8 +138,7 @@ public class CardListViewActivity extends BaseActivity {
                         .setMessage("쿠폰을 판매하시겠습니까?")
                         .setCancelable(true)
                         .setPositiveButton("네", new DialogInterface.OnClickListener() {
-                            public void onClick(
-                                    DialogInterface dialog, int id) {
+                            public void onClick(DialogInterface dialog, int id) {
                                 startProgresss();
                                 sendCoupon(mItems.get(position),qrCode);
                             }
@@ -273,14 +272,6 @@ public class CardListViewActivity extends BaseActivity {
     public void startProgresss(){
         progressON(this,"올리는중...");
     }
-    private void timeHandler(AppCompatDialog activity) {
-        mHandler = new Handler();
-        mHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                activity.setCancelable(true);
-            }
-        },2000);
-    }
+
 
 }

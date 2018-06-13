@@ -80,9 +80,6 @@ public class ShopFragment extends LoadingFragment{
     private List<ShoppingModel> coffeeList = new ArrayList<>(), travelList = new ArrayList<>(), storeList = new ArrayList<>();
     private AlertDialog.Builder alertDialogBuilder;
     private boolean doneGetMyWallet = false;
-    AppCompatDialog progressDialog;
-    BackPressHandler backPressHandler;
-    Handler mHandler =null;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -110,15 +107,7 @@ public class ShopFragment extends LoadingFragment{
 
         return v;
     }
-    private void timeHandler(AppCompatDialog activity) {
-        mHandler = new Handler();
-        mHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                activity.setCancelable(true);
-            }
-        },2000);
-    }
+
 
     private void buildTextView(View v){
         txt_balance = v.findViewById(R.id.txt_shop_mywallet_balance);

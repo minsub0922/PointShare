@@ -3,6 +3,7 @@ package com.kau.minseop.pointshare.loading;
 import android.app.Activity;
 import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Handler;
 import android.support.v7.app.AppCompatDialog;
 import android.text.TextUtils;
 import android.widget.ImageView;
@@ -18,6 +19,8 @@ import com.kau.minseop.pointshare.R;
 
 public class LoadingFragment extends BaseFragment {
     AppCompatDialog progressDialog;
+    Handler mHandler =null;
+
     public void progressON() {
         progressON(getActivity(), null);
     }
@@ -39,6 +42,7 @@ public class LoadingFragment extends BaseFragment {
             progressDialog.show();
 
         }
+        timeHandler(progressDialog);
 
 
         final ImageView img_loading_frame = (ImageView) progressDialog.findViewById(R.id.iv_frame_loading);
@@ -77,4 +81,13 @@ public class LoadingFragment extends BaseFragment {
             progressDialog.dismiss();
         }
     }
-}
+    private void timeHandler(AppCompatDialog activity) {
+        mHandler = new Handler();
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                activity.setCancelable(true);
+            }
+        },2000);
+    }
+ }

@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.kau.minseop.pointshare.cardlist.CardListFragment;
 import com.kau.minseop.pointshare.event.ActivityResultEvent;
+import com.kau.minseop.pointshare.handler.BackPressHandler;
 import com.kau.minseop.pointshare.shop.ShopFragment;
 import com.kau.minseop.pointshare.wallet.BusProvider;
 import com.kau.minseop.pointshare.wallet.WalletFragment;
@@ -20,7 +21,7 @@ import io.realm.Realm;
 public class MainActivity extends AppCompatActivity {
     private MenuItem preitem;
     private TextView txt_title;
-
+    private BackPressHandler backPressHandler;
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
@@ -61,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
 
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+        backPressHandler = new BackPressHandler(this);
     }
 
     private boolean replaceViewPager(@NonNull Fragment fragment) {
@@ -74,5 +76,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         BusProvider.getInstance().post(new ActivityResultEvent(requestCode, resultCode, data));
+    }
+
+    @Override
+    public void onBackPressed(){
+        backPressHandler.onBackPressed();
     }
 }
