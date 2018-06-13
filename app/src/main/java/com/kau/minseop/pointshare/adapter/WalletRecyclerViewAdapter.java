@@ -4,6 +4,7 @@ import android.content.ClipData;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,8 +53,10 @@ public class WalletRecyclerViewAdapter extends  RecyclerView.Adapter<WalletRecyc
     public void onBindViewHolder(@NonNull WalletViewHoler holder, int position) {
         final WalletViewHolerModel model = modelList.get(position);
         holder.txt_walletName.setText(model.getWalletName());
+
         if (position%2==0) holder.imageView.setImageResource(R.drawable.wallet1);
         else holder.imageView.setImageResource(R.drawable.wallet2);
+
         if(model.getWalletBalance()==""){
             holder.txt_walletBalance.setText("getting Balance from the net....");
         }else holder.txt_walletBalance.setText(model.getWalletBalance());
@@ -67,7 +70,6 @@ public class WalletRecyclerViewAdapter extends  RecyclerView.Adapter<WalletRecyc
         removeRealmObject(modelList.get(position));
         modelList.remove(position);
         notifyItemRemoved(position);
-
     }
 
     private void removeRealmObject(WalletViewHolerModel model){
@@ -77,11 +79,11 @@ public class WalletRecyclerViewAdapter extends  RecyclerView.Adapter<WalletRecyc
         rows.deleteAllFromRealm();
         mRealm.commitTransaction();
     }
-
+/*
     public void restoreItem(WalletViewHolerModel item, int position) {
         modelList.add(position, item);
         notifyItemInserted(position);
-    }
+    }*/
 
 
     public static class WalletViewHoler extends RecyclerView.ViewHolder{

@@ -38,7 +38,7 @@ public class GenerationActivity extends Activity implements GenerationContract.V
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        allowExternalStorage();
+        allowExternalStorageAccess();
 
         setActivitySize();
 
@@ -50,7 +50,7 @@ public class GenerationActivity extends Activity implements GenerationContract.V
         mGenerateWalletButton.setOnClickListener(this);
     }
 
-    private void allowExternalStorage(){
+    private void allowExternalStorageAccess(){
         int permissionCheck = ContextCompat.checkSelfPermission(this,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE);
         if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
@@ -84,24 +84,16 @@ public class GenerationActivity extends Activity implements GenerationContract.V
         this.detailPath = detailPath;
     }
 
-    /*@Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case REQUEST_PERMISSION_WRITE_STORAGE: {
-                if (grantResults.length == 0 || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-                } else {
-                }
-                break;
-            }
-        }
-    }*/
-
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.generate_wallet_button){
-            mWalletPresenter = new GenerationPresenter(GenerationActivity.this, mPassword.getText().toString());
-            mWalletPresenter.generateWallet(mPassword.getText().toString());
-            createObject(mWalletAddress, mPassword.getText().toString(), detailPath);
+            Log.d("TAG",mWalletName.getText().toString());
+            if (mWalletName.getText().toString().replaceAll(" ","").getBytes().length > 0 && mPassword.getText().toString().replaceAll(" ","").getBytes().length > 0) {
+                mWalletPresenter = new GenerationPresenter(GenerationActivity.this, mPassword.getText().toString());
+                mWalletPresenter.generateWallet(mPassword.getText().toString());
+                createObject(mWalletAddress, mPassword.getText().toString(), detailPath);
+            }
+            else Toast.makeText(GenerationActivity.this, "양식을 모두 채워주십시오.", Toast.LENGTH_SHORT).show();
         }
     }
 

@@ -80,10 +80,6 @@ public class WalletFragment extends LoadingFragment implements View.OnClickListe
     public static final String TAG = WalletFragment.class.getName();
 
     private CoordinatorLayout coordinatorLayout;
-    private String balance;
-    private String password;
-    private String walletAddress;
-    private String detailPath;
     private Web3j web3j;
     private List<Credentials> credentials = new ArrayList<>();
     private Realm mRealm;
@@ -92,7 +88,7 @@ public class WalletFragment extends LoadingFragment implements View.OnClickListe
     private RecyclerView rv;
     private WalletRecyclerViewAdapter adapter;
     private final List<WalletViewHolerModel> modelList = new ArrayList<>();
-    private boolean isFirst = true;
+    private boolean isDeleted = false;
     private AppCompatDialog progressDialog;
 
     @SuppressLint("StaticFieldLeak")
@@ -206,13 +202,13 @@ public class WalletFragment extends LoadingFragment implements View.OnClickListe
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                progressOFF();
                 return null;
             }
 
             @Override
             protected void onPostExecute(Object o) {
                 super.onPostExecute(o);
+                progressOFF();
                 Log.d("TAG","done sned eth!");
                 for (int i=0; i<modelList.size(); i++) getWalletBallance(i);
             }
@@ -257,14 +253,13 @@ public class WalletFragment extends LoadingFragment implements View.OnClickListe
             @Override
             protected Object doInBackground(Object[] objects) {
                 BigInteger ethGetBalance = null;
+                if (modelList.size()<=position) return null;
                 try {
                     ethGetBalance = web3j
                             .ethGetBalance(modelList.get(position).getWalletAddress(), DefaultBlockParameterName.LATEST)
                             .send()
                             .getBalance();
-                    BigInteger wei = ethGetBalance;
-                    balance = wei.toString();
-                    modelList.get(position).setWalletBalance(balance);
+                    modelList.get(position).setWalletBalance(ethGetBalance.toString());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -326,24 +321,21 @@ public class WalletFragment extends LoadingFragment implements View.OnClickListe
     @Override
     public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction, int position) {
         if (viewHolder instanceof WalletRecyclerViewAdapter.WalletViewHoler) {
-            // get the removed item name to display it in snack bar
+            isDeleted =true;
             String name = modelList.get(viewHolder.getAdapterPosition()).getWalletName();
 
-            // backup of removed item for undo purpose
             final WalletViewHolerModel deletedItem = modelList.get(viewHolder.getAdapterPosition());
             final int deletedIndex = viewHolder.getAdapterPosition();
 
-            // remove the item from recycler view
             adapter.removeItem(viewHolder.getAdapterPosition());
 
-            // showing snack bar with Undo option
             Snackbar snackbar = Snackbar
                     .make(coordinatorLayout, "your wallet '"+name + "' has been removed from your Wallet!", Snackbar.LENGTH_LONG);
             snackbar.setAction("UNDO", new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     // undo is selected, restore the deleted item
-                    adapter.restoreItem(deletedItem, deletedIndex);
+                  /*  adapter.restoreItem(deletedItem, deletedIndex);*/
                 }
             });
             snackbar.setActionTextColor(Color.YELLOW);
@@ -354,15 +346,22 @@ public class WalletFragment extends LoadingFragment implements View.OnClickListe
     @Subscribe
     public void onActivityResult(ActivityResultEvent activityResultEvent) {
         onActivityResult(activityResultEvent.getRequestCode(), activityResultEvent.getResultCode(), activityResultEvent.getData());
-
         if (activityResultEvent.getResultCode()==-1){
-            mRealm.beginTransaction();
-            RealmResults<WalletModel> walletModels = mRealm.where(WalletModel.class).findAll();
-            mRealm.commitTransaction();
-            WalletModel model = walletModels.get(walletModels.size()-1);
-            modelList.add(new WalletViewHolerModel("",model.getWalletName(), model.getWalletAddress(), "0"));
-            adapter.notifyDataSetChanged();
-            readyForRequest(model.getPassword(),model.getDetailPath());
+            if (isDeleted){
+                isDeleted = false;
+                modelList.clear();
+                adapter.notifyDataSetChanged();
+                rv.setAdapter(adapter);
+                getObject();
+            }else {
+                mRealm.beginTransaction();
+                RealmResults<WalletModel> walletModels = mRealm.where(WalletModel.class).findAll();
+                mRealm.commitTransaction();
+                WalletModel model = walletModels.get(walletModels.size() - 1);
+                modelList.add(new WalletViewHolerModel("", model.getWalletName(), model.getWalletAddress(), "0"));
+                adapter.notifyDataSetChanged();
+                readyForRequest(model.getPassword(), model.getDetailPath());
+            }
         }
     }
 
@@ -391,7 +390,6 @@ public class WalletFragment extends LoadingFragment implements View.OnClickListe
                 Log.d("TAG", "Deploying smart contract");
                 Coupondeal contract = null;
                 try {
-                    Log.d("TAG", String.valueOf(credentials.size()));
                     contract = Coupondeal.deploy(
                             web3j, credentials.get(0),
                             ManagedTransaction.GAS_PRICE, Contract.GAS_LIMIT).send();
