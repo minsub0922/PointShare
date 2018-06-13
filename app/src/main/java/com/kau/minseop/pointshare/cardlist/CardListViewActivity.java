@@ -35,6 +35,7 @@ import com.kau.minseop.pointshare.Contract;
 import com.kau.minseop.pointshare.R;
 import com.kau.minseop.pointshare.adapter.CardlistRecyclerViewAdapter;
 import com.kau.minseop.pointshare.adapter.CouponRecyclerViewAdapter;
+import com.kau.minseop.pointshare.loading.BaseActivity;
 import com.kau.minseop.pointshare.model.CardListModel;
 
 import java.util.ArrayList;
@@ -62,7 +63,7 @@ import javax.crypto.spec.SecretKeySpec;
 import io.realm.Realm;
 import io.realm.RealmResults;
 
-public class CardListViewActivity extends AppCompatActivity {
+public class CardListViewActivity extends BaseActivity {
     private CouponRecyclerViewAdapter adapter;
     private ArrayList<CouponModel> mItems = new ArrayList<>();
     private Web3j web3j;
@@ -227,7 +228,6 @@ public class CardListViewActivity extends AppCompatActivity {
                 } catch (IOException e) {
                     e.printStackTrace();
                     Log.d("TAG","failed !!! generate Wallet");
-
                 }
                 return null;
             }
@@ -282,58 +282,5 @@ public class CardListViewActivity extends AppCompatActivity {
             }
         },2000);
     }
-    public void progressON(Activity activity, String message) {
 
-        if (activity == null || activity.isFinishing()) {
-            return;
-        }
-
-
-        if (progressDialog != null && progressDialog.isShowing()) {
-            progressSET(message);
-        } else {
-
-            progressDialog = new AppCompatDialog(activity);
-            progressDialog.setCancelable(false);
-            progressDialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
-            progressDialog.setContentView(R.layout.progress_loading);
-            progressDialog.show();
-            timeHandler(progressDialog);
-
-        }
-
-
-        final ImageView img_loading_frame = (ImageView) progressDialog.findViewById(R.id.iv_frame_loading);
-        final AnimationDrawable frameAnimation = (AnimationDrawable) img_loading_frame.getBackground();
-        img_loading_frame.post(new Runnable() {
-            @Override
-            public void run() {
-                frameAnimation.start();
-            }
-        });
-
-        TextView tv_progress_message = (TextView) progressDialog.findViewById(R.id.tv_progress_message);
-        if (!TextUtils.isEmpty(message)) {
-            tv_progress_message.setText(message);
-        }
-
-
-    }
-    public void progressSET(String message) {
-
-        if (progressDialog == null || !progressDialog.isShowing()) {
-            return;
-        }
-
-        TextView tv_progress_message = (TextView) progressDialog.findViewById(R.id.tv_progress_message);
-        if (!TextUtils.isEmpty(message)) {
-            tv_progress_message.setText(message);
-        }
-
-    }
-    public void progressOFF() {
-        if (progressDialog != null && progressDialog.isShowing()) {
-            progressDialog.dismiss();
-        }
-    }
 }

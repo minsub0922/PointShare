@@ -40,7 +40,7 @@ public class AddCardListActivity extends AppCompatActivity {
 
         Button insert = (Button)findViewById(R.id.insert);
         Button delete = (Button)findViewById(R.id.delete);
-        result.setText(dbHelper.getResult());
+        //result.setText(dbHelper.getResult());
         insert.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

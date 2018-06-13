@@ -30,6 +30,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import com.kau.minseop.pointshare.BaseFragment;
@@ -40,6 +41,7 @@ import com.kau.minseop.pointshare.contract.Coupondeal;
 import com.kau.minseop.pointshare.event.ActivityResultEvent;
 import com.kau.minseop.pointshare.generation.GenerationActivity;
 import com.kau.minseop.pointshare.helper.RecyclerItemTouchHelper;
+import com.kau.minseop.pointshare.loading.LoadingFragment;
 import com.kau.minseop.pointshare.model.WalletModel;
 import com.kau.minseop.pointshare.model.WalletViewHolerModel;
 import com.squareup.otto.Subscribe;
@@ -49,6 +51,9 @@ import org.web3j.crypto.WalletUtils;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.Web3jFactory;
 import org.web3j.protocol.core.DefaultBlockParameterName;
+import org.web3j.protocol.core.methods.response.EthLog;
+import org.web3j.protocol.core.methods.response.TransactionReceipt;
+import org.web3j.protocol.core.methods.response.Web3ClientVersion;
 import org.web3j.protocol.http.HttpService;
 import org.web3j.tx.ManagedTransaction;
 import org.web3j.tx.Transfer;
@@ -60,6 +65,8 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 import io.realm.Realm;
 import io.realm.RealmResults;
@@ -68,7 +75,7 @@ import io.realm.RealmResults;
  * Created by eirlis on 29.06.17.
  */
 
-public class WalletFragment extends BaseFragment implements View.OnClickListener , RecyclerItemTouchHelper.RecyclerItemTouchHelperListener {
+public class WalletFragment extends LoadingFragment implements View.OnClickListener , RecyclerItemTouchHelper.RecyclerItemTouchHelperListener {
 
     public static final String TAG = WalletFragment.class.getName();
 
@@ -101,6 +108,8 @@ public class WalletFragment extends BaseFragment implements View.OnClickListener
         coordinatorLayout = v.findViewById(R.id.coordinatorlayout);
 
         mRealm = Realm.getDefaultInstance();
+
+        //getClientVersion();
 
         getObject();
 
@@ -208,6 +217,7 @@ public class WalletFragment extends BaseFragment implements View.OnClickListener
                 for (int i=0; i<modelList.size(); i++) getWalletBallance(i);
             }
         }.execute();
+
     }
 
     private void getObject(){
@@ -356,6 +366,24 @@ public class WalletFragment extends BaseFragment implements View.OnClickListener
         }
     }
 
+    private void getMyContract(){
+        new AsyncTask(){
+            @Override
+            protected Object doInBackground(Object[] objects) {
+                Coupondeal contract = Coupondeal.load(contractAddress, web3j, credentials.get(0),ManagedTransaction.GAS_PRICE, Contract.GAS_LIMIT);
+
+                try {
+                    Log.d("TAG","asd:  "+ String.valueOf(contract.getCouponList(BigInteger.valueOf(0)).send()));
+                    Log.d("TAG","asd:  "+ String.valueOf(contract.getCouponList(BigInteger.valueOf(1)).send()));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Log.d("TAG", String.valueOf(e));
+                }
+                return null;
+            }
+        }.execute();
+    }
+
     private void generateNewContract(){
         new AsyncTask(){
             @Override
@@ -388,6 +416,7 @@ public class WalletFragment extends BaseFragment implements View.OnClickListener
         if (activity == null || activity.isFinishing()) {
             return;
         }
+
 
         if (progressDialog != null && progressDialog.isShowing()) {
             progressSET(message);

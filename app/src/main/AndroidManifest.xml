@@ -34,8 +34,8 @@
         <activity android:name=".cardlist.AddCardListActivity" />
         <activity
             android:name=".shop.QRActivity"
-            android:theme="@android:style/Theme.DeviceDefault.Light.Dialog.NoActionBar" >
-        </activity>
+            android:theme="@android:style/Theme.DeviceDefault.Light.Dialog.NoActionBar"></activity>
+        <activity android:name=".loading.BaseFragment"></activity>
     </application>
 
 </manifest>

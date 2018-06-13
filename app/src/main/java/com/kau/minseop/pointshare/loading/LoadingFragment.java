@@ -1,8 +1,6 @@
 package com.kau.minseop.pointshare.loading;
 
-
 import android.app.Activity;
-import android.app.Application;
 import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.AppCompatDialog;
@@ -10,27 +8,19 @@ import android.text.TextUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.fasterxml.jackson.databind.ser.Serializers;
+import com.kau.minseop.pointshare.BaseFragment;
 import com.kau.minseop.pointshare.R;
 
 /**
- * Created by TedPark on 2017. 3. 18..
+ * Created by khanj on 2018-06-13.
  */
 
-public class BaseApplication extends Application {
-
-    private static BaseApplication baseApplication;
+public class LoadingFragment extends BaseFragment {
     AppCompatDialog progressDialog;
-
-    public static BaseApplication getInstance() {
-        return baseApplication;
+    public void progressON() {
+        progressON(getActivity(), null);
     }
-
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        baseApplication = this;
-    }
-
     public void progressON(Activity activity, String message) {
 
         if (activity == null || activity.isFinishing()) {
@@ -87,6 +77,4 @@ public class BaseApplication extends Application {
             progressDialog.dismiss();
         }
     }
-
-
 }

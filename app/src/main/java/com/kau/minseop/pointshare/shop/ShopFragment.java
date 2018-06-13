@@ -32,6 +32,7 @@ import com.kau.minseop.pointshare.R;
 import com.kau.minseop.pointshare.adapter.ShopRecyclerViewAdapter;
 import com.kau.minseop.pointshare.contract.Coupondeal;
 import com.kau.minseop.pointshare.handler.BackPressHandler;
+import com.kau.minseop.pointshare.loading.LoadingFragment;
 import com.kau.minseop.pointshare.model.CouponModel;
 import com.kau.minseop.pointshare.model.ShoppingModel;
 import com.kau.minseop.pointshare.model.WalletModel;
@@ -65,7 +66,7 @@ import io.realm.RealmResults;
  * Created by minseop on 2018-06-09.
  */
 
-public class ShopFragment extends BaseFragment{
+public class ShopFragment extends LoadingFragment{
     private String KEY = "199301130922";
     private Realm mRealm;
     private String walletBalance;
@@ -359,56 +360,6 @@ public class ShopFragment extends BaseFragment{
         }
 
     }
-
-    public void progressON(Activity activity, String message) {
-
-        if (activity == null || activity.isFinishing()) {
-            return;
-        }
-
-        if (progressDialog != null && progressDialog.isShowing()) {
-            progressSET(message);
-        } else {
-            progressDialog = new AppCompatDialog(activity);
-            progressDialog.setCancelable(false);
-            progressDialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
-            progressDialog.setContentView(R.layout.progress_loading);
-            progressDialog.show();
-        }
-        timeHandler(progressDialog);
-
-        final ImageView img_loading_frame = (ImageView) progressDialog.findViewById(R.id.iv_frame_loading);
-        final AnimationDrawable frameAnimation = (AnimationDrawable) img_loading_frame.getBackground();
-        img_loading_frame.post(new Runnable() {
-            @Override
-            public void run() {
-                frameAnimation.start();
-            }
-        });
-        TextView tv_progress_message = (TextView) progressDialog.findViewById(R.id.tv_progress_message);
-        if (!TextUtils.isEmpty(message)) {
-            tv_progress_message.setText(message);
-        }
-    }
-        public void progressSET(String message) {
-
-        if (progressDialog == null || !progressDialog.isShowing()) {
-            return;
-        }
-
-        TextView tv_progress_message = (TextView) progressDialog.findViewById(R.id.tv_progress_message);
-        if (!TextUtils.isEmpty(message)) {
-            tv_progress_message.setText(message);
-        }
-
-    }
-
-    public void progressOFF() {
-        if (progressDialog != null && progressDialog.isShowing()) {
-            progressDialog.dismiss();
-        }
-    }
-
 
     private static String decrypt(String text, String key) throws Exception {
         Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
