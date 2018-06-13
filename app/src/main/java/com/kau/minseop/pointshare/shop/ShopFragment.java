@@ -26,6 +26,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.kau.minseop.pointshare.BaseFragment;
 import com.kau.minseop.pointshare.Contract;
 import com.kau.minseop.pointshare.R;
@@ -66,7 +68,7 @@ import io.realm.RealmResults;
  * Created by minseop on 2018-06-09.
  */
 
-public class ShopFragment extends LoadingFragment{
+public class ShopFragment extends LoadingFragment {
     private String KEY = "199301130922";
     private Realm mRealm;
     private String walletBalance;
@@ -85,8 +87,6 @@ public class ShopFragment extends LoadingFragment{
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View v = inflater.inflate(R.layout.fragment_shop, container, false);
 
-
-
         web3j = Web3jFactory.build(new HttpService("https://ropsten.infura.io/wd7279F18YpzuVLkfZTk"));
         mRealm = Realm.getDefaultInstance();
 
@@ -100,6 +100,7 @@ public class ShopFragment extends LoadingFragment{
 
         if (doneGetMyWallet) {
             startProgresss(1);
+
             getCouponList();
 
             getWalletBallance(walletModel.getWalletAddress());
@@ -132,29 +133,11 @@ public class ShopFragment extends LoadingFragment{
         adapter_store= new ShopRecyclerViewAdapter(storeList, getActivity());
         rv_store.setAdapter(adapter_store);
 
-        setOnClickListener();
-    }
-
-    private void setOnClickListener() {
         adapter_coffee.setOnItemClickListener(new ShopRecyclerViewAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
                 ShoppingModel model = coffeeList.get(position);
-                Log.d("TAG", String.valueOf(model.getIndex()));
-                alertDialogBuilder.setTitle(model.getCouponModel().getcName()+" 구매하기");
-                alertDialogBuilder
-                        .setMessage(model.getCouponModel().getPrice() + "구매하시겠습니까?")
-                        .setCancelable(true)
-                        .setPositiveButton("네", new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int id) {
-                                        purchaseCoupon(model.getIndex(),model.getSellerAddress(),model.getCouponModel().getPrice(),model.getQrCode());
-                                    }
-                                })
-                        .setNegativeButton("취소", new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int id) {dialog.cancel();}
-                        });
-                alertDialogBuilder.create().show();
-
+                setOnItemClickListener(model);
             }
         });
 
@@ -162,21 +145,7 @@ public class ShopFragment extends LoadingFragment{
             @Override
             public void onItemClick(int position) {
                 ShoppingModel model = travelList.get(position);
-                Log.d("TAG", String.valueOf(model.getIndex()));
-                alertDialogBuilder.setTitle(model.getCouponModel().getcName()+" 구매하기");
-                alertDialogBuilder
-                        .setMessage(model.getCouponModel().getPrice() + "구매하시겠습니까?")
-                        .setCancelable(true)
-                        .setPositiveButton("네", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                purchaseCoupon(model.getIndex(),model.getSellerAddress(),model.getCouponModel().getPrice(), model.getQrCode());
-                            }
-                        })
-                        .setNegativeButton("취소", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {dialog.cancel();}
-                        });
-                alertDialogBuilder.create().show();
-
+                setOnItemClickListener(model);
             }
         });
 
@@ -184,22 +153,28 @@ public class ShopFragment extends LoadingFragment{
             @Override
             public void onItemClick(int position) {
                 ShoppingModel model = storeList.get(position);
-                Log.d("TAG", String.valueOf(model.getIndex()));
-                alertDialogBuilder.setTitle(model.getCouponModel().getcName()+" 구매하기");
-                alertDialogBuilder
-                        .setMessage(model.getCouponModel().getPrice() + "구매하시겠습니까?")
-                        .setCancelable(true)
-                        .setPositiveButton("네", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                purchaseCoupon(model.getIndex(),model.getSellerAddress(),model.getCouponModel().getPrice(), model.getQrCode());
-                            }
-                        })
-                        .setNegativeButton("취소", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {dialog.cancel();}
-                        });
-                alertDialogBuilder.create().show();
+                setOnItemClickListener(model);
             }
         });
+    }
+
+    private void setOnItemClickListener(ShoppingModel model){
+        Log.d("TAG", String.valueOf(model.getIndex()));
+        alertDialogBuilder.setTitle(model.getCouponModel().getcName()+" 구매하기");
+        alertDialogBuilder
+                .setMessage(model.getCouponModel().getPrice() + "구매하시겠습니까?")
+                .setCancelable(true)
+                .setPositiveButton("네", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        int remain = BigInteger.valueOf(Long.parseLong(model.getCouponModel().getPrice())).compareTo(BigInteger.valueOf(Long.parseLong(walletBalance)));
+                        if (remain==-1) purchaseCoupon(model.getIndex(),model.getSellerAddress(),model.getCouponModel().getPrice(),model.getQrCode());
+                        else Toast.makeText(getActivity(), "잔액이 부족합니다.", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {dialog.cancel();}
+                });
+        alertDialogBuilder.create().show();
     }
 
     private void getMyWallet(){
@@ -271,7 +246,6 @@ public class ShopFragment extends LoadingFragment{
                          Tuple6<String, String, String, String, String, String> coupon = contract.getCouponList(BigInteger.valueOf(i)).send();
                          if (coupon==null) break;
                          determineType(coupon.getValue3()).add(new ShoppingModel(coupon.getValue1(), coupon.getValue4(), i,new CouponModel(coupon.getValue2(), coupon.getValue3(), coupon.getValue5(), coupon.getValue6())));
-                         //Log.d("TAG",coupon.getValue3());
                          i++;
                     }
                     Log.d("TAG", String.valueOf(i));
@@ -319,7 +293,7 @@ public class ShopFragment extends LoadingFragment{
                     Log.d("TAG", "purchase success!!");
                 } catch (Exception e) {
                     e.printStackTrace();
-                    Log.d("TAG","wht???????" +e);
+                    Log.d("TAG", String.valueOf(e));
                 }
                 progressOFF();
                 return null;
@@ -363,6 +337,5 @@ public class ShopFragment extends LoadingFragment{
         byte [] results = cipher.doFinal(Base64.decode(text, 0));
         return new String(results,"UTF-8");
     }
-
 
 }
