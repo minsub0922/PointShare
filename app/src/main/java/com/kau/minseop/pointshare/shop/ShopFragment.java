@@ -302,14 +302,14 @@ public class ShopFragment extends LoadingFragment {
             @Override
             protected void onPostExecute(Object o) {
                 super.onPostExecute(o);
+
+                getWalletBallance(walletModel.getWalletAddress());
+                Intent intent = new Intent(getActivity(),QRActivity.class);
                 try {
-                    decrypt(qrcode,KEY);
+                    intent.putExtra("qrcode",decrypt(qrcode,KEY));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                getWalletBallance(walletModel.getWalletAddress());
-                Intent intent = new Intent(getActivity(),QRActivity.class);
-                intent.putExtra("qrcode","123532323");
                 startActivity(intent);
             }
         }.execute();
