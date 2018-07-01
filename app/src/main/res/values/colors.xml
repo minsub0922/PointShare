@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimary">#f7861c</color>
     <color name="colorPrimaryDark">#dfdfdf</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorAccent">#f7861c</color>
     <color name="colorStatusBar">#E0E0E0</color>
     <color name="colorAppBar">#F5F5F5</color>
     <color name="colorBackground">#FAFAFA</color>
@@ -17,4 +17,6 @@
     <color name="textColorWhitePrimary">#ffffff</color>
     <color name="textColorWhiteSecondary">#b3ffffff</color>
     <color name="textColorWhiteDisabled">#80ffffff</color>
+
+    <color name="appthemeColor">#F7861C</color>
 </resources>

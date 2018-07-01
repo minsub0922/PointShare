@@ -7,94 +7,174 @@
     android:layout_height="match_parent"
     android:paddingTop="10dp"
     >
-    <ScrollView
-        android:padding="10dp"
-        android:scrollbars="none"
+
+    <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-        <LinearLayout
-            android:orientation="vertical"
+
+        <ProgressBar
+            android:id="@+id/shop_progressbar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ScrollView
+            android:padding="10dp"
+            android:scrollbars="none"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            >
-            <android.support.constraint.ConstraintLayout
+            android:layout_height="match_parent">
+            <LinearLayout
+                android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="15dp">
-
-                <ImageView
-                    android:id="@+id/imageView"
-                    android:layout_width="20dp"
-                    android:layout_height="15dp"
-                    android:layout_marginEnd="8dp"
-                    android:scaleType="fitXY"
-                    android:src="@drawable/ethereumicon"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/txt_shop_mywallet_balance"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <TextView
-                    android:id="@+id/txt_shop_mywallet_balance"
-                    android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                >
+                <android.support.constraint.ConstraintLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginEnd="8dp"
-                    android:textSize="14dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/textView" />
+                    android:layout_marginBottom="15dp">
 
-                <TextView
-                    android:id="@+id/textView"
-                    android:layout_width="wrap_content"
+                    <ImageView
+                        android:id="@+id/imageView"
+                        android:layout_width="20dp"
+                        android:layout_height="15dp"
+                        android:layout_marginEnd="8dp"
+                        android:scaleType="fitXY"
+                        android:src="@drawable/ethereumicon"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/txt_shop_mywallet_balance"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/txt_shop_mywallet_balance"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginEnd="8dp"
+                        android:textSize="14dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/textView" />
+
+                    <TextView
+                        android:id="@+id/textView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginEnd="8dp"
+                        android:text="* 10^(-18)"
+                        android:textColor="#cccccc"
+                        android:textSize="7dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent" />
+                </android.support.constraint.ConstraintLayout>
+
+
+                <android.support.v7.widget.CardView
+                    android:id="@+id/cardview_coffee"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginEnd="8dp"
-                    android:text="* 10^(-18)"
-                    android:textColor="#cccccc"
-                    android:textSize="7dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent" />
-            </android.support.constraint.ConstraintLayout>
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginEnd="@dimen/card_horizontal_margin"
+                    android:layout_marginStart="@dimen/card_horizontal_margin"
+                    android:layout_marginTop="@dimen/card_vertical_margin"
+                    app:cardBackgroundColor="@color/colorCards"
+                    app:cardCornerRadius="@dimen/card_radius"
+                    >
+                    <TextView
+                        android:layout_margin="10dp"
+                        android:id="@+id/txt_coffee"
+                        android:textSize="15dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                    <TextView
+                        android:layout_gravity="end"
+                        android:layout_margin="10dp"
+                        android:text="더보기"
+                        android:textColor="@color/appthemeColor"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/rv_fragment_shop_coffee"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="35dp"
+                        android:layout_marginBottom="5dp"
+                        >
+                    </android.support.v7.widget.RecyclerView>
+                </android.support.v7.widget.CardView>
 
-            <TextView
-                android:text="Coffee"
-                android:textSize="15dp"
-                android:layout_marginBottom="7dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/rv_fragment_shop_coffee"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="15dp"
-                >
-            </android.support.v7.widget.RecyclerView>
-            <TextView
-                android:text="Travel"
-                android:textSize="15dp"
-                android:layout_marginBottom="7dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/rv_fragment_shop_travel"
-                android:layout_marginBottom="15dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                >
-            </android.support.v7.widget.RecyclerView>
-            <TextView
-                android:text="Store"
-                android:layout_marginBottom="7dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-            <android.support.v7.widget.RecyclerView
-                android:layout_marginBottom="15dp"
-                android:id="@+id/rv_fragment_shop_store"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                >
-            </android.support.v7.widget.RecyclerView>
+                <android.support.v7.widget.CardView
+                    android:id="@+id/cardview_shop"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginEnd="@dimen/card_horizontal_margin"
+                    android:layout_marginStart="@dimen/card_horizontal_margin"
+                    android:layout_marginTop="@dimen/card_vertical_margin"
+                    app:cardBackgroundColor="@color/colorCards"
+                    app:cardCornerRadius="@dimen/card_radius">
+                    <TextView
+                        android:id="@+id/txt_travel"
+                        android:textSize="15dp"
+                        android:layout_margin="10dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                    <TextView
+                        android:layout_gravity="end"
+                        android:layout_margin="10dp"
+                        android:text="더보기"
+                        android:textColor="@color/appthemeColor"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/rv_fragment_shop_travel"
+                        android:layout_marginTop="35dp"
+                        android:layout_marginBottom="5dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        >
+                    </android.support.v7.widget.RecyclerView>
+                </android.support.v7.widget.CardView>
 
-        </LinearLayout>
-    </ScrollView>
+                <android.support.v7.widget.CardView
+                    android:id="@+id/cardview_store"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/card_vertical_margin"
+                    android:layout_marginEnd="@dimen/card_horizontal_margin"
+                    android:layout_marginStart="@dimen/card_horizontal_margin"
+                    android:layout_marginTop="@dimen/card_vertical_margin"
+                    app:cardBackgroundColor="@color/colorCards"
+                    app:cardCornerRadius="@dimen/card_radius">
+                    <TextView
+                        android:id="@+id/txt_store"
+                        android:layout_margin="10dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                    <TextView
+                        android:layout_margin="10dp"
+                        android:layout_gravity="end"
+                        android:text="더보기"
+                        android:textColor="@color/appthemeColor"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                    <android.support.v7.widget.RecyclerView
+                        android:layout_marginTop="35dp"
+                        android:layout_marginBottom="5dp"
+                        android:id="@+id/rv_fragment_shop_store"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        >
+                    </android.support.v7.widget.RecyclerView>
+                </android.support.v7.widget.CardView>
+
+            </LinearLayout>
+        </ScrollView>
+    </android.support.constraint.ConstraintLayout>
 </android.support.design.widget.CoordinatorLayout>

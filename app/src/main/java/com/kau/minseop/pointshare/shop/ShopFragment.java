@@ -4,8 +4,11 @@ import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.wifi.hotspot2.pps.Credential;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -25,6 +28,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -82,10 +86,14 @@ public class ShopFragment extends LoadingFragment {
     private List<ShoppingModel> coffeeList = new ArrayList<>(), travelList = new ArrayList<>(), storeList = new ArrayList<>();
     private AlertDialog.Builder alertDialogBuilder;
     private boolean doneGetMyWallet = false;
+    private ProgressBar progressBar;
+    private TextView txt_coffee, txt_travel, txt_store;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View v = inflater.inflate(R.layout.fragment_shop, container, false);
+
+        buildView(v);
 
         web3j = Web3jFactory.build(new HttpService("https://ropsten.infura.io/wd7279F18YpzuVLkfZTk"));
         mRealm = Realm.getDefaultInstance();
@@ -94,12 +102,13 @@ public class ShopFragment extends LoadingFragment {
 
         getMyWallet();
 
-        buildTextView(v);
+
 
         buildRecyclerView(v);
 
+
         if (doneGetMyWallet) {
-            startProgresss(1);
+            //startProgresss(1);
 
             getCouponList();
 
@@ -110,7 +119,13 @@ public class ShopFragment extends LoadingFragment {
     }
 
 
-    private void buildTextView(View v){
+    private void buildView(View v){
+        txt_coffee = v.findViewById(R.id.txt_coffee);
+        txt_travel = v.findViewById(R.id.txt_travel);
+        txt_store = v.findViewById(R.id.txt_store);
+        progressBar = v.findViewById(R.id.shop_progressbar);
+        progressBar.setIndeterminate(true);
+        progressBar.getIndeterminateDrawable().setColorFilter(Color.rgb(247,134,28), PorterDuff.Mode.MULTIPLY);
         txt_balance = v.findViewById(R.id.txt_shop_mywallet_balance);
     }
 
@@ -262,6 +277,10 @@ public class ShopFragment extends LoadingFragment {
                 adapter_store.notifyDataSetChanged();
                 adapter_coffee.notifyDataSetChanged();
                 adapter_travel.notifyDataSetChanged();
+                progressBar.setVisibility(View.GONE);
+                txt_coffee.setText("Coffee");
+                txt_travel.setText("Travel");
+                txt_store.setText("Store");
             }
         }.execute();
     }
@@ -278,6 +297,7 @@ public class ShopFragment extends LoadingFragment {
 
 
     private void purchaseCoupon(int index, String address, String price, String qrcode){
+        Log.d("TAG", qrcode);
         startProgresss(2);
         new AsyncTask(){
             @Override
@@ -305,12 +325,15 @@ public class ShopFragment extends LoadingFragment {
 
                 getWalletBallance(walletModel.getWalletAddress());
                 Intent intent = new Intent(getActivity(),QRActivity.class);
+
                 try {
                     intent.putExtra("qrcode",decrypt(qrcode,KEY));
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    Log.d("TAG", String.valueOf(e));
                 }
+
                 startActivity(intent);
+
             }
         }.execute();
     }

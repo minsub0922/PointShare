@@ -2,11 +2,8 @@ package com.kau.minseop.pointshare.cardlist;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Parcelable;
-import android.renderscript.ScriptGroup;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -22,10 +19,7 @@ import com.kau.minseop.pointshare.helper.CardListDBHelper;
 import com.kau.minseop.pointshare.model.CardListModel;
 import com.squareup.otto.Subscribe;
 
-import java.io.Serializable;
 import java.util.ArrayList;
-
-import io.realm.RealmResults;
 
 /*
  * Created by minseop on 2018-06-08.
@@ -71,9 +65,11 @@ public class CardListFragment extends BaseFragment {
                 startActivityForResult(intent,1);
             }
         });
+
         return v;
         //
     }
+
     private void setData() {
         mItems.clear();
         String[] cardDB = dbHelper.getResult().split("%");

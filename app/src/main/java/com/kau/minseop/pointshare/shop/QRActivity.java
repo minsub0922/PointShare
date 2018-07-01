@@ -27,7 +27,13 @@ public class QRActivity extends Activity {
         setContentView(R.layout.activity_qr);
         qrcode = (ImageView)findViewById(R.id.imQRcode);
         Intent intent = getIntent();
-        String qrCode = intent.getExtras().getString("qrcode");
+        String qrCode;
+
+        try {
+            qrCode = intent.getExtras().getString("qrcode");
+        }catch (Exception e){
+            qrCode = " ";
+        }
 
         MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
         try {
