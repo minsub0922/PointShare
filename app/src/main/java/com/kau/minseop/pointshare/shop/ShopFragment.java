@@ -73,7 +73,7 @@ import io.realm.RealmResults;
  * Created by minseop on 2018-06-09.
  */
 
-public class ShopFragment extends LoadingFragment {
+public class ShopFragment extends BaseFragment {
     private String KEY = "199301130922";
     private Realm mRealm;
     private String walletBalance;
@@ -102,29 +102,24 @@ public class ShopFragment extends LoadingFragment {
     }
 
     public ShopFragment(){
-
     }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View v = inflater.inflate(R.layout.fragment_shop, container, false);
 
+        count++;
+
         setHasOptionsMenu(true);
 
         buildView(v);
 
-        web3j = Web3jFactory.build(new HttpService("https://ropsten.infura.io/wd7279F18YpzuVLkfZTk"));
-        mRealm = Realm.getDefaultInstance();
-
-        alertDialogBuilder = new AlertDialog.Builder(getActivity());
-
-        getMyWallet();
-
         buildRecyclerView(v);
 
-        if (doneGetMyWallet) {
-            getCouponList();
-            getWalletBallance(walletModel.getWalletAddress());
+        if (count <= 1) {
+          originPageBuild();
+        } else if (count>1){
+            copyPageBuild();
         }
 
         Bundle args = getArguments();
@@ -136,6 +131,25 @@ public class ShopFragment extends LoadingFragment {
         return v;
     }
 
+    private void originPageBuild(){
+        web3j = Web3jFactory.build(new HttpService("https://ropsten.infura.io/wd7279F18YpzuVLkfZTk"));
+        mRealm = Realm.getDefaultInstance();
+        alertDialogBuilder = new AlertDialog.Builder(getActivity());
+        getMyWallet();
+
+        if (doneGetMyWallet) {
+            getCouponList();
+            getWalletBallance(walletModel.getWalletAddress());
+        }
+    }
+
+    private void copyPageBuild(){
+        progressBar.setVisibility(View.GONE);
+        txt_coffee.setText("Coffee");
+        txt_travel.setText("Travel");
+        txt_store.setText("Store");
+        txt_balance.setText(walletBalance);
+    }
 
     private void buildView(View v){
         txt_coffee = v.findViewById(R.id.txt_coffee);
@@ -274,6 +288,10 @@ public class ShopFragment extends LoadingFragment {
         new AsyncTask(){
             @Override
             protected Object doInBackground(Object[] objects) {
+                coffeeList.clear();
+                travelList.clear();
+                storeList.clear();
+
                 Coupondeal contract = Coupondeal.load(contractAddress, web3j, credential, ManagedTransaction.GAS_PRICE, Contract.GAS_LIMIT);
                 int i=0;
                 try {
@@ -287,7 +305,7 @@ public class ShopFragment extends LoadingFragment {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                progressOFF();
+               // progressOFF();
                 return null;
             }
 
@@ -318,7 +336,7 @@ public class ShopFragment extends LoadingFragment {
 
     private void purchaseCoupon(int index, String address, String price, String qrcode){
         Log.d("TAG", qrcode);
-        startProgresss(2);
+        //startProgresss(2);
         new AsyncTask(){
             @Override
             protected Object doInBackground(Object[] objects) {
@@ -335,7 +353,7 @@ public class ShopFragment extends LoadingFragment {
                     e.printStackTrace();
                     Log.d("TAG", String.valueOf(e));
                 }
-                progressOFF();
+               // progressOFF();
                 return null;
             }
 
@@ -358,14 +376,14 @@ public class ShopFragment extends LoadingFragment {
         }.execute();
     }
 
-    public void startProgresss(int i){
+  /*  public void startProgresss(int i){
         if(i==1)
         progressON(getActivity(),"리스트 받는중...");
         else if(i==2){
             progressON(getActivity(),"쿠폰 구매중...");
         }
 
-    }
+    }*/
 
     private static String decrypt(String text, String key) throws Exception {
         Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");

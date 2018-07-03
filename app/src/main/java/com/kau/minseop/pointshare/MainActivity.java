@@ -32,36 +32,8 @@ import butterknife.ButterKnife;
 import io.realm.Realm;
 
 public class MainActivity extends AppCompatActivity implements BaseFragment.FragmentNavigation, FragNavController.TransactionListener, FragNavController.RootFragmentListener {
-    private MenuItem preitem;
     private TextView tb_title;
-    //private TextView txt_title;
-    private BackPressHandler backPressHandler;
-    /*private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
-            = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
-        @Override
-        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-            if (item==preitem) return false;
-            switch (item.getItemId()) {
-                case R.id.nav_home:
-                    replaceViewPager(new ShopFragment());
-                    txt_title.setText("SHOP");
-                    preitem = item;
-                    return true;
-                case R.id.nav_cardlist:
-                    replaceViewPager(new CardListFragment());
-                    txt_title.setText("CARD LIST");
-                    preitem = item;
-                    return true;
-                case R.id.nav_mypage:
-                    replaceViewPager(new WalletFragment());
-                    txt_title.setText("MY PAGE");
-                    preitem = item;
-                    return true;
-            }
-            return false;
-        }
-    };*/
     String[] TABS;
 
     private Toolbar toolbar;
@@ -76,15 +48,7 @@ public class MainActivity extends AppCompatActivity implements BaseFragment.Frag
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        TABS  = new String[]{getString(R.string.title_home), getString(R.string.title_cardlist), getString(R.string.title_mypage)};
-
-        setContentView(R.layout.activity_main);
-
-        bottomTabLayout = findViewById(R.id.navigation);
-
-        toolbar = findViewById(R.id.toolbar);
-
-        tb_title = findViewById(R.id.tb_title);
+        buildView();
 
         initToolbar();
 
@@ -115,28 +79,26 @@ public class MainActivity extends AppCompatActivity implements BaseFragment.Frag
                 switchTab(tab.getPosition());
             }
         });
+    }
 
-        //txt_title = findViewById(R.id.txt_main_title);
+    private void buildView(){
+        TABS  = new String[]{getString(R.string.title_home), getString(R.string.title_cardlist), getString(R.string.title_mypage)};
+
+        setContentView(R.layout.activity_main);
+
+        bottomTabLayout = findViewById(R.id.navigation);
+
+        toolbar = findViewById(R.id.toolbar);
+
+        tb_title = findViewById(R.id.tb_title);
 
         Realm.init(this);
-        //replaceViewPager(new ShopFragment());
-        //txt_title.setText("SHOP");
-
-        /*BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
-        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);*/
     }
 
     private void initToolbar() {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
     }
-
-  /*  private boolean replaceViewPager(@NonNull Fragment fragment) {
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.main_activity_fragment_container, fragment)
-                .commit();
-        return true;
-    }*/
 
     private void initTab() {
         if (bottomTabLayout != null) {
@@ -173,7 +135,6 @@ public class MainActivity extends AppCompatActivity implements BaseFragment.Frag
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
         switch (item.getItemId()) {
             case android.R.id.home:
                 onBackPressed();
@@ -189,34 +150,28 @@ public class MainActivity extends AppCompatActivity implements BaseFragment.Frag
 
         if (!mNavController.isRootFragment()) {
             mNavController.popFragment();
+
         } else {
 
             if (fragmentHistory.isEmpty()) {
                 super.onBackPressed();
-            } else {
 
+            } else {
 
                 if (fragmentHistory.getStackSize() > 1) {
 
                     int position = fragmentHistory.popPrevious();
-
                     switchTab(position);
-
                     updateTabSelection(position);
 
                 } else {
-
                     switchTab(0);
-
                     updateTabSelection(0);
-
                     fragmentHistory.emptyStack();
                 }
             }
-
         }
     }
-
 
     private void updateTabSelection(int currentTab){
 
@@ -278,9 +233,7 @@ public class MainActivity extends AppCompatActivity implements BaseFragment.Frag
         //do fragmentty stuff. Maybe change title, I'm not going to tell you how to live your life
         // If we have a backstack, show the back button
         if (getSupportActionBar() != null && mNavController != null) {
-
             updateToolbar();
-
         }
     }
 
@@ -296,19 +249,15 @@ public class MainActivity extends AppCompatActivity implements BaseFragment.Frag
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
             getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_arrow_back);
-
         }
     }
 
     public void initToolbar(Toolbar toolbar, String title, boolean isBackEnabled) {
-
         setSupportActionBar(toolbar);
-
         if (isBackEnabled) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
             getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_arrow_back);
-
         }
 
         getSupportActionBar().setTitle(title);

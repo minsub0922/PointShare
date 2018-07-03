@@ -76,7 +76,7 @@ import io.realm.RealmResults;
  * Created by eirlis on 29.06.17.
  */
 
-public class WalletFragment extends LoadingFragment implements View.OnClickListener , RecyclerItemTouchHelper.RecyclerItemTouchHelperListener {
+public class WalletFragment extends BaseFragment implements View.OnClickListener , RecyclerItemTouchHelper.RecyclerItemTouchHelperListener {
 
     public static final String TAG = WalletFragment.class.getName();
 
@@ -106,6 +106,8 @@ public class WalletFragment extends LoadingFragment implements View.OnClickListe
         final View v = inflater.inflate(R.layout.fragment_wallet, container, false);
         web3j = Web3jFactory.build(new HttpService("https://ropsten.infura.io/wd7279F18YpzuVLkfZTk"));
 
+        count++;
+
         buildButtons(v);
 
         buildRecyclerView(v);
@@ -115,8 +117,7 @@ public class WalletFragment extends LoadingFragment implements View.OnClickListe
         mRealm = Realm.getDefaultInstance();
 
         //getClientVersion();
-
-        getObject();
+        if (count<=1) getObject();
 
         return v;
     }
@@ -185,7 +186,7 @@ public class WalletFragment extends LoadingFragment implements View.OnClickListe
                 innBuilder.setPositiveButton("송금", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        startProgresss();
+                        //startProgresss();
                         sendEth(finalIndex, strName, et.getText().toString());
                         Log.d("TAG", strName+"   "+et.getText().toString());
                         dialog.dismiss();
@@ -218,7 +219,7 @@ public class WalletFragment extends LoadingFragment implements View.OnClickListe
             @Override
             protected void onPostExecute(Object o) {
                 super.onPostExecute(o);
-                progressOFF();
+                //progressOFF();
                 Log.d("TAG","done sned eth!");
                 for (int i=0; i<modelList.size(); i++) getWalletBallance(i);
             }
@@ -310,7 +311,7 @@ public class WalletFragment extends LoadingFragment implements View.OnClickListe
                 innBuilder.setPositiveButton("송금", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        startProgresss();
+//                        startProgresss();
                         sendEth(0, address[0], et.getText().toString());
                         Log.d("TAG", address[0]+"   "+et.getText().toString());
                         dialog.dismiss();
@@ -414,9 +415,4 @@ public class WalletFragment extends LoadingFragment implements View.OnClickListe
             }
         }.execute();
     }
-
-    public void startProgresss(){
-        progressON(getActivity(),"송금중...");
-    }
-
 }

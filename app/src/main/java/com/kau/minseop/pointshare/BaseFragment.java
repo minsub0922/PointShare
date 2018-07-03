@@ -13,6 +13,9 @@ import com.kau.minseop.pointshare.wallet.BusProvider;
  */
 
 public class BaseFragment extends Fragment {
+
+    public int count=0;
+
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
