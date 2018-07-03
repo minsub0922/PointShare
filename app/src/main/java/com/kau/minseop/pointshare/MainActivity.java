@@ -33,16 +33,52 @@ import io.realm.Realm;
 
 public class MainActivity extends AppCompatActivity implements BaseFragment.FragmentNavigation, FragNavController.TransactionListener, FragNavController.RootFragmentListener {
     private TextView tb_title;
-
+    private MenuItem preitem;
     String[] TABS;
 
     private Toolbar toolbar;
 
-    private TabLayout bottomTabLayout;
+    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
+            = new BottomNavigationView.OnNavigationItemSelectedListener() {
+        @Override
+        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+            switch (item.getItemId()) {
+                case R.id.nav_home:
+                    switchTab(0);
+                    if (item==preitem) {
+                        mNavController.clearStack();
+                        return false;
+                    }
+                    preitem = item;
+                    fragmentHistory.push(0);
+                    return true;
+                case R.id.nav_cardlist:
+                    switchTab(1);
+                    if (item==preitem) {
+                        mNavController.clearStack();
+                        return false;
+                    }
+                    fragmentHistory.push(1);
+                    preitem = item;
+
+                    return true;
+                case R.id.nav_mypage:
+                    switchTab(2);
+                    if (item==preitem) {
+                        mNavController.clearStack();
+                        return false;
+                    }
+                    fragmentHistory.push(2);
+                    preitem = item;
+                    return true;
+            }
+            return false;
+        }
+    };
 
     private FragNavController mNavController;
-
     private FragmentHistory fragmentHistory;
+    private  BottomNavigationView bottomTabLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,8 +88,6 @@ public class MainActivity extends AppCompatActivity implements BaseFragment.Frag
 
         initToolbar();
 
-        initTab();
-
         fragmentHistory = new FragmentHistory();
         mNavController = FragNavController.newBuilder(savedInstanceState, getSupportFragmentManager(), R.id.main_activity_fragment_container)
                 .transactionListener(this)
@@ -62,31 +96,14 @@ public class MainActivity extends AppCompatActivity implements BaseFragment.Frag
 
         switchTab(0);
 
-        bottomTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                fragmentHistory.push(tab.getPosition());
-                switchTab(tab.getPosition());
-            }
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-                mNavController.clearStack();
-                switchTab(tab.getPosition());
-            }
-        });
     }
 
     private void buildView(){
         TABS  = new String[]{getString(R.string.title_home), getString(R.string.title_cardlist), getString(R.string.title_mypage)};
 
         setContentView(R.layout.activity_main);
-
-        bottomTabLayout = findViewById(R.id.navigation);
+        bottomTabLayout = (BottomNavigationView) findViewById(R.id.navigation);
+        bottomTabLayout.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
         toolbar = findViewById(R.id.toolbar);
 
@@ -99,29 +116,6 @@ public class MainActivity extends AppCompatActivity implements BaseFragment.Frag
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
     }
-
-    private void initTab() {
-        if (bottomTabLayout != null) {
-            for (int i = 0; i < TABS.length; i++) {
-                bottomTabLayout.addTab(bottomTabLayout.newTab());
-                TabLayout.Tab tab = bottomTabLayout.getTabAt(i);
-                if (tab != null)
-                    tab.setCustomView(getTabView(i));
-            }
-        }
-    }
-
-    private View getTabView(int position) {
-        View view = LayoutInflater.from(MainActivity.this).inflate(R.layout.tab_item_bottom, null);
-        ImageView icon = (ImageView) view.findViewById(R.id.tab_icon);
-
-        if(position==0) Glide.with(this).load(R.drawable.baseline_home_black_48).into(icon);
-        else if (position == 1) Glide.with(this).load(R.drawable.baseline_credit_card_black_48).into(icon);
-        else if (position == 2) Glide.with(this).load(R.drawable.baseline_account_box_black_48).into(icon);
-
-        return view;
-    }
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -162,25 +156,13 @@ public class MainActivity extends AppCompatActivity implements BaseFragment.Frag
 
                     int position = fragmentHistory.popPrevious();
                     switchTab(position);
-                    updateTabSelection(position);
+                    //updateTabSelection(position);
 
                 } else {
                     switchTab(0);
-                    updateTabSelection(0);
+                    //updateTabSelection(0);
                     fragmentHistory.emptyStack();
                 }
-            }
-        }
-    }
-
-    private void updateTabSelection(int currentTab){
-
-        for (int i = 0; i <  TABS.length; i++) {
-            TabLayout.Tab selectedTab = bottomTabLayout.getTabAt(i);
-            if(currentTab != i) {
-                selectedTab.getCustomView().setSelected(false);
-            }else{
-                selectedTab.getCustomView().setSelected(true);
             }
         }
     }
