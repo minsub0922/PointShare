@@ -69,7 +69,7 @@ import javax.crypto.spec.SecretKeySpec;
 import io.realm.Realm;
 import io.realm.RealmResults;
 
-public class CardListViewActivity extends BaseFragment {
+public class CardListViewFragment extends BaseFragment {
     private CouponRecyclerViewAdapter adapter;
     private ArrayList<CouponModel> mItems = new ArrayList<>();
     private Web3j web3j;
