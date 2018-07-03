@@ -10,4 +10,9 @@
     <string name="textview_etherbase">Etherbase</string>
     <string name="textview_account_address">Account address</string>
     <string name="title_activity_main">MainActivity</string>
+    <array name="tab_name">
+        <item>Shop</item>
+        <item>Card List</item>
+        <item>My Page</item>
+    </array>
 </resources>

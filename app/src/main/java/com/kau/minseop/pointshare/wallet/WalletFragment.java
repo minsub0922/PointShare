@@ -35,6 +35,7 @@ import android.widget.Toast;
 
 import com.kau.minseop.pointshare.BaseFragment;
 import com.kau.minseop.pointshare.Contract;
+import com.kau.minseop.pointshare.MainActivity;
 import com.kau.minseop.pointshare.R;
 import com.kau.minseop.pointshare.adapter.WalletRecyclerViewAdapter;
 import com.kau.minseop.pointshare.contract.Coupondeal;
@@ -91,6 +92,14 @@ public class WalletFragment extends LoadingFragment implements View.OnClickListe
     private boolean isDeleted = false;
     private AppCompatDialog progressDialog;
 
+    public static WalletFragment newInstance(int instance) {
+        Bundle args = new Bundle();
+        args.putInt(ARGS_INSTANCE, instance);
+        WalletFragment fragment = new WalletFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     @SuppressLint("StaticFieldLeak")
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -119,6 +128,7 @@ public class WalletFragment extends LoadingFragment implements View.OnClickListe
         btn_attachWallet.setOnClickListener(this);
         btn_attachContract.setOnClickListener(this);
         btn_sendether.setOnClickListener(this);
+        ( (MainActivity)getActivity()).updateToolbarTitle("MY PAGE");
     }
 
     private void buildRecyclerView(View v){

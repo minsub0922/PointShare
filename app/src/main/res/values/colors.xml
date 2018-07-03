@@ -19,4 +19,12 @@
     <color name="textColorWhiteDisabled">#80ffffff</color>
 
     <color name="appthemeColor">#F7861C</color>
+
+
+    <color name="black">#000000</color>
+
+    <color name="black_25_transparent">#40000000</color>
+
+    <color name="transparent">#00000000</color>
+
 </resources>

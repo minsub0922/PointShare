@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.kau.minseop.pointshare.BaseFragment;
+import com.kau.minseop.pointshare.MainActivity;
 import com.kau.minseop.pointshare.R;
 import com.kau.minseop.pointshare.adapter.CardlistRecyclerViewAdapter;
 import com.kau.minseop.pointshare.event.ActivityResultEvent;
@@ -34,6 +35,19 @@ public class CardListFragment extends BaseFragment {
     RecyclerView rv;
     Button addCard;
     CardListDBHelper dbHelper;
+
+    public static CardListFragment newInstance(int instance) {
+        Bundle args = new Bundle();
+        args.putInt(ARGS_INSTANCE, instance);
+        CardListFragment fragment = new CardListFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    public CardListFragment(){
+
+    }
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_cardlist, container, false);
@@ -43,6 +57,9 @@ public class CardListFragment extends BaseFragment {
         rv.setAdapter(adapter);
         rv.setLayoutManager(new LinearLayoutManager(this.getContext()) );
         rv.setNestedScrollingEnabled(false);
+
+        ( (MainActivity)getActivity()).updateToolbarTitle("CARD LIST");
+
         setData();
         addCard = (Button)v.findViewById(R.id.addcard);
         adapter.setItemClick(new CardlistRecyclerViewAdapter.ItemClick() {

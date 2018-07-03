@@ -8,5 +8,15 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="windowNoTitle">true</item>
     </style>
+    <style name="BottomTabLayout" parent="Widget.Design.TabLayout">
+        <item name="tabIndicatorHeight">0dp</item>
+        <item name="tabPaddingStart">0dp</item>
+        <item name="tabPaddingEnd">0dp</item>
+        <item name="tabGravity">fill</item>
+        <item name="tabMode">fixed</item>
 
+    </style>
+    <style name="titleStyle" parent="@style/Base.TextAppearance.AppCompat.Title">
+        <item name="android:textSize">17dp</item>
+    </style>
 </resources>

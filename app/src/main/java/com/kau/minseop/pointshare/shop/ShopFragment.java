@@ -34,6 +34,7 @@ import android.widget.Toast;
 
 import com.kau.minseop.pointshare.BaseFragment;
 import com.kau.minseop.pointshare.Contract;
+import com.kau.minseop.pointshare.MainActivity;
 import com.kau.minseop.pointshare.R;
 import com.kau.minseop.pointshare.adapter.ShopRecyclerViewAdapter;
 import com.kau.minseop.pointshare.contract.Coupondeal;
@@ -89,9 +90,26 @@ public class ShopFragment extends LoadingFragment {
     private ProgressBar progressBar;
     private TextView txt_coffee, txt_travel, txt_store;
 
+    int fragCount;
+
+
+    public static ShopFragment newInstance(int instance) {
+        Bundle args = new Bundle();
+        args.putInt(ARGS_INSTANCE, instance);
+        ShopFragment fragment = new ShopFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    public ShopFragment(){
+
+    }
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View v = inflater.inflate(R.layout.fragment_shop, container, false);
+
+        setHasOptionsMenu(true);
 
         buildView(v);
 
@@ -102,17 +120,17 @@ public class ShopFragment extends LoadingFragment {
 
         getMyWallet();
 
-
-
         buildRecyclerView(v);
 
-
         if (doneGetMyWallet) {
-            //startProgresss(1);
-
             getCouponList();
-
             getWalletBallance(walletModel.getWalletAddress());
+        }
+
+        Bundle args = getArguments();
+        if (args != null) {
+            fragCount = args.getInt(ARGS_INSTANCE);
+            Log.d("TAG", "count :"+String.valueOf(fragCount));
         }
 
         return v;
@@ -127,6 +145,8 @@ public class ShopFragment extends LoadingFragment {
         progressBar.setIndeterminate(true);
         progressBar.getIndeterminateDrawable().setColorFilter(Color.rgb(247,134,28), PorterDuff.Mode.MULTIPLY);
         txt_balance = v.findViewById(R.id.txt_shop_mywallet_balance);
+
+        ( (MainActivity)getActivity()).updateToolbarTitle("SHOP");
     }
 
     private void buildRecyclerView(View v){
