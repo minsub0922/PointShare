@@ -64,15 +64,21 @@ public class CardListFragment extends BaseFragment {
         adapter.setItemClick(new CardlistRecyclerViewAdapter.ItemClick() {
             @Override
             public void onClick(View view, int position) {
-              /*  Intent intent = new Intent(getActivity(),CardListViewFragment.class);
+              /*  Intent intent = new Intent(getActivity(),CardListViewActivity.class);
                 //intent.putExtra("items", mItems.get(position));
                 intent.putExtra("cardnum",mItems.get(position).getCardNum());
                 intent.putExtra("cardPassward",mItems.get(position).getCardPassward());
                 intent.putExtra("cardPeriod",mItems.get(position).getCardValidityPeriod());
                 intent.putExtra("cardtype",mItems.get(position).getCardType());
                 startActivity(intent);*/
-                mFragmentNavigation.pushFragment(new CardListViewFragment());
-
+                CardListViewActivity fragment = new CardListViewActivity();
+                Bundle args = new Bundle();
+                args.putString("cardnum",mItems.get(position).getCardNum());
+                args.putString("cardPassward",mItems.get(position).getCardPassward());
+                args.putString("cardPeriod",mItems.get(position).getCardValidityPeriod());
+                args.putString("cardtype",mItems.get(position).getCardType());
+                fragment.setArguments(args);
+                mFragmentNavigation.pushFragment(fragment);
             }
         });
         addCard.setOnClickListener(new View.OnClickListener() {
@@ -100,7 +106,6 @@ public class CardListFragment extends BaseFragment {
                 mItems.add(cards);
             }
         }
-
 
         adapter.notifyDataSetChanged();
     }

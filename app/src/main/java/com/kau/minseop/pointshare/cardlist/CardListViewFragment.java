@@ -1,27 +1,18 @@
 package com.kau.minseop.pointshare.cardlist;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.app.Fragment;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.drawable.AnimationDrawable;
-import android.graphics.drawable.ColorDrawable;
-import android.net.wifi.hotspot2.pps.Credential;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.os.Handler;
-import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -38,17 +29,14 @@ import com.google.zxing.common.BitMatrix;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 import com.kau.minseop.pointshare.BaseFragment;
 import com.kau.minseop.pointshare.Contract;
+import com.kau.minseop.pointshare.MainActivity;
 import com.kau.minseop.pointshare.R;
-import com.kau.minseop.pointshare.adapter.CardlistRecyclerViewAdapter;
 import com.kau.minseop.pointshare.adapter.CouponRecyclerViewAdapter;
-import com.kau.minseop.pointshare.loading.BaseActivity;
-import com.kau.minseop.pointshare.model.CardListModel;
 
 import java.util.ArrayList;
 import com.kau.minseop.pointshare.contract.Coupondeal;
 import com.kau.minseop.pointshare.model.CouponModel;
 import com.kau.minseop.pointshare.model.WalletModel;
-import com.kau.minseop.pointshare.model.WalletViewHolerModel;
 
 import org.web3j.crypto.Credentials;
 import org.web3j.crypto.WalletUtils;
@@ -73,7 +61,6 @@ public class CardListViewFragment extends BaseFragment {
     private CouponRecyclerViewAdapter adapter;
     private ArrayList<CouponModel> mItems = new ArrayList<>();
     private Web3j web3j;
-    private TextView cardType;
     private TextView cardNum;
     private ImageView Im_qrCode;
     private String qrCode;
@@ -92,9 +79,8 @@ public class CardListViewFragment extends BaseFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        View v = inflater.inflate(R.layout.activity_card_list_view, container, false);
+        View v = inflater.inflate(R.layout.fragment_card_list_view, container, false);
 
-        cardType = (TextView)v.findViewById(R.id.cardtype);
         cardNum = (TextView)v.findViewById(R.id.cardnum);
         Im_qrCode = (ImageView)v.findViewById(R.id.qrCode);
 
@@ -102,19 +88,18 @@ public class CardListViewFragment extends BaseFragment {
         mRealm = Realm.getDefaultInstance();
         getWallet();
 
-        /*Intent intent = getIntent();
-        String cType = intent.getExtras().getString("cardtype");
-        String cNum = intent.getExtras().getString("cardnum");
-        String cPassward = intent.getExtras().getString("cardPassward");
-        String cPeriod = intent.getExtras().getString("cardPeriod");
+        String cType = getArguments().getString("cardtype");
+        String cNum = getArguments().getString("cardnum");
+        String cPassward = getArguments().getString("cardPassward");
+        String cPeriod = getArguments().getString("cardPeriod");
 
         try {
             qrCode= encrypt( cNum+cPassward, KEY);
         } catch (Exception e) {
             e.printStackTrace();
-        }*/
+        }
 
-      /*  AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
                 getActivity() );
         adapter = new CouponRecyclerViewAdapter(mItems);
         RecyclerView rv;
@@ -130,12 +115,11 @@ public class CardListViewFragment extends BaseFragment {
             Im_qrCode.setImageBitmap(bitmap);
         }catch (WriterException e){
             e.printStackTrace();
-        }*/
+        }
 
-      /*  cardType.setText(cType);
-        cardNum.setText(cNum);*/
+        cardNum.setText(cNum);
 
-       /* adapter.setItemClick(new CouponRecyclerViewAdapter.ItemClick() {
+        adapter.setItemClick(new CouponRecyclerViewAdapter.ItemClick() {
             @Override
             public void onClick(View view, int position) {
                 // 제목셋팅
@@ -160,7 +144,9 @@ public class CardListViewFragment extends BaseFragment {
 
                 alertDialogBuilder.show();
             }
-        });*/
+        });
+
+        ( (MainActivity)getActivity()).updateToolbarTitle(cType);
         return v;
     }
 
