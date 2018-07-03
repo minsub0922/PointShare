@@ -71,8 +71,14 @@ public class CardListFragment extends BaseFragment {
                 intent.putExtra("cardPeriod",mItems.get(position).getCardValidityPeriod());
                 intent.putExtra("cardtype",mItems.get(position).getCardType());
                 startActivity(intent);*/
-                mFragmentNavigation.pushFragment(new CardListViewActivity());
-
+                CardListViewActivity fragment = new CardListViewActivity();
+                Bundle args = new Bundle();
+                args.putString("cardnum",mItems.get(position).getCardNum());
+                args.putString("cardPassward",mItems.get(position).getCardPassward());
+                args.putString("cardPeriod",mItems.get(position).getCardValidityPeriod());
+                args.putString("cardtype",mItems.get(position).getCardType());
+                fragment.setArguments(args);
+                mFragmentNavigation.pushFragment(fragment);
             }
         });
         addCard.setOnClickListener(new View.OnClickListener() {
