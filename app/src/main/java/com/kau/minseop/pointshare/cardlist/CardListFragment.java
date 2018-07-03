@@ -64,13 +64,6 @@ public class CardListFragment extends BaseFragment {
         adapter.setItemClick(new CardlistRecyclerViewAdapter.ItemClick() {
             @Override
             public void onClick(View view, int position) {
-              /*  Intent intent = new Intent(getActivity(),CardListViewActivity.class);
-                //intent.putExtra("items", mItems.get(position));
-                intent.putExtra("cardnum",mItems.get(position).getCardNum());
-                intent.putExtra("cardPassward",mItems.get(position).getCardPassward());
-                intent.putExtra("cardPeriod",mItems.get(position).getCardValidityPeriod());
-                intent.putExtra("cardtype",mItems.get(position).getCardType());
-                startActivity(intent);*/
                 CardListViewFragment fragment = new CardListViewFragment();
                 Bundle args = new Bundle();
                 args.putString("cardnum",mItems.get(position).getCardNum());

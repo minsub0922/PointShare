@@ -92,15 +92,6 @@ public class ShopFragment extends BaseFragment {
 
     int fragCount;
 
-
-    public static ShopFragment newInstance(int instance) {
-        Bundle args = new Bundle();
-        args.putInt(ARGS_INSTANCE, instance);
-        ShopFragment fragment = new ShopFragment();
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     public ShopFragment(){
     }
 
