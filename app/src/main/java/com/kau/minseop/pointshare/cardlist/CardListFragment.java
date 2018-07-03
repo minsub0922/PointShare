@@ -107,7 +107,6 @@ public class CardListFragment extends BaseFragment {
             }
         }
 
-
         adapter.notifyDataSetChanged();
     }
 
