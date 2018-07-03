@@ -71,7 +71,7 @@ public class CardListFragment extends BaseFragment {
                 intent.putExtra("cardPeriod",mItems.get(position).getCardValidityPeriod());
                 intent.putExtra("cardtype",mItems.get(position).getCardType());
                 startActivity(intent);*/
-                CardListViewActivity fragment = new CardListViewActivity();
+                CardListViewFragment fragment = new CardListViewFragment();
                 Bundle args = new Bundle();
                 args.putString("cardnum",mItems.get(position).getCardNum());
                 args.putString("cardPassward",mItems.get(position).getCardPassward());

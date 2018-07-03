@@ -23,6 +23,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.zxing.BarcodeFormat;
+import com.google.zxing.EncodeHintType;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
@@ -49,6 +50,8 @@ import org.web3j.tx.ManagedTransaction;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigInteger;
+import java.util.EnumMap;
+import java.util.Map;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
@@ -75,6 +78,7 @@ public class CardListViewFragment extends BaseFragment {
     private AppCompatDialog progressDialog;
     Handler mHandler =null;
 
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -92,9 +96,8 @@ public class CardListViewFragment extends BaseFragment {
         String cNum = getArguments().getString("cardnum");
         String cPassward = getArguments().getString("cardPassward");
         String cPeriod = getArguments().getString("cardPeriod");
-
         try {
-            qrCode= encrypt( cNum+cPassward, KEY);
+            qrCode = cNum + cPassward;//= encrypt( cNum+cPassward, KEY);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -107,15 +110,19 @@ public class CardListViewFragment extends BaseFragment {
         rv.setAdapter(adapter);
         rv.setLayoutManager(new LinearLayoutManager(getActivity().getApplicationContext()) );
         setData();
+
+
         MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
         try {
-            BitMatrix bitMatrix = multiFormatWriter.encode(qrCode, BarcodeFormat.QR_CODE,250,250);
+            //BitMatrix bitMatrix = multiFormatWriter.encode(qrCode, BarcodeFormat.QR_CODE,250,250);
+            BitMatrix bitMatrix = multiFormatWriter.encode(qrCode, BarcodeFormat.CODE_128,400,170);
             BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
             Bitmap bitmap = barcodeEncoder.createBitmap(bitMatrix);
             Im_qrCode.setImageBitmap(bitmap);
         }catch (WriterException e){
             e.printStackTrace();
         }
+
 
         cardNum.setText(cNum);
 
