@@ -25,7 +25,7 @@ public class BaseFragment extends Fragment {
     public static final String ARGS_INSTANCE = "com.kau.minseop.pointshare";
 
 
-    FragmentNavigation mFragmentNavigation;
+    public FragmentNavigation mFragmentNavigation;
 
     @Override
     public void onAttach(Context context) {

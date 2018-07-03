@@ -45,7 +45,6 @@ public class CardListFragment extends BaseFragment {
     }
 
     public CardListFragment(){
-
     }
 
     @Override
@@ -65,13 +64,14 @@ public class CardListFragment extends BaseFragment {
         adapter.setItemClick(new CardlistRecyclerViewAdapter.ItemClick() {
             @Override
             public void onClick(View view, int position) {
-                Intent intent = new Intent(getActivity(),CardListViewActivity.class);
+              /*  Intent intent = new Intent(getActivity(),CardListViewActivity.class);
                 //intent.putExtra("items", mItems.get(position));
                 intent.putExtra("cardnum",mItems.get(position).getCardNum());
                 intent.putExtra("cardPassward",mItems.get(position).getCardPassward());
                 intent.putExtra("cardPeriod",mItems.get(position).getCardValidityPeriod());
                 intent.putExtra("cardtype",mItems.get(position).getCardType());
-                startActivity(intent);
+                startActivity(intent);*/
+                mFragmentNavigation.pushFragment(new CardListViewActivity());
 
             }
         });

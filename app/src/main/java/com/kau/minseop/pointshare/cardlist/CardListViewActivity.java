@@ -2,6 +2,7 @@ package com.kau.minseop.pointshare.cardlist;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.Fragment;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -12,6 +13,8 @@ import android.os.AsyncTask;
 import android.os.Environment;
 import android.os.Handler;
 import android.provider.ContactsContract;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -21,7 +24,9 @@ import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,6 +36,7 @@ import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
+import com.kau.minseop.pointshare.BaseFragment;
 import com.kau.minseop.pointshare.Contract;
 import com.kau.minseop.pointshare.R;
 import com.kau.minseop.pointshare.adapter.CardlistRecyclerViewAdapter;
@@ -63,7 +69,7 @@ import javax.crypto.spec.SecretKeySpec;
 import io.realm.Realm;
 import io.realm.RealmResults;
 
-public class CardListViewActivity extends BaseActivity {
+public class CardListViewActivity extends BaseFragment {
     private CouponRecyclerViewAdapter adapter;
     private ArrayList<CouponModel> mItems = new ArrayList<>();
     private Web3j web3j;
@@ -82,19 +88,21 @@ public class CardListViewActivity extends BaseActivity {
     private AppCompatDialog progressDialog;
     Handler mHandler =null;
 
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_card_list_view);
-        cardType = (TextView)findViewById(R.id.cardtype);
-        cardNum = (TextView)findViewById(R.id.cardnum);
-        Im_qrCode = (ImageView)findViewById(R.id.qrCode);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
+        View v = inflater.inflate(R.layout.activity_card_list_view, container, false);
+
+        cardType = (TextView)v.findViewById(R.id.cardtype);
+        cardNum = (TextView)v.findViewById(R.id.cardnum);
+        Im_qrCode = (ImageView)v.findViewById(R.id.qrCode);
 
         web3j = Web3jFactory.build(new HttpService("https://ropsten.infura.io/wd7279F18YpzuVLkfZTk"));
         mRealm = Realm.getDefaultInstance();
         getWallet();
 
-        Intent intent = getIntent();
+        /*Intent intent = getIntent();
         String cType = intent.getExtras().getString("cardtype");
         String cNum = intent.getExtras().getString("cardnum");
         String cPassward = intent.getExtras().getString("cardPassward");
@@ -104,15 +112,15 @@ public class CardListViewActivity extends BaseActivity {
             qrCode= encrypt( cNum+cPassward, KEY);
         } catch (Exception e) {
             e.printStackTrace();
-        }
+        }*/
 
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
-                this);
+      /*  AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                getActivity() );
         adapter = new CouponRecyclerViewAdapter(mItems);
         RecyclerView rv;
-        rv = findViewById(R.id.recyclerView);
+        rv = v.findViewById(R.id.recyclerView);
         rv.setAdapter(adapter);
-        rv.setLayoutManager(new LinearLayoutManager(this.getApplicationContext()) );
+        rv.setLayoutManager(new LinearLayoutManager(getActivity().getApplicationContext()) );
         setData();
         MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
         try {
@@ -122,12 +130,12 @@ public class CardListViewActivity extends BaseActivity {
             Im_qrCode.setImageBitmap(bitmap);
         }catch (WriterException e){
             e.printStackTrace();
-        }
+        }*/
 
-        cardType.setText(cType);
-        cardNum.setText(cNum);
+      /*  cardType.setText(cType);
+        cardNum.setText(cNum);*/
 
-        adapter.setItemClick(new CouponRecyclerViewAdapter.ItemClick() {
+       /* adapter.setItemClick(new CouponRecyclerViewAdapter.ItemClick() {
             @Override
             public void onClick(View view, int position) {
                 // 제목셋팅
@@ -139,7 +147,7 @@ public class CardListViewActivity extends BaseActivity {
                         .setCancelable(true)
                         .setPositiveButton("네", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                startProgresss();
+                                //startProgresss();
                                 sendCoupon(mItems.get(position),qrCode);
                             }
                         })
@@ -152,11 +160,12 @@ public class CardListViewActivity extends BaseActivity {
 
                 alertDialogBuilder.show();
             }
-        });
+        });*/
+        return v;
     }
 
     protected void Toastmessage(){
-        Toast.makeText(getApplicationContext(),"등록완료",Toast.LENGTH_LONG).show();
+        Toast.makeText(getActivity().getApplicationContext(),"등록완료",Toast.LENGTH_LONG).show();
 
     }
 
@@ -261,7 +270,7 @@ public class CardListViewActivity extends BaseActivity {
                     contract = Coupondeal.load(contractAddress, web3j, credential, ManagedTransaction.GAS_PRICE, Contract.GAS_LIMIT);
                     contract.createCoupon(couponModel.getcName(), couponModel.getCompany(), qrcode, couponModel.getPrice(), couponModel.getDeadline()).send();
                     Log.d("TAG","잘했어요");
-                    progressOFF();
+                    //progressOFF();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -269,9 +278,9 @@ public class CardListViewActivity extends BaseActivity {
             }
         }.execute();
     }
-    public void startProgresss(){
+ /*   public void startProgresss(){
         progressON(this,"올리는중...");
-    }
+    }*/
 
 
 }
