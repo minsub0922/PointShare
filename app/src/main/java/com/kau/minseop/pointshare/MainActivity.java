@@ -33,7 +33,7 @@ import io.realm.Realm;
 
 public class MainActivity extends AppCompatActivity implements BaseFragment.FragmentNavigation, FragNavController.TransactionListener, FragNavController.RootFragmentListener {
     private TextView tb_title;
-    private MenuItem preitem;
+    private int preitem;
     String[] TABS;
 
     private Toolbar toolbar;
@@ -45,31 +45,31 @@ public class MainActivity extends AppCompatActivity implements BaseFragment.Frag
             switch (item.getItemId()) {
                 case R.id.nav_home:
                     switchTab(0);
-                    if (item==preitem) {
+                    if (preitem==0) {
                         mNavController.clearStack();
                         return false;
                     }
-                    preitem = item;
                     fragmentHistory.push(0);
+                    preitem = 0;
                     return true;
                 case R.id.nav_cardlist:
                     switchTab(1);
-                    if (item==preitem) {
+                    if (preitem==1) {
                         mNavController.clearStack();
                         return false;
                     }
                     fragmentHistory.push(1);
-                    preitem = item;
+                    preitem = 1;
 
                     return true;
                 case R.id.nav_mypage:
                     switchTab(2);
-                    if (item==preitem) {
+                    if (preitem==2) {
                         mNavController.clearStack();
                         return false;
                     }
                     fragmentHistory.push(2);
-                    preitem = item;
+                    preitem = 2;
                     return true;
             }
             return false;
@@ -151,15 +151,16 @@ public class MainActivity extends AppCompatActivity implements BaseFragment.Frag
                 super.onBackPressed();
 
             } else {
-
                 if (fragmentHistory.getStackSize() > 1) {
-
                     int position = fragmentHistory.popPrevious();
                     switchTab(position);
                     //updateTabSelection(position);
-
+                    bottomTabLayout.getMenu().getItem(position).setChecked(true);
+                    preitem = position;
                 } else {
+                    bottomTabLayout.getMenu().getItem(0).setChecked(true);
                     switchTab(0);
+                    preitem = 0;
                     //updateTabSelection(0);
                     fragmentHistory.emptyStack();
                 }
