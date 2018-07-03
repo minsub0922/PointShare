@@ -1,9 +1,12 @@
 package com.kau.minseop.pointshare;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
@@ -79,6 +82,8 @@ public class MainActivity extends AppCompatActivity implements BaseFragment.Frag
     private FragNavController mNavController;
     private FragmentHistory fragmentHistory;
     private  BottomNavigationView bottomTabLayout;
+    private Snackbar snackbar;
+    private CoordinatorLayout coordinatorLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,10 +103,28 @@ public class MainActivity extends AppCompatActivity implements BaseFragment.Frag
 
     }
 
+    public void snackBarOn(String msg){
+        snackbar = Snackbar
+                .make(coordinatorLayout, "now uploading", Snackbar.LENGTH_INDEFINITE);
+        snackbar.setActionTextColor(Color.YELLOW);
+        snackbar.show();
+    }
+
+    public void snackBarDismiss(){
+        snackbar.setText("upload finished");
+        snackbar.setAction("OK", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                    }
+                }
+        );
+    }
+
     private void buildView(){
         TABS  = new String[]{getString(R.string.title_home), getString(R.string.title_cardlist), getString(R.string.title_mypage)};
 
         setContentView(R.layout.activity_main);
+        coordinatorLayout = findViewById(R.id.coordinator);
         bottomTabLayout = (BottomNavigationView) findViewById(R.id.navigation);
         bottomTabLayout.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
