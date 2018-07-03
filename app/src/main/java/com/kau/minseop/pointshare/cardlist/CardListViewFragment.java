@@ -259,10 +259,7 @@ public class CardListViewFragment extends BaseFragment {
     }
 
     private void sendCoupon(CouponModel couponModel, String qrcode) {
-        snackbar = Snackbar
-                .make(v.findViewById(R.id.frag_cardlistview_coordinatorlayout), "now uploading", Snackbar.LENGTH_INDEFINITE);
-        snackbar.setActionTextColor(Color.YELLOW);
-        snackbar.show();
+
 
         final boolean[] isSuccess = new boolean[1];
 
