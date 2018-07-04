@@ -15,6 +15,7 @@ import com.kau.minseop.pointshare.wallet.BusProvider;
 public class BaseFragment extends Fragment {
 
     public int count=0;
+    public final String contractAddress = "0xc4f089BC18CF1Ba71249367294C227BdFc9eb236";
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {

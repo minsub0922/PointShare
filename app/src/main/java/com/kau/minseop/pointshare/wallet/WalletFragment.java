@@ -84,7 +84,6 @@ public class WalletFragment extends BaseFragment implements View.OnClickListener
     private Web3j web3j;
     private List<Credentials> credentials = new ArrayList<>();
     private Realm mRealm;
-    private String contractAddress = "0xc4f089BC18CF1Ba71249367294C227BdFc9eb236";
     private Button btn_attachWallet, btn_attachContract, btn_sendether;
     private RecyclerView rv;
     private WalletRecyclerViewAdapter adapter;
@@ -288,7 +287,7 @@ public class WalletFragment extends BaseFragment implements View.OnClickListener
     @Override
     public void onClick(View v) {
         if(v.getId()==R.id.btn_attach_wallet) startActivityForResult(new Intent(getActivity(), GenerationActivity.class),1);
-        else if (v.getId()==R.id.btn_attach_contract) generateNewContract();
+        //else if (v.getId()==R.id.btn_attach_contract) generateNewContract();
         else if (v.getId()==R.id.btn_send_ether_other) sendEtherTo();
         //else if (v.getId()==R.id.btn_get_contract) getMyContract();
     }
@@ -394,7 +393,7 @@ public class WalletFragment extends BaseFragment implements View.OnClickListener
         }.execute();
     }
 
-    private void generateNewContract(){
+    /*private void generateNewContract(){
         new AsyncTask(){
             @Override
             protected Object doInBackground(Object[] objects) {
@@ -414,5 +413,5 @@ public class WalletFragment extends BaseFragment implements View.OnClickListener
                 return null;
             }
         }.execute();
-    }
+    }*/
 }

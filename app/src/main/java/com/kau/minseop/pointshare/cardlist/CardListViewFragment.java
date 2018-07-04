@@ -76,7 +76,6 @@ public class CardListViewFragment extends BaseFragment {
     private String KEY = "199301130922";
     private Credentials credential;
     private Realm mRealm;
-    private String contractAddress = "0xc4f089BC18CF1Ba71249367294C227BdFc9eb236";
     private String walletBalance;
     private Coupondeal contract;
     private WalletModel walletModel = new WalletModel();

@@ -79,7 +79,6 @@ public class ShopFragment extends BaseFragment {
     private String walletBalance;
     private Credentials credential;
     private Web3j web3j;
-    private String contractAddress = "0xc4f089BC18CF1Ba71249367294C227BdFc9eb236";
     private WalletModel walletModel = new WalletModel();
     private TextView txt_balance;
     private RecyclerView rv_coffee, rv_travel, rv_store;
