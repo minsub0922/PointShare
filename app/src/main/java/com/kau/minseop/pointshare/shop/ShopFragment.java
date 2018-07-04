@@ -357,9 +357,9 @@ public class ShopFragment extends BaseFragment implements SwipeRefreshLayout.OnR
     private List<ShoppingModel> determineType(String cname){
         if (cname.contains("스타")||cname.contains("TWOSOME")||cname.contains("COFFEEBEAN")){
             return coffeeList;
-        }else if (cname.contains("GS") || cname.contains("CU") || cname.contains("SEVENELEVEN")){
+        }else if (cname.contains("GS") || cname.contains("CU") || cname.contains("SEVENELEVEN")|| cname.contains("cu")){
             return storeList;
-        }else if (cname.contains("그린")||cname.contains("socar")||cname.contains("모두")){
+        }else if (cname.contains("그린")||cname.contains("SOCAR")||cname.contains("모두")||cname.contains("socar")){
             return travelList;
         }else return coffeeList;
     }
