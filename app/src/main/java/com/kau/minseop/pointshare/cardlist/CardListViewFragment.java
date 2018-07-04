@@ -148,7 +148,7 @@ public class CardListViewFragment extends BaseFragment {
                         })
                         .setNegativeButton("취소", new DialogInterface.OnClickListener() {
                             public void onClick(
-                                DialogInterface dialog, int id) {
+                                    DialogInterface dialog, int id) {
                                 // 다이얼로그를 취소한다
                                 dialog.cancel();
                             }});
@@ -283,7 +283,7 @@ public class CardListViewFragment extends BaseFragment {
                     Toast.makeText(getActivity(), "insufficient funds for gas, price ...", Toast.LENGTH_SHORT).show();
                 }else{
                     activity.snackBarDismiss();
-            }
+                }
             }
         }.execute();
     }

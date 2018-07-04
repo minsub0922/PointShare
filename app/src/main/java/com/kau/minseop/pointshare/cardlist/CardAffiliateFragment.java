@@ -29,6 +29,7 @@ import com.journeyapps.barcodescanner.BarcodeEncoder;
 import com.kau.minseop.pointshare.BaseFragment;
 import com.kau.minseop.pointshare.R;
 import com.kau.minseop.pointshare.adapter.AffiliateGridViewAdapter;
+import com.kau.minseop.pointshare.adapter.CardlistRecyclerViewAdapter;
 
 import java.util.ArrayList;
 
@@ -110,9 +111,21 @@ public class CardAffiliateFragment extends BaseFragment {
             }
 
         });
-
+        gridAdapters.setItemClick(new AffiliateGridViewAdapter.ItemClick() {
+            @Override
+            public void onClick(View view, int position) {
+                CardListViewFragment fragment = new CardListViewFragment();
+                Bundle args = new Bundle();
+                args.putString("cardCompany",affName.get(position).toString());
+                fragment.setArguments(args);
+                mFragmentNavigation.pushFragment(fragment);
+            }
+        });
 
         return v;
+
+
+
     }
 
 }

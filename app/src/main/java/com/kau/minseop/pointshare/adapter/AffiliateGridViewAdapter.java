@@ -24,12 +24,19 @@ public class AffiliateGridViewAdapter extends BaseAdapter {
     ArrayList affname;
     ArrayList affimg;
     Context context;
+    private AffiliateGridViewAdapter.ItemClick itemClick;
+    public interface ItemClick {
+        public void onClick(View view,int position);
+    }
+    //아이템 클릭시 실행 함수 등록 함수
+    public void setItemClick(AffiliateGridViewAdapter.ItemClick itemClick) {
+        this.itemClick = itemClick;
+    }
     public AffiliateGridViewAdapter(ArrayList affname, ArrayList affimg,Context context) {
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.affname = affname;
         this.affimg = affimg;
         this.context=context;
-        Log.d("TAG","시발");
 
     }
     @Override
@@ -40,8 +47,9 @@ public class AffiliateGridViewAdapter extends BaseAdapter {
     @Override
     public Object getItem(int position) {
         // TODO Auto-generated method stub
-        return affimg.get(position);    //아이템을 호출할 때 사용하는 메소드
+        return affname.get(position);    //아이템을 호출할 때 사용하는 메소드
     }
+
     @Override
     public long getItemId(int position) {
         // TODO Auto-generated method stub
@@ -63,8 +71,12 @@ public class AffiliateGridViewAdapter extends BaseAdapter {
             public void onClick(View v) {
                 // TODO Auto-generated method stub
                 // 이미지를 터치했을때 동작하는 곳
+                if(itemClick != null){
+                    itemClick.onClick(v,position);
+                }
             }
         });
+
         return convertView;
     }
 }

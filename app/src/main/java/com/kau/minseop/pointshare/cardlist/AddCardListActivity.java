@@ -25,6 +25,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.kau.minseop.pointshare.MainActivity;
 import com.kau.minseop.pointshare.R;
 import com.kau.minseop.pointshare.helper.CardListDBHelper;
 
@@ -53,6 +54,7 @@ public class AddCardListActivity extends AppCompatActivity {
         final EditText etCardCVC = (EditText)findViewById(R.id.cardcvc);
         final EditText etCardPassward = (EditText)findViewById(R.id.cardpassward);
         final TextView result = (TextView) findViewById(R.id.result);
+
         spinnerlist = new ArrayList<>();
         spinnerAdapter = new ArrayAdapter(this,android.R.layout.simple_list_item_1,spinnerlist);
         spinner = (Spinner)findViewById(R.id.spinner);

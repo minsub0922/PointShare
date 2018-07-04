@@ -5,8 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.kau.minseop.pointshare.cardlist.CardListViewFragment"
-    android:orientation="vertical">
-
+    android:orientation="vertical"
+    android:background="#ffffff">
     <ImageView
         android:id="@+id/qrCode"
         android:scaleType="fitXY"
@@ -42,7 +42,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        android:background="#ffd3d3d3"
+        android:background="#eeeeee"
         android:paddingLeft="3dp"
         android:paddingRight="3dp"
         >
