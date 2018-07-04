@@ -81,7 +81,6 @@ public class WalletFragment extends BaseFragment implements View.OnClickListener
     public static final String TAG = WalletFragment.class.getName();
 
     private CoordinatorLayout coordinatorLayout;
-    private Web3j web3j;
     private List<Credentials> credentials = new ArrayList<>();
     private Realm mRealm;
     private Button btn_attachWallet, btn_attachContract, btn_sendether;
@@ -89,21 +88,13 @@ public class WalletFragment extends BaseFragment implements View.OnClickListener
     private WalletRecyclerViewAdapter adapter;
     private final List<WalletViewHolerModel> modelList = new ArrayList<>();
     private boolean isDeleted = false;
-    private AppCompatDialog progressDialog;
-
-    public static WalletFragment newInstance(int instance) {
-        Bundle args = new Bundle();
-        args.putInt(ARGS_INSTANCE, instance);
-        WalletFragment fragment = new WalletFragment();
-        fragment.setArguments(args);
-        return fragment;
-    }
 
     @SuppressLint("StaticFieldLeak")
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View v = inflater.inflate(R.layout.fragment_wallet, container, false);
-        web3j = Web3jFactory.build(new HttpService("https://ropsten.infura.io/wd7279F18YpzuVLkfZTk"));
+
+        web3j = Web3jFactory.build(new HttpService(testnetAddess));
 
         count++;
 
@@ -373,24 +364,6 @@ public class WalletFragment extends BaseFragment implements View.OnClickListener
                 readyForRequest(model.getPassword(), model.getDetailPath());
             }
         }
-    }
-
-    private void getMyContract(){
-        new AsyncTask(){
-            @Override
-            protected Object doInBackground(Object[] objects) {
-                Coupondeal contract = Coupondeal.load(contractAddress, web3j, credentials.get(0),ManagedTransaction.GAS_PRICE, Contract.GAS_LIMIT);
-
-                try {
-                    Log.d("TAG","asd:  "+ String.valueOf(contract.getCouponList(BigInteger.valueOf(0)).send()));
-                    Log.d("TAG","asd:  "+ String.valueOf(contract.getCouponList(BigInteger.valueOf(1)).send()));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    Log.d("TAG", String.valueOf(e));
-                }
-                return null;
-            }
-        }.execute();
     }
 
     /*private void generateNewContract(){

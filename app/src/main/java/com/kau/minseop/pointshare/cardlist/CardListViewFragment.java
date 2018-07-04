@@ -73,15 +73,12 @@ public class CardListViewFragment extends BaseFragment {
     private TextView cardNum;
     private ImageView Im_qrCode;
     private String qrCode;
-    private String KEY = "199301130922";
     private Credentials credential;
     private Realm mRealm;
     private String walletBalance;
     private Coupondeal contract;
     private WalletModel walletModel = new WalletModel();
     private CouponModel couponModel;
-    private AppCompatDialog progressDialog;
-    Handler mHandler =null;
     View v;
 
 
@@ -94,8 +91,9 @@ public class CardListViewFragment extends BaseFragment {
         cardNum = (TextView)v.findViewById(R.id.cardnum);
         Im_qrCode = (ImageView)v.findViewById(R.id.qrCode);
 
-        web3j = Web3jFactory.build(new HttpService("https://ropsten.infura.io/wd7279F18YpzuVLkfZTk"));
+        web3j = Web3jFactory.build(new HttpService(testnetAddess));
         mRealm = Realm.getDefaultInstance();
+
         getWallet();
 
         String cType = getArguments().getString("cardtype");
@@ -162,12 +160,6 @@ public class CardListViewFragment extends BaseFragment {
         ( (MainActivity)getActivity()).updateToolbarTitle(cType);
         return v;
     }
-
-    protected void Toastmessage(){
-        Toast.makeText(getActivity().getApplicationContext(),"등록완료",Toast.LENGTH_LONG).show();
-    }
-
-
 
     private static String encrypt(String text, String key) throws Exception {
         Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");

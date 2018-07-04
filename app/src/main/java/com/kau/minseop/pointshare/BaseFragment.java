@@ -8,6 +8,8 @@ import android.view.View;
 
 import com.kau.minseop.pointshare.wallet.BusProvider;
 
+import org.web3j.protocol.Web3j;
+
 /**
  * Created by minseop on 2018-06-08.
  */
@@ -15,7 +17,12 @@ import com.kau.minseop.pointshare.wallet.BusProvider;
 public class BaseFragment extends Fragment {
 
     public int count=0;
+    public final String KEY = "199301130922";
     public final String contractAddress = "0xc4f089BC18CF1Ba71249367294C227BdFc9eb236";
+    public Web3j web3j;
+    public String testnetAddess = "https://ropsten.infura.io/wd7279F18YpzuVLkfZTk";
+
+
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {

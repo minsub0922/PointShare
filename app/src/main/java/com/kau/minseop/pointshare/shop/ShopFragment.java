@@ -74,7 +74,6 @@ import io.realm.RealmResults;
  */
 
 public class ShopFragment extends BaseFragment {
-    private String KEY = "199301130922";
     private Realm mRealm;
     private String walletBalance;
     private Credentials credential;
@@ -122,7 +121,7 @@ public class ShopFragment extends BaseFragment {
     }
 
     private void originPageBuild(){
-        web3j = Web3jFactory.build(new HttpService("https://ropsten.infura.io/wd7279F18YpzuVLkfZTk"));
+        web3j = Web3jFactory.build(new HttpService(testnetAddess));
         mRealm = Realm.getDefaultInstance();
         alertDialogBuilder = new AlertDialog.Builder(getActivity());
         getMyWallet();
@@ -295,7 +294,6 @@ public class ShopFragment extends BaseFragment {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-               // progressOFF();
                 return null;
             }
 
@@ -343,7 +341,6 @@ public class ShopFragment extends BaseFragment {
                     e.printStackTrace();
                     Log.d("TAG", String.valueOf(e));
                 }
-               // progressOFF();
                 return null;
             }
 
@@ -365,15 +362,6 @@ public class ShopFragment extends BaseFragment {
             }
         }.execute();
     }
-
-  /*  public void startProgresss(int i){
-        if(i==1)
-        progressON(getActivity(),"리스트 받는중...");
-        else if(i==2){
-            progressON(getActivity(),"쿠폰 구매중...");
-        }
-
-    }*/
 
     private static String decrypt(String text, String key) throws Exception {
         Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
