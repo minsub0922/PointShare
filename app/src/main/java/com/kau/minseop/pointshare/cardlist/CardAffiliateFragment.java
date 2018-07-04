@@ -13,8 +13,11 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
@@ -23,12 +26,17 @@ import com.journeyapps.barcodescanner.BarcodeEncoder;
 import com.kau.minseop.pointshare.BaseFragment;
 import com.kau.minseop.pointshare.R;
 
+import java.util.ArrayList;
+
 
 public class CardAffiliateFragment extends BaseFragment {
     private String qrCode;
     private TextView cardNum;
     private ImageView Im_qrCode;
+    private ArrayList affName;
+    private ArrayList affImg;
     FirebaseDatabase database = FirebaseDatabase.getInstance();
+    DatabaseReference cardRef = database.getReference("CardCoupon");
     DatabaseReference couponRef = database.getReference("coupons");
     View v;
     @Nullable
@@ -37,7 +45,8 @@ public class CardAffiliateFragment extends BaseFragment {
         v = inflater.inflate(R.layout.fragment_card_affiliate, container, false);
         cardNum = (TextView)v.findViewById(R.id.cardnum);
         Im_qrCode = (ImageView)v.findViewById(R.id.qrCode);
-
+        affName = new ArrayList();
+        affImg = new ArrayList();
         String cType = getArguments().getString("cardtype");
         String cNum = getArguments().getString("cardnum");
         String cPassward = getArguments().getString("cardPassward");
@@ -59,8 +68,20 @@ public class CardAffiliateFragment extends BaseFragment {
         }
         cardNum.setText(cNum);
 
+        cardRef.child(cType.toLowerCase()).child("affiliates").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                affName.clear();
+                for(DataSnapshot snapshot:dataSnapshot.getChildren()){
+                    affName.add(snapshot.getValue().toString());
+                }
+            }
 
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
 
+            }
+        });
         return v;
     }
 
