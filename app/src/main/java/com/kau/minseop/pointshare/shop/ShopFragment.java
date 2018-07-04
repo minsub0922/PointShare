@@ -401,18 +401,21 @@ public class ShopFragment extends BaseFragment implements SwipeRefreshLayout.OnR
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.txt_coffee_more){
+            ((MainActivity) getActivity()).setArrayList(coffeeList,0);
             ShopDetailFragment fragment = new ShopDetailFragment();
             Bundle args = new Bundle();
             args.putInt("index",0);
             fragment.setArguments(args);
             mFragmentNavigation.pushFragment(fragment);
         }else if (v.getId() == R.id.txt_travel_more){
+            ((MainActivity) getActivity()).setArrayList(travelList,1);
             ShopDetailFragment fragment = new ShopDetailFragment();
             Bundle args = new Bundle();
             args.putInt("index",1);
             fragment.setArguments(args);
             mFragmentNavigation.pushFragment(fragment);
         }else if (v.getId() == R.id.txt_store_more){
+            ((MainActivity) getActivity()).setArrayList(storeList,2);
             ShopDetailFragment fragment = new ShopDetailFragment();
             Bundle args = new Bundle();
             args.putInt("index",2);

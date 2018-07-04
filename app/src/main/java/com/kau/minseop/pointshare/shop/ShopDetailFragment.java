@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -32,6 +33,7 @@ import com.kau.minseop.pointshare.adapter.ShopRecyclerViewAdapter;
 import com.kau.minseop.pointshare.contract.Coupondeal;
 import com.kau.minseop.pointshare.model.ShoppingModel;
 import com.kau.minseop.pointshare.model.WalletModel;
+import com.kau.minseop.pointshare.utils.GetImageResource;
 
 import org.w3c.dom.Text;
 import org.web3j.crypto.Credentials;
@@ -74,6 +76,7 @@ public class ShopDetailFragment extends BaseFragment {
     private WalletModel walletModel = new WalletModel();
     private AlertDialog.Builder alertDialogBuilder;
     private boolean doneGetMyWallet = false;
+    private ImageView img_company;
 
     @Nullable
     @Override
@@ -83,6 +86,8 @@ public class ShopDetailFragment extends BaseFragment {
         index = getArguments().getInt("index");
 
         initView();
+
+        initWallet();
 
         return v;
     }
@@ -94,9 +99,17 @@ public class ShopDetailFragment extends BaseFragment {
 
         list = ((MainActivity) getActivity()).getArrayList(index);
 
+        img_company = v.findViewById(R.id.img_company);
         gridView = v.findViewById(R.id.fragment_shop_detail_gridView);
         adapter = new MyAdapter(getActivity(), list);
         gridView.setAdapter(adapter);
+
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                setOnItemClickListener(list.get(position));
+            }
+        });
     }
 
     private void initWallet(){
@@ -107,7 +120,7 @@ public class ShopDetailFragment extends BaseFragment {
         getWalletBallance(walletModel.getWalletAddress());
     }
 
-    private void setOnItemClickListener(ShoppingModel model){
+    public void setOnItemClickListener(ShoppingModel model){
         Log.d("TAG", String.valueOf(model.getIndex()));
         alertDialogBuilder.setTitle(model.getCouponModel().getcName()+" 구매하기");
         alertDialogBuilder
@@ -242,7 +255,6 @@ public class ShopDetailFragment extends BaseFragment {
     class MyAdapter extends BaseAdapter {
         Context context;
         List<ShoppingModel> list;
-        LayoutInflater inf;
 
         public MyAdapter(Context context, List<ShoppingModel> list) {
             this.context = context;
@@ -269,15 +281,18 @@ public class ShopDetailFragment extends BaseFragment {
 
             if (convertView==null) {
                 LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-                convertView = inflater.inflate(R.layout.model_shop_viewholder,parent,false);
+                convertView = inflater.inflate(R.layout.model_shop_recycler,parent,false);
             }
             final ShoppingModel model = list.get(position);
-            ImageView iv = convertView.findViewById(R.id.img_model_shop_viewholder);
+            ImageView img = convertView.findViewById(R.id.img_model_shop_recycler);
+            ImageView img2 = convertView.findViewById(R.id.img2_model_shop_recycler);
             TextView cname = convertView.findViewById(R.id.txt_model_shop_cname);
             TextView balance = convertView.findViewById(R.id.txt_model_shop_price);
             TextView deadline = convertView.findViewById(R.id.txt_model_shop_deadline);
 
-            Glide.with(context) .load(R.drawable.starbucks).into(iv);
+            GetImageResource getImageResource = new GetImageResource();
+            Glide.with(context) .load(getImageResource.getCouponImgRes(model.getCouponModel().getcName())).into(img);
+            Glide.with(context) .load(getImageResource.getCompanyImgRes(model.getCouponModel().getCompany())).into(img2);
             cname.setText(model.getCouponModel().getcName());
             balance.setText(model.getCouponModel().getPrice());
             deadline.setText(model.getCouponModel().getDeadline());

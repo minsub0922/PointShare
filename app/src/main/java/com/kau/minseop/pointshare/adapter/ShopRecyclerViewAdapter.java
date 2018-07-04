@@ -22,6 +22,7 @@ import com.kau.minseop.pointshare.R;
 import com.kau.minseop.pointshare.model.ShoppingModel;
 import com.kau.minseop.pointshare.model.WalletModel;
 import com.kau.minseop.pointshare.model.WalletViewHolerModel;
+import com.kau.minseop.pointshare.utils.GetImageResource;
 
 import java.util.List;
 
@@ -63,19 +64,10 @@ public class ShopRecyclerViewAdapter extends  RecyclerView.Adapter<ShopRecyclerV
     @Override
     public void onBindViewHolder(@NonNull ShopViewHoler holder, int position) {
         final ShoppingModel model = modelList.get(position);
-        Log.d("TAG","name of company : "+model.getCouponModel().getCompany());
-        if (model.getCouponModel().getCompany().contains("스타")){
-            Glide.with(context) .load(R.drawable.starbucks).into(holder.img2);
-        }else if (model.getCouponModel().getCompany().contains("GS")){
-            Glide.with(context) .load(R.drawable.gs25).into(holder.img2);
-        }else if (model.getCouponModel().getCompany().contains("그린")){
-            Glide.with(context) .load(R.drawable.greencar).into(holder.img2);
-        }else if (model.getCouponModel().getCompany().contains("SOCAR")){
-            Glide.with(context) .load(R.drawable.socar).into(holder.img2);
-        }else if (model.getCouponModel().getCompany().contains("모두")){
-            Glide.with(context) .load(R.drawable.modutour).into(holder.img2);
-        }
-        Glide.with(context).load(R.drawable.americano).into(holder.img);
+
+        GetImageResource getImageResource = new GetImageResource();
+        Glide.with(context).load( getImageResource.getCompanyImgRes(model.getCouponModel().getCompany())).into(holder.img2);
+        Glide.with(context).load( getImageResource.getCouponImgRes(model.getCouponModel().getcName())).into(holder.img);
 
         holder.txt_couponName.setText(model.getCouponModel().getcName());
         holder.txt_couponPrice.setText(model.getCouponModel().getPrice());
