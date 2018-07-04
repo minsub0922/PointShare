@@ -18,7 +18,7 @@ public class BaseFragment extends Fragment {
 
     public int count=0;
     public final String KEY = "199301130922";
-    public final String contractAddress = "0xc4f089BC18CF1Ba71249367294C227BdFc9eb236";
+    public final String contractAddress = "0xb9e35DC2Ce838b4E7A1cDf722d0363bba61E0bf7";
     public Web3j web3j;
     public String testnetAddess = "https://ropsten.infura.io/wd7279F18YpzuVLkfZTk";
 
