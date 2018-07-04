@@ -6,6 +6,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     >
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/shop_swipe_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
     <ScrollView
         android:padding="10dp"
         android:scrollbars="none"
@@ -92,4 +96,5 @@
         </LinearLayout>
     </LinearLayout>
     </ScrollView>
+    </android.support.v4.widget.SwipeRefreshLayout>
 </android.support.design.widget.CoordinatorLayout>

@@ -17,7 +17,7 @@
             <ImageView
                 android:id="@+id/img_model_shop_viewholder"
                 android:layout_width="match_parent"
-                android:layout_height="80dp"
+                android:layout_height="110dp"
                 android:scaleType="fitXY"
                 android:src="@mipmap/ic_launcher"
                 android:layout_marginBottom="10dp"/>
@@ -25,7 +25,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:layout_marginLeft="10dp">
+                >
                 <TextView
                     android:id="@+id/txt_model_shop_cname"
                     android:layout_width="wrap_content"
@@ -33,7 +33,6 @@
                     android:maxLines="1"
                     android:text="coupon name"
                     android:textSize="12dp"
-                    android:layout_gravity="center"
                     />
                 <TextView
                     android:layout_gravity="center"
@@ -42,12 +41,12 @@
                     android:id="@+id/txt_model_shop_price"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="11dp"
+                    android:textSize="13dp"
                     android:text="balance"
                     />
                 <TextView
-                    android:layout_gravity="center"
-                    android:layout_marginTop="10dp"
+                    android:layout_gravity="end"
+                    android:layout_marginTop="5dp"
                     android:id="@+id/txt_model_shop_deadline"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

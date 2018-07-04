@@ -22,12 +22,16 @@ import com.bumptech.glide.Glide;
 import com.kau.minseop.pointshare.cardlist.CardListFragment;
 import com.kau.minseop.pointshare.event.ActivityResultEvent;
 import com.kau.minseop.pointshare.handler.BackPressHandler;
+import com.kau.minseop.pointshare.model.ShoppingModel;
 import com.kau.minseop.pointshare.shop.ShopFragment;
 import com.kau.minseop.pointshare.utils.FragmentHistory;
 import com.kau.minseop.pointshare.utils.Utils;
 import com.kau.minseop.pointshare.views.FragNavController;
 import com.kau.minseop.pointshare.wallet.BusProvider;
 import com.kau.minseop.pointshare.wallet.WalletFragment;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindArray;
 import butterknife.BindView;
@@ -38,7 +42,7 @@ public class MainActivity extends AppCompatActivity implements BaseFragment.Frag
     private TextView tb_title;
     private int preitem;
     String[] TABS;
-
+    private List<ShoppingModel> coffeeList = new ArrayList<>(), travelList = new ArrayList<>(), storeList = new ArrayList<>();
     private Toolbar toolbar;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
@@ -84,6 +88,7 @@ public class MainActivity extends AppCompatActivity implements BaseFragment.Frag
     private  BottomNavigationView bottomTabLayout;
     private Snackbar snackbar;
     private CoordinatorLayout coordinatorLayout;
+    private String msg;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,20 +109,42 @@ public class MainActivity extends AppCompatActivity implements BaseFragment.Frag
     }
 
     public void snackBarOn(String msg){
+        this.msg = msg;
         snackbar = Snackbar
-                .make(coordinatorLayout, "now uploading", Snackbar.LENGTH_INDEFINITE);
+                .make(coordinatorLayout, msg, Snackbar.LENGTH_INDEFINITE);
         snackbar.setActionTextColor(Color.YELLOW);
         snackbar.show();
     }
 
     public void snackBarDismiss(){
-        snackbar.setText("upload finished");
+        snackbar.setText(msg);
         snackbar.setAction("OK", new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                     }
                 }
         );
+    }
+
+    public void setArrayList(List<ShoppingModel> arrayList, int index){
+        if (index == 0){
+           coffeeList = arrayList;
+        }else if (index ==1){
+            travelList = arrayList;
+        }else if (index ==2){
+            storeList = arrayList;
+        }
+    }
+
+    public List<ShoppingModel> getArrayList(int index){
+        if (index == 0){
+            return coffeeList;
+        }else if (index == 1){
+            return travelList;
+        }else if (index ==2){
+            return storeList;
+        }
+        return null;
     }
 
     private void buildView(){

@@ -16,6 +16,8 @@ import android.os.Environment;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatDialog;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -25,6 +27,7 @@ import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -73,13 +76,13 @@ import io.realm.RealmResults;
  * Created by minseop on 2018-06-09.
  */
 
-public class ShopFragment extends BaseFragment {
+public class ShopFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener, View.OnClickListener {
     private Realm mRealm;
     private String walletBalance;
     private Credentials credential;
     private Web3j web3j;
     private WalletModel walletModel = new WalletModel();
-    private TextView txt_balance;
+    private TextView txt_balance, txt_coffee_more, txt_travel_more, txt_store_more;
     private RecyclerView rv_coffee, rv_travel, rv_store;
     private ShopRecyclerViewAdapter adapter_coffee, adapter_travel, adapter_store;
     private List<ShoppingModel> coffeeList = new ArrayList<>(), travelList = new ArrayList<>(), storeList = new ArrayList<>();
@@ -87,8 +90,9 @@ public class ShopFragment extends BaseFragment {
     private boolean doneGetMyWallet = false;
     private ProgressBar progressBar;
     private TextView txt_coffee, txt_travel, txt_store;
-
-    int fragCount;
+    private SwipeRefreshLayout swipeRefreshLayout;
+    private ConstraintLayout constraintLayout;
+    private boolean refreshing=false;
 
     public ShopFragment(){
     }
@@ -110,13 +114,6 @@ public class ShopFragment extends BaseFragment {
         } else if (count>1){
             copyPageBuild();
         }
-
-        Bundle args = getArguments();
-        if (args != null) {
-            fragCount = args.getInt(ARGS_INSTANCE);
-            Log.d("TAG", "count :"+String.valueOf(fragCount));
-        }
-
         return v;
     }
 
@@ -148,8 +145,30 @@ public class ShopFragment extends BaseFragment {
         progressBar.setIndeterminate(true);
         progressBar.getIndeterminateDrawable().setColorFilter(Color.rgb(247,134,28), PorterDuff.Mode.MULTIPLY);
         txt_balance = v.findViewById(R.id.txt_shop_mywallet_balance);
+        txt_coffee_more = v.findViewById(R.id.txt_coffee_more);
+        txt_travel_more = v.findViewById(R.id.txt_travel_more);
+        txt_store_more = v.findViewById(R.id.txt_store_more);
+        txt_coffee_more.setOnClickListener(this);
+        txt_travel_more.setOnClickListener(this);
+        txt_store_more.setOnClickListener(this);
+
+        swipeRefreshLayout = v.findViewById(R.id.shop_swipe_layout);
+        swipeRefreshLayout.setOnRefreshListener(this);
 
         ( (MainActivity)getActivity()).updateToolbarTitle("SHOP");
+    }
+
+
+    @Override
+    public void onRefresh() {
+        refreshing=true;
+        getCouponList();
+        getWalletBallance(walletModel.getWalletAddress());
+    }
+
+    private void finishRefreshing(){
+        swipeRefreshLayout.setRefreshing(false);
+        refreshing=false;
     }
 
     private void buildRecyclerView(View v){
@@ -307,6 +326,7 @@ public class ShopFragment extends BaseFragment {
                 txt_coffee.setText("Coffee");
                 txt_travel.setText("Travel");
                 txt_store.setText("Store");
+                finishRefreshing();
             }
         }.execute();
     }
@@ -323,8 +343,8 @@ public class ShopFragment extends BaseFragment {
 
 
     private void purchaseCoupon(int index, String address, String price, String qrcode){
-        Log.d("TAG", qrcode);
-        //startProgresss(2);
+        MainActivity activity = ((MainActivity) getActivity());
+        activity.snackBarOn("purchasing ...");
         new AsyncTask(){
             @Override
             protected Object doInBackground(Object[] objects) {
@@ -356,7 +376,7 @@ public class ShopFragment extends BaseFragment {
                 } catch (Exception e) {
                     Log.d("TAG", String.valueOf(e));
                 }
-
+                activity.snackBarDismiss();
                 startActivity(intent);
 
             }
@@ -377,4 +397,29 @@ public class ShopFragment extends BaseFragment {
         return new String(results,"UTF-8");
     }
 
+    @Override
+    public void onClick(View v) {
+        if (v.getId() == R.id.txt_coffee_more){
+            ((MainActivity) getActivity()).setArrayList(coffeeList,0);
+            ShopDetailFragment fragment = new ShopDetailFragment();
+            Bundle args = new Bundle();
+            args.putInt("index",0);
+            fragment.setArguments(args);
+            mFragmentNavigation.pushFragment(fragment);
+        }else if (v.getId() == R.id.txt_travel_more){
+            ((MainActivity) getActivity()).setArrayList(travelList,1);
+            ShopDetailFragment fragment = new ShopDetailFragment();
+            Bundle args = new Bundle();
+            args.putInt("index",1);
+            fragment.setArguments(args);
+            mFragmentNavigation.pushFragment(fragment);
+        }else if (v.getId() == R.id.txt_store_more){
+            ((MainActivity) getActivity()).setArrayList(storeList,2);
+            ShopDetailFragment fragment = new ShopDetailFragment();
+            Bundle args = new Bundle();
+            args.putInt("index",2);
+            fragment.setArguments(args);
+            mFragmentNavigation.pushFragment(fragment);
+        }
+    }
 }

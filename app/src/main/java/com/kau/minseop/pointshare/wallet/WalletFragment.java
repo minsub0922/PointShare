@@ -15,6 +15,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatDialog;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -76,7 +77,7 @@ import io.realm.RealmResults;
  * Created by eirlis on 29.06.17.
  */
 
-public class WalletFragment extends BaseFragment implements View.OnClickListener , RecyclerItemTouchHelper.RecyclerItemTouchHelperListener {
+public class WalletFragment extends BaseFragment implements View.OnClickListener , RecyclerItemTouchHelper.RecyclerItemTouchHelperListener,SwipeRefreshLayout.OnRefreshListener {
 
     public static final String TAG = WalletFragment.class.getName();
 
@@ -88,6 +89,8 @@ public class WalletFragment extends BaseFragment implements View.OnClickListener
     private WalletRecyclerViewAdapter adapter;
     private final List<WalletViewHolerModel> modelList = new ArrayList<>();
     private boolean isDeleted = false;
+    private SwipeRefreshLayout swipeRefreshLayout;
+    private boolean refreshing=false;
 
     @SuppressLint("StaticFieldLeak")
     @Override
@@ -120,6 +123,10 @@ public class WalletFragment extends BaseFragment implements View.OnClickListener
         btn_attachContract.setOnClickListener(this);
         btn_sendether.setOnClickListener(this);
         ( (MainActivity)getActivity()).updateToolbarTitle("MY PAGE");
+
+        swipeRefreshLayout = v.findViewById(R.id.shop_swipe_layout);
+        swipeRefreshLayout.setOnRefreshListener(this);
+
     }
 
     private void buildRecyclerView(View v){
@@ -271,6 +278,7 @@ public class WalletFragment extends BaseFragment implements View.OnClickListener
             protected void onPostExecute(Object o) {
                 super.onPostExecute(o);
                 if (position==modelList.size()-1) adapter.notifyDataSetChanged();
+                finishRefreshing();
             }
         }.execute();
     }
@@ -364,6 +372,16 @@ public class WalletFragment extends BaseFragment implements View.OnClickListener
                 readyForRequest(model.getPassword(), model.getDetailPath());
             }
         }
+    }
+
+    @Override
+    public void onRefresh() {
+        getWalletBallance(0);
+    }
+
+    private void finishRefreshing(){
+        swipeRefreshLayout.setRefreshing(false);
+        refreshing=false;
     }
 
     /*private void generateNewContract(){
