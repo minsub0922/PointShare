@@ -48,6 +48,7 @@ import com.kau.minseop.pointshare.helper.RecyclerItemTouchHelper;
 import com.kau.minseop.pointshare.loading.LoadingFragment;
 import com.kau.minseop.pointshare.model.WalletModel;
 import com.kau.minseop.pointshare.model.WalletViewHolerModel;
+import com.kau.minseop.pointshare.mypage.MyPageFragment;
 import com.squareup.otto.Subscribe;
 
 import org.web3j.crypto.Credentials;
@@ -86,7 +87,7 @@ public class WalletFragment extends BaseFragment implements View.OnClickListener
     private CoordinatorLayout coordinatorLayout;
     private List<Credentials> credentials = new ArrayList<>();
     private Realm mRealm;
-    private Button btn_attachWallet, btn_attachContract, btn_sendether,btn_createCoupon;
+    private Button btn_attachWallet, btn_attachContract, btn_sendether,btn_createCoupon, btn_mypage;
     private RecyclerView rv;
     private WalletRecyclerViewAdapter adapter;
     private final List<WalletViewHolerModel> modelList = new ArrayList<>();
@@ -123,9 +124,12 @@ public class WalletFragment extends BaseFragment implements View.OnClickListener
         btn_attachWallet = v.findViewById(R.id.btn_attach_wallet);
         //btn_attachContract = v.findViewById(R.id.btn_attach_contract);
         btn_sendether = v.findViewById(R.id.btn_send_ether_other);
+
+        btn_mypage = v.findViewById(R.id.btn_mypage);
        // btn_createCoupon = v.findViewById(R.id.btn_create_coupon);
         btn_attachWallet.setOnClickListener(this);
         btn_sendether.setOnClickListener(this);
+        btn_mypage.setOnClickListener(this);
         //btn_createCoupon.setOnClickListener(this);
         ( (MainActivity)getActivity()).updateToolbarTitle("MY PAGE");
 
@@ -297,7 +301,18 @@ public class WalletFragment extends BaseFragment implements View.OnClickListener
         /*else if(v.getId() == R.id.btn_create_coupon){
             Intent intent = new Intent(getActivity(),CreateCouponActivity.class);
             startActivity(intent);
-        }*/
+        }*/else if(v.getId() == R.id.btn_mypage){
+            listCoupon();
+        }
+
+    }
+
+    private void listCoupon(){
+        MyPageFragment fragment = new MyPageFragment();
+        Bundle args = new Bundle();
+        args.putString("walletAddress",modelList.get(0).getWalletAddress());
+        fragment.setArguments(args);
+        mFragmentNavigation.pushFragment(fragment);
     }
 
     private void sendEtherTo(){

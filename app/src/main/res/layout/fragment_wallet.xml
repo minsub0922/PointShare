@@ -90,6 +90,14 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
         </LinearLayout>
+        <Button
+            android:layout_marginTop="20dp"
+            android:backgroundTint="@color/appthemeColor"
+            android:textColor="#ffffff"
+            android:id="@+id/btn_mypage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="PURCHASED COUPON"/>
     </LinearLayout>
     </ScrollView>
     </android.support.v4.widget.SwipeRefreshLayout>

@@ -44,6 +44,7 @@ import com.kau.minseop.pointshare.contract.Coupondeal;
 import com.kau.minseop.pointshare.handler.BackPressHandler;
 import com.kau.minseop.pointshare.loading.LoadingFragment;
 import com.kau.minseop.pointshare.model.CouponModel;
+import com.kau.minseop.pointshare.model.PurchasingModel;
 import com.kau.minseop.pointshare.model.ShoppingModel;
 import com.kau.minseop.pointshare.model.WalletModel;
 
@@ -225,7 +226,10 @@ public class ShopFragment extends BaseFragment implements SwipeRefreshLayout.OnR
                 .setPositiveButton("네", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         int remain = BigInteger.valueOf(Long.parseLong(model.getCouponModel().getPrice())).compareTo(BigInteger.valueOf(Long.parseLong(walletBalance)));
-                        if (remain==-1) purchaseCoupon(model.getIndex(),model.getSellerAddress(),model.getCouponModel().getPrice(),model.getQrCode());
+                        if (remain==-1){
+                            //purchaseCoupon(model.getIndex(),model.getSellerAddress(),model.getCouponModel().getPrice(),model.getQrCode());
+                            purchaseCoupon(model);
+                        }
                         else Toast.makeText(getActivity(), "잔액이 부족합니다.", Toast.LENGTH_SHORT).show();
                     }
                 })
@@ -233,6 +237,24 @@ public class ShopFragment extends BaseFragment implements SwipeRefreshLayout.OnR
                     public void onClick(DialogInterface dialog, int id) {dialog.cancel();}
                 });
         alertDialogBuilder.create().show();
+    }
+
+    private void createObject(ShoppingModel m){
+        mRealm.beginTransaction();
+        RealmResults<PurchasingModel> purchasingModels = mRealm.where(PurchasingModel.class).findAll();
+        PurchasingModel purchasingModel;
+        try {
+            purchasingModel = mRealm.createObject(PurchasingModel.class, m.getIndex()); //primary key
+            purchasingModel.setcName(m.getCouponModel().getcName());
+            purchasingModel.setCompany(m.getCouponModel().getCompany());
+            purchasingModel.setPrice(m.getCouponModel().getPrice());
+            purchasingModel.setDeadline(m.getCouponModel().getDeadline());
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        mRealm.commitTransaction();
+        Log.v("TAG", String.valueOf(purchasingModels.size()));
     }
 
     private void getMyWallet(){
@@ -343,7 +365,11 @@ public class ShopFragment extends BaseFragment implements SwipeRefreshLayout.OnR
     }
 
 
-    private void purchaseCoupon(int index, String address, String price, String qrcode){
+    private void purchaseCoupon(ShoppingModel model){
+        int index = model.getIndex();
+        String address = model.getSellerAddress();
+        String price = model.getCouponModel().getPrice();
+        String qrcode = model.getQrCode();
         MainActivity activity = ((MainActivity) getActivity());
         activity.snackBarOn("purchasing ...");
         new AsyncTask(){
@@ -371,13 +397,13 @@ public class ShopFragment extends BaseFragment implements SwipeRefreshLayout.OnR
 
                 getWalletBallance(walletModel.getWalletAddress());
                 Intent intent = new Intent(getActivity(),QRActivity.class);
-
                 try {
                     intent.putExtra("qrcode",decrypt(qrcode,KEY));
                 } catch (Exception e) {
                     Log.d("TAG", String.valueOf(e));
                 }
                 activity.snackBarDismiss();
+                createObject(model);
                 startActivity(intent);
 
             }
@@ -412,6 +438,7 @@ public class ShopFragment extends BaseFragment implements SwipeRefreshLayout.OnR
             ShopDetailFragment fragment = new ShopDetailFragment();
             Bundle args = new Bundle();
             args.putInt("index",1);
+
             fragment.setArguments(args);
             mFragmentNavigation.pushFragment(fragment);
         }else if (v.getId() == R.id.txt_store_more){
