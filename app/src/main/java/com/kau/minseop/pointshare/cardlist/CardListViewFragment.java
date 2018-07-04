@@ -183,18 +183,22 @@ public class CardListViewFragment extends BaseFragment {
         mItems.add(couponModel);
         couponModel = new CouponModel("그린라떼200ML","스타벅스","2000","~2018.09.10");
         mItems.add(couponModel);
-        couponModel = new CouponModel("2시간무료이용권","그린카","3000","~2023.12.30");
+        couponModel = new CouponModel("쏘카1만원할인권","socar","6000","~2023.12.30");
         mItems.add(couponModel);
-        couponModel = new CouponModel("3시간이상이용시20%할인권","SOCAR","5000","~2018.07.22");
+        couponModel = new CouponModel("CU모바일상품권(1만원권)","CU","5000","~2018.06.07");
         mItems.add(couponModel);
-        couponModel = new CouponModel("신한은행70%환율우대쿠폰","모두투어","2000","~2018.06.07");
+        couponModel = new CouponModel("(농심)토마토라면","CU","500","~2019.05.05");
         mItems.add(couponModel);
-        couponModel = new CouponModel("하나은행70%환율우대쿠폰","모두투어","2000","~2019.04.10");
+        couponModel = new CouponModel("(오뚜기)라면볶이","CU","500","~2019.07.07");
         mItems.add(couponModel);
-        couponModel = new CouponModel("(스타벅스)콜드브루270ML","GS25","800","~2020.10.05");
+        couponModel = new CouponModel("GS25모바일상품권(1만원권)","GS25","5000","~2019.05.24");
+        mItems.add(couponModel);
+        couponModel = new CouponModel("바나나우유240ML","GS25","800","~2020.10.05");
         mItems.add(couponModel);
         couponModel = new CouponModel("파이크플레이스블랙275ML","GS25","500","~2020.05.24");
         mItems.add(couponModel);
+
+
         adapter.notifyDataSetChanged();
     }
 

@@ -9,6 +9,7 @@ import android.widget.TextView;
 import com.kau.minseop.pointshare.R;
 import com.kau.minseop.pointshare.model.CardListModel;
 import com.kau.minseop.pointshare.model.CouponModel;
+import com.kau.minseop.pointshare.utils.GetImageResource;
 
 import java.util.ArrayList;
 
@@ -53,11 +54,14 @@ public class CouponRecyclerViewAdapter extends RecyclerView.Adapter<CouponRecycl
     // View 의 내용을 해당 포지션의 데이터로 바꿉니다.
     @Override
     public void onBindViewHolder(CouponRecyclerViewAdapter.ItemViewHolder holder, int position) {
+        GetImageResource imageResource = new GetImageResource();
         holder.cCompany.setText(mItems.get(position).getCompany());
         holder.cName.setText(mItems.get(position).getcName()+" - "+mItems.get(position).getPrice()+"원" );
         holder.cPeriod.setText(mItems.get(position).getDeadline()+"까지");
+        holder.itemView.findViewById(R.id.couponimg).setBackgroundResource(imageResource.getCouponImgRes(mItems.get(position).getcName()));
+/*
         if(mItems.get(position).getCompany().contains("모두투어")){
-            holder.itemView.findViewById(R.id.couponimg).setBackgroundResource(R.drawable.moducouponjpg);
+            holder.itemView.findViewById(R.id.couponimg).setBackgroundResource(R.drawable.hana);
         }
         else  if(mItems.get(position).getCompany().contains("스타벅스")){
             holder.itemView.findViewById(R.id.couponimg).setBackgroundResource(R.drawable.starbuckscoupon);
@@ -71,6 +75,7 @@ public class CouponRecyclerViewAdapter extends RecyclerView.Adapter<CouponRecycl
         else  if(mItems.get(position).getCompany().contains("그린카")){
             holder.itemView.findViewById(R.id.couponimg).setBackgroundResource(R.drawable.greencar);
         }
+        */
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
