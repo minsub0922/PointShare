@@ -6,13 +6,16 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -25,6 +28,7 @@ import com.google.zxing.common.BitMatrix;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 import com.kau.minseop.pointshare.BaseFragment;
 import com.kau.minseop.pointshare.R;
+import com.kau.minseop.pointshare.adapter.AffiliateGridViewAdapter;
 
 import java.util.ArrayList;
 
@@ -35,6 +39,7 @@ public class CardAffiliateFragment extends BaseFragment {
     private ImageView Im_qrCode;
     private ArrayList affName;
     private ArrayList affImg;
+    private GridView gridView;
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference cardRef = database.getReference("CardCoupon");
     DatabaseReference couponRef = database.getReference("coupons");
@@ -47,6 +52,9 @@ public class CardAffiliateFragment extends BaseFragment {
         Im_qrCode = (ImageView)v.findViewById(R.id.qrCode);
         affName = new ArrayList();
         affImg = new ArrayList();
+        AffiliateGridViewAdapter gridAdapters = new AffiliateGridViewAdapter(affName,affImg,getActivity());
+        gridView = (GridView) v.findViewById(R.id.gridViews);
+        gridView.setAdapter(gridAdapters);
         String cType = getArguments().getString("cardtype");
         String cNum = getArguments().getString("cardnum");
         String cPassward = getArguments().getString("cardPassward");
@@ -72,8 +80,27 @@ public class CardAffiliateFragment extends BaseFragment {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 affName.clear();
+                affImg.clear();
                 for(DataSnapshot snapshot:dataSnapshot.getChildren()){
-                    affName.add(snapshot.getValue().toString());
+                    couponRef.child(snapshot.getValue().toString()).child("name").addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            affName.add(dataSnapshot.getValue().toString());
+                        }
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                        }
+                    });
+                    couponRef.child(snapshot.getValue().toString()).child("imgurl").addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            affImg.add(dataSnapshot.getValue().toString());
+                            gridAdapters.notifyDataSetChanged();
+                        }
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                        }
+                    });
                 }
             }
 
@@ -81,47 +108,14 @@ public class CardAffiliateFragment extends BaseFragment {
             public void onCancelled(DatabaseError databaseError) {
 
             }
+
         });
+
+
         return v;
     }
 
-    class GridViewAdapter extends BaseAdapter {
-        Context context;
-        int layout;
-        int img[];
-        LayoutInflater inf;
-
-        public GridViewAdapter(Context context, int layout, int[] img) {
-            this.context = context;
-            this.layout = layout;
-            this.img = img;
-            inf = (LayoutInflater) context.getSystemService
-                    (Context.LAYOUT_INFLATER_SERVICE);
-        }
-
-        @Override
-        public int getCount() {
-            return img.length;
-        }
-
-        @Override
-        public Object getItem(int position) {
-            return img[position];
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return position;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            if (convertView==null)
-                convertView = inf.inflate(layout, null);
-            //ImageView iv = (ImageView)convertView.findViewById(R.id.imageView1);
-            //iv.setImageResource(img[position]);
-
-            return convertView;
-        }
-    }
 }
+
+
+

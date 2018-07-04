@@ -79,7 +79,7 @@ public class CardListFragment extends BaseFragment {
         adapter.setItemClick(new CardlistRecyclerViewAdapter.ItemClick() {
             @Override
             public void onClick(View view, int position) {
-                CardListViewFragment fragment = new CardListViewFragment();
+                CardAffiliateFragment fragment = new CardAffiliateFragment();
                 Bundle args = new Bundle();
                 args.putString("cardnum",mItems.get(position).getCardNum());
                 args.putString("cardPassward",mItems.get(position).getCardPassward());

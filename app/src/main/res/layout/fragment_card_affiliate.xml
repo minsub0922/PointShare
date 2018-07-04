@@ -41,11 +41,10 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        android:background="#ffd3d3d3"
         android:paddingLeft="3dp"
         android:paddingRight="3dp">
         <GridView
-            android:id="@+id/gridView1"
+            android:id="@+id/gridViews"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingLeft="7dp"

@@ -71,10 +71,14 @@ public class CardlistRecyclerViewAdapter extends RecyclerView.Adapter<CardlistRe
         imgViews = (ImageView)holder.itemView.findViewById(R.id.cardtypeImage);
         holder.cardType.setText(mItems.get(position).getCardType());
 
-        if(mItems.get(position).getCardType().contains("CJONE")){
-            holder.itemView.setBackgroundResource(R.drawable.cjone);
-            Glide.with(context).load(mItems.get(position).getImgurl()).into(imgViews);
-        }
+        if(mItems.get(position).getCardType().contains("CJONE")){holder.itemView.setBackgroundResource(R.drawable.cjone);}
+        else  if(mItems.get(position).getCardType().contains("HappyPoint")){holder.itemView.setBackgroundResource(R.drawable.happypoint);}
+        else  if(mItems.get(position).getCardType().contains("CU")){holder.itemView.setBackgroundResource(R.drawable.cu);}
+        else  if(mItems.get(position).getCardType().contains("신세계")){holder.itemView.setBackgroundResource(R.drawable.emart);}
+        else  if(mItems.get(position).getCardType().contains("KT")){holder.itemView.setBackgroundResource(R.drawable.kt);}
+        else  if(mItems.get(position).getCardType().contains("bithumb")){holder.itemView.setBackgroundResource(R.drawable.bithumb);}
+        else  if(mItems.get(position).getCardType().contains("GS")){holder.itemView.setBackgroundResource(R.drawable.gs);}
+        Glide.with(context).load(mItems.get(position).getImgurl()).into(imgViews);
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
