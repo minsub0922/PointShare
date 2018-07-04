@@ -34,6 +34,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.kau.minseop.pointshare.BaseFragment;
 import com.kau.minseop.pointshare.Contract;
 import com.kau.minseop.pointshare.MainActivity;
@@ -84,13 +86,15 @@ public class WalletFragment extends BaseFragment implements View.OnClickListener
     private CoordinatorLayout coordinatorLayout;
     private List<Credentials> credentials = new ArrayList<>();
     private Realm mRealm;
-    private Button btn_attachWallet, btn_attachContract, btn_sendether;
+    private Button btn_attachWallet, btn_attachContract, btn_sendether,btn_createCoupon;
     private RecyclerView rv;
     private WalletRecyclerViewAdapter adapter;
     private final List<WalletViewHolerModel> modelList = new ArrayList<>();
     private boolean isDeleted = false;
     private SwipeRefreshLayout swipeRefreshLayout;
     private boolean refreshing=false;
+
+
 
     @SuppressLint("StaticFieldLeak")
     @Override
@@ -119,9 +123,11 @@ public class WalletFragment extends BaseFragment implements View.OnClickListener
         btn_attachWallet = v.findViewById(R.id.btn_attach_wallet);
         btn_attachContract = v.findViewById(R.id.btn_attach_contract);
         btn_sendether = v.findViewById(R.id.btn_send_ether_other);
+        btn_createCoupon = v.findViewById(R.id.btn_create_coupon);
         btn_attachWallet.setOnClickListener(this);
         btn_attachContract.setOnClickListener(this);
         btn_sendether.setOnClickListener(this);
+        btn_createCoupon.setOnClickListener(this);
         ( (MainActivity)getActivity()).updateToolbarTitle("MY PAGE");
 
         swipeRefreshLayout = v.findViewById(R.id.shop_swipe_layout);
@@ -289,6 +295,10 @@ public class WalletFragment extends BaseFragment implements View.OnClickListener
         //else if (v.getId()==R.id.btn_attach_contract) generateNewContract();
         else if (v.getId()==R.id.btn_send_ether_other) sendEtherTo();
         //else if (v.getId()==R.id.btn_get_contract) getMyContract();
+        else if(v.getId() == R.id.btn_create_coupon){
+            Intent intent = new Intent(getActivity(),CreateCouponActivity.class);
+            startActivity(intent);
+        }
     }
 
     private void sendEtherTo(){

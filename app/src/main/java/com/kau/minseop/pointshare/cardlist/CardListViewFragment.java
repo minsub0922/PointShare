@@ -262,7 +262,7 @@ public class CardListViewFragment extends BaseFragment {
             protected Object doInBackground(Object[] objects) {
                 try {
                     contract = Coupondeal.load(contractAddress, web3j, credential, ManagedTransaction.GAS_PRICE, Contract.GAS_LIMIT);
-                    contract.createCoupon(couponModel.getcName(), couponModel.getCompany(), qrcode, couponModel.getPrice(), couponModel.getDeadline()).send();
+                    contract.createCoupon(couponModel.getcName(), couponModel.getCompany(), encrypt(qrcode,KEY), couponModel.getPrice(), couponModel.getDeadline()).send();
                     Log.d("TAG","잘했어요");
                     isSuccess[0] = true;
                     //progressOFF();
