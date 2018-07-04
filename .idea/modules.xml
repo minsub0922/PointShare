@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/PointShare.iml" filepath="$PROJECT_DIR$/PointShare.iml" />
+      <module fileurl="file://C:\Users\khanj\AndroidStudioProjects\PointShare-real\PointShare.iml" filepath="C:\Users\khanj\AndroidStudioProjects\PointShare-real\PointShare.iml" />
+      <module fileurl="file://$PROJECT_DIR$/PointShare-real.iml" filepath="$PROJECT_DIR$/PointShare-real.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>

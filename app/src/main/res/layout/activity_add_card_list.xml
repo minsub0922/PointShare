@@ -16,30 +16,11 @@
             android:layout_height="wrap_content"
             android:text="카드종류"
             android:layout_marginRight="15dp"/>
-        <RadioGroup
-            android:id="@+id/radio_group"
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <RadioButton
-                android:id="@+id/btn_radio1"
-                android:text="HappyPoint"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="10dp"/>
-            <RadioButton
-                android:layout_marginRight="10dp"
-                android:id="@+id/btn_radio2"
-                android:text="CU"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-            <RadioButton
-                android:layout_marginRight="10dp"
-                android:id="@+id/btn_radio3"
-                android:text="CJONE"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-        </RadioGroup>
+       <Spinner
+           android:id="@+id/spinner"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"/>
+
     </LinearLayout>
 
 
@@ -59,7 +40,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
-            android:inputType="date"/>
+            android:inputType="number"
+            android:hint="xxxx-xxxx-xxxx-xxxx"
+            android:maxLength="19">
+
+        </EditText>
 
     </LinearLayout>
 
@@ -78,7 +63,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
-            android:inputType="date"/>
+            android:inputType="date"
+            android:hint="월/년도"
+            android:maxLength="5"/>
 
     </LinearLayout>
     <LinearLayout
@@ -96,7 +83,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
-            android:inputType="number" />
+            android:inputType="number"
+            android:maxLength="3"
+            android:hint="카드 뒤에 있는 번호"/>
 
     </LinearLayout>
     <LinearLayout
@@ -114,7 +103,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
-            android:inputType="numberPassword"/>
+            android:inputType="numberPassword"
+            android:maxLength="4"
+            android:hint="비밀번호 4자리"/>
 
     </LinearLayout>
 

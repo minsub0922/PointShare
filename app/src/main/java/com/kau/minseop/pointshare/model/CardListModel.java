@@ -13,13 +13,15 @@ public class CardListModel {
     private String carCVCNum;
     private String cardPassward;
     private String point="100000";
+    private String imgurl;
 
-    public CardListModel(String cardType, String cardNum, String cardValidityPeriod, String carCVCNum, String cardPassward){
+    public CardListModel(String cardType, String cardNum, String cardValidityPeriod, String carCVCNum, String cardPassward, String imgurl){
         this.cardType = cardType ;
         this.cardNum = cardNum;
         this.cardValidityPeriod = cardValidityPeriod;
         this.carCVCNum = carCVCNum;
         this.cardPassward = cardPassward;
+        this.imgurl = imgurl;
     }
 
     public String getCardType() {
@@ -38,4 +40,5 @@ public class CardListModel {
         return cardPassward;
     }
     public String getPoint(){return point;}
+    public String getImgurl(){return imgurl;}
 }

@@ -1,14 +1,25 @@
 package com.kau.minseop.pointshare.adapter;
 
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.kau.minseop.pointshare.R;
 import com.kau.minseop.pointshare.model.CardListModel;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 
 /**
@@ -19,9 +30,13 @@ public class CardlistRecyclerViewAdapter extends RecyclerView.Adapter<CardlistRe
     ArrayList<CardListModel> mItems;
     //아이템 클릭시 실행 함수
     private ItemClick itemClick;
+    private ImageView imgViews;
+    Bitmap bitmap;
+    private Context context;
     public interface ItemClick {
         public void onClick(View view,int position);
     }
+
 
     //아이템 클릭시 실행 함수 등록 함수
     public void setItemClick(ItemClick itemClick) {
@@ -35,8 +50,10 @@ public class CardlistRecyclerViewAdapter extends RecyclerView.Adapter<CardlistRe
             this.view = view;
         }
     }
-    public CardlistRecyclerViewAdapter(ArrayList<CardListModel> items){
+    public CardlistRecyclerViewAdapter(ArrayList<CardListModel> items, Context context){
         mItems = items;
+        this.context =context;
+
     }
 
 
@@ -51,19 +68,13 @@ public class CardlistRecyclerViewAdapter extends RecyclerView.Adapter<CardlistRe
     // View 의 내용을 해당 포지션의 데이터로 바꿉니다.
     @Override
     public void onBindViewHolder(ItemViewHolder holder, int position) {
-        if(mItems.get(position).getCardType().contains("HappyPoint")){
-            holder.itemView.setBackgroundResource(R.drawable.happypoint);
-            holder.itemView.findViewById(R.id.cardtypeImage).setBackgroundResource(R.drawable.happypointlogo);
-        }
-        else if(mItems.get(position).getCardType().contains("CU")){
-            holder.itemView.setBackgroundResource(R.drawable.cu);
-            holder.itemView.findViewById(R.id.cardtypeImage).setBackgroundResource(R.drawable.culogo);
-        }
-        else if(mItems.get(position).getCardType().contains("CJONE")){
-            holder.itemView.setBackgroundResource(R.drawable.cjone);
-            holder.itemView.findViewById(R.id.cardtypeImage).setBackgroundResource(R.drawable.cjlogo);
-        }
+        imgViews = (ImageView)holder.itemView.findViewById(R.id.cardtypeImage);
         holder.cardType.setText(mItems.get(position).getCardType());
+
+        if(mItems.get(position).getCardType().contains("CJONE")){
+            holder.itemView.setBackgroundResource(R.drawable.cjone);
+            Glide.with(context).load(mItems.get(position).getImgurl()).into(imgViews);
+        }
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

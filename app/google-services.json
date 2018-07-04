@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "406439323336",
+    "firebase_url": "https://pointshare-4a908.firebaseio.com",
+    "project_id": "pointshare-4a908",
+    "storage_bucket": "pointshare-4a908.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:406439323336:android:e3f860bff1cfb28e",
+        "android_client_info": {
+          "package_name": "com.kau.minseop.pointshare"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "406439323336-8gv0ve0li6oa25tndacpg1a726ui0ef6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyABQtBCg4TNUmKoyhzUye6k4wLVgNL2aqI"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
