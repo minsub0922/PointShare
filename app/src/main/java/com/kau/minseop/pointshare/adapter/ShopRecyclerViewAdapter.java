@@ -13,6 +13,11 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.kau.minseop.pointshare.R;
 import com.kau.minseop.pointshare.model.ShoppingModel;
 import com.kau.minseop.pointshare.model.WalletModel;
@@ -32,6 +37,7 @@ public class ShopRecyclerViewAdapter extends  RecyclerView.Adapter<ShopRecyclerV
     private OnItemClickListener mListener;
     private final List<ShoppingModel> modelList;
     private Context context;
+    private DatabaseReference mDatabase;
 
     public interface OnItemClickListener{
         void onItemClick(int position);
@@ -41,6 +47,7 @@ public class ShopRecyclerViewAdapter extends  RecyclerView.Adapter<ShopRecyclerV
     }
 
     public ShopRecyclerViewAdapter(List<ShoppingModel> modelList, Context context) {
+        mDatabase = FirebaseDatabase.getInstance().getReference();
         this.modelList = modelList;
         this.context = context;
     }
@@ -49,7 +56,7 @@ public class ShopRecyclerViewAdapter extends  RecyclerView.Adapter<ShopRecyclerV
     @Override
     public ShopViewHoler onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         final LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        final View view = inflater.inflate(R.layout.model_shop_viewholder, parent, false);
+        final View view = inflater.inflate(R.layout.model_shop_recycler, parent, false);
         return new ShopViewHoler(view, mListener);
     }
 
@@ -58,16 +65,17 @@ public class ShopRecyclerViewAdapter extends  RecyclerView.Adapter<ShopRecyclerV
         final ShoppingModel model = modelList.get(position);
         Log.d("TAG","name of company : "+model.getCouponModel().getCompany());
         if (model.getCouponModel().getCompany().contains("스타")){
-            Glide.with(context) .load(R.drawable.starbucks).into(holder.img);
+            Glide.with(context) .load(R.drawable.starbucks).into(holder.img2);
         }else if (model.getCouponModel().getCompany().contains("GS")){
-            Glide.with(context) .load(R.drawable.gs25).into(holder.img);
+            Glide.with(context) .load(R.drawable.gs25).into(holder.img2);
         }else if (model.getCouponModel().getCompany().contains("그린")){
-            Glide.with(context) .load(R.drawable.greencar).into(holder.img);
+            Glide.with(context) .load(R.drawable.greencar).into(holder.img2);
         }else if (model.getCouponModel().getCompany().contains("SOCAR")){
-            Glide.with(context) .load(R.drawable.socar).into(holder.img);
+            Glide.with(context) .load(R.drawable.socar).into(holder.img2);
         }else if (model.getCouponModel().getCompany().contains("모두")){
-            Glide.with(context) .load(R.drawable.modutour).into(holder.img);
+            Glide.with(context) .load(R.drawable.modutour).into(holder.img2);
         }
+        Glide.with(context).load(R.drawable.americano).into(holder.img);
 
         holder.txt_couponName.setText(model.getCouponModel().getcName());
         holder.txt_couponPrice.setText(model.getCouponModel().getPrice());
@@ -79,13 +87,14 @@ public class ShopRecyclerViewAdapter extends  RecyclerView.Adapter<ShopRecyclerV
 
     public static class ShopViewHoler extends RecyclerView.ViewHolder{
 
-        private ImageView img;
+        private ImageView img, img2;
         private TextView txt_couponName, txt_couponPrice, txt_couponDeadline;
 
         public ShopViewHoler(View itemView, OnItemClickListener listener) {
             super(itemView);
 
-            img = itemView.findViewById(R.id.img_model_shop_viewholder);
+            img = itemView.findViewById(R.id.img_model_shop_recycler);
+            img2 = itemView.findViewById(R.id.img2_model_shop_recycler);
             txt_couponName = itemView.findViewById(R.id.txt_model_shop_cname);
             txt_couponPrice = itemView.findViewById(R.id.txt_model_shop_price);
             txt_couponDeadline= itemView.findViewById(R.id.txt_model_shop_deadline);

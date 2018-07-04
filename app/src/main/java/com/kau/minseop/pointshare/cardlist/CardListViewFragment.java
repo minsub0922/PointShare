@@ -95,6 +95,7 @@ public class CardListViewFragment extends BaseFragment {
         mRealm = Realm.getDefaultInstance();
 
         getWallet();
+
         String cType = getArguments().getString("cardtype");
         String cNum = getArguments().getString("cardnum");
         String cPassward = getArguments().getString("cardPassward");
@@ -132,8 +133,10 @@ public class CardListViewFragment extends BaseFragment {
         adapter.setItemClick(new CouponRecyclerViewAdapter.ItemClick() {
             @Override
             public void onClick(View view, int position) {
+                // 제목셋팅
                 alertDialogBuilder.setTitle("쿠폰 등록");
 
+                // AlertDialog 셋팅
                 alertDialogBuilder
                         .setMessage("쿠폰을 판매하시겠습니까?")
                         .setCancelable(true)
