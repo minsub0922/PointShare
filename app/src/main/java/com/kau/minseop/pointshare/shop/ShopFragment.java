@@ -359,7 +359,7 @@ public class ShopFragment extends BaseFragment implements SwipeRefreshLayout.OnR
             return coffeeList;
         }else if (cname.contains("GS") || cname.contains("CU") || cname.contains("SEVENELEVEN")){
             return storeList;
-        }else if (cname.contains("그린")||cname.contains("SOCAR")||cname.contains("모두")){
+        }else if (cname.contains("그린")||cname.contains("socar")||cname.contains("모두")){
             return travelList;
         }else return coffeeList;
     }

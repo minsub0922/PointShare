@@ -23,7 +23,7 @@ public class GetImageResource {
         }else if (company.contains("모두투어")) {
             return R.drawable.modutour;
         }else if (company.contains("CU")){
-            return R.drawable.cu;
+            return R.drawable.culogo;
         }
         return 0;
     }

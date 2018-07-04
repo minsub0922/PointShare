@@ -56,7 +56,7 @@ public class CouponRecyclerViewAdapter extends RecyclerView.Adapter<CouponRecycl
     public void onBindViewHolder(CouponRecyclerViewAdapter.ItemViewHolder holder, int position) {
         GetImageResource imageResource = new GetImageResource();
         holder.cCompany.setText(mItems.get(position).getCompany());
-        holder.cName.setText(mItems.get(position).getcName()+" - "+mItems.get(position).getPrice()+"원" );
+        holder.cName.setText(mItems.get(position).getcName());
         holder.cPeriod.setText(mItems.get(position).getDeadline()+"까지");
         holder.itemView.findViewById(R.id.couponimg).setBackgroundResource(imageResource.getCouponImgRes(mItems.get(position).getcName()));
 /*
