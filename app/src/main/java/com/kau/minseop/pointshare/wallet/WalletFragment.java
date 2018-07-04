@@ -121,13 +121,12 @@ public class WalletFragment extends BaseFragment implements View.OnClickListener
 
     private void buildButtons(View v){
         btn_attachWallet = v.findViewById(R.id.btn_attach_wallet);
-        btn_attachContract = v.findViewById(R.id.btn_attach_contract);
+        //btn_attachContract = v.findViewById(R.id.btn_attach_contract);
         btn_sendether = v.findViewById(R.id.btn_send_ether_other);
-        btn_createCoupon = v.findViewById(R.id.btn_create_coupon);
+       // btn_createCoupon = v.findViewById(R.id.btn_create_coupon);
         btn_attachWallet.setOnClickListener(this);
-        btn_attachContract.setOnClickListener(this);
         btn_sendether.setOnClickListener(this);
-        btn_createCoupon.setOnClickListener(this);
+        //btn_createCoupon.setOnClickListener(this);
         ( (MainActivity)getActivity()).updateToolbarTitle("MY PAGE");
 
         swipeRefreshLayout = v.findViewById(R.id.shop_swipe_layout);
@@ -295,10 +294,10 @@ public class WalletFragment extends BaseFragment implements View.OnClickListener
         //else if (v.getId()==R.id.btn_attach_contract) generateNewContract();
         else if (v.getId()==R.id.btn_send_ether_other) sendEtherTo();
         //else if (v.getId()==R.id.btn_get_contract) getMyContract();
-        else if(v.getId() == R.id.btn_create_coupon){
+        /*else if(v.getId() == R.id.btn_create_coupon){
             Intent intent = new Intent(getActivity(),CreateCouponActivity.class);
             startActivity(intent);
-        }
+        }*/
     }
 
     private void sendEtherTo(){

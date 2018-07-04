@@ -76,7 +76,7 @@ public class ShopDetailFragment extends BaseFragment {
     private WalletModel walletModel = new WalletModel();
     private AlertDialog.Builder alertDialogBuilder;
     private boolean doneGetMyWallet = false;
-    private ImageView img_company;
+    private ImageView img_category;
 
     @Nullable
     @Override
@@ -93,13 +93,22 @@ public class ShopDetailFragment extends BaseFragment {
     }
 
     private void initView(){
-        if (index == 0) ( (MainActivity)getActivity()).updateToolbarTitle("COFFEE LIST");
-        else if (index == 1) ( (MainActivity)getActivity()).updateToolbarTitle("TRAVEL LIST");
-        else if (index == 2 ) ( (MainActivity)getActivity()).updateToolbarTitle("STORE LIST");
+        img_category = v.findViewById(R.id.img_category);
+
+        if (index == 0) {
+            ( (MainActivity)getActivity()).updateToolbarTitle("COFFEE LIST");
+            img_category.setImageResource(R.drawable.coffee);
+        }
+        else if (index == 1) {
+            ( (MainActivity)getActivity()).updateToolbarTitle("TRAVEL LIST");
+            img_category.setImageResource(R.drawable.travel);
+        }
+        else if (index == 2 ) {
+            ( (MainActivity)getActivity()).updateToolbarTitle("STORE LIST");
+            img_category.setImageResource(R.drawable.store);
+        }
 
         list = ((MainActivity) getActivity()).getArrayList(index);
-
-        img_company = v.findViewById(R.id.img_company);
         gridView = v.findViewById(R.id.fragment_shop_detail_gridView);
         adapter = new MyAdapter(getActivity(), list);
         gridView.setAdapter(adapter);

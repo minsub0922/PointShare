@@ -84,38 +84,11 @@
             android:layout_height="wrap_content"
             android:id="@+id/btn_attach_wallet"
             android:text="CREATE WALLET"/>
-        <Button
-            android:backgroundTint="@color/appthemeColor"
-            android:textColor="#ffffff"
-            android:layout_marginTop="10dp"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:id="@+id/btn_attach_contract"
-            android:text="CREATE CONTRACT"/>
     </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
-            <Button
-                android:backgroundTint="@color/appthemeColor"
-                android:textColor="#ffffff"
-                android:layout_marginTop="10dp"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:id="@+id/btn_create_coupon"
-                android:text="CREATE COUPON"/>
-            <Button
-                android:backgroundTint="@color/appthemeColor"
-                android:textColor="#ffffff"
-                android:layout_marginTop="10dp"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:id="@+id/btn_create_card"
-                android:text="CREATE CARD"/>
         </LinearLayout>
     </LinearLayout>
     </ScrollView>

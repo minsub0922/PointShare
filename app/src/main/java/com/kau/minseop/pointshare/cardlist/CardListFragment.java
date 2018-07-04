@@ -50,20 +50,14 @@ public class CardListFragment extends BaseFragment {
     Button addCard;
     CardListDBHelper dbHelper;
     String imgurl;
-    Bitmap bitmap;
-    public static CardListFragment newInstance(int instance) {
-        Bundle args = new Bundle();
-        args.putInt(ARGS_INSTANCE, instance);
-        CardListFragment fragment = new CardListFragment();
-        fragment.setArguments(args);
-        return fragment;
-    }
 
     public CardListFragment(){
     }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        count++;
+
         View v = inflater.inflate(R.layout.fragment_cardlist, container, false);
         dbHelper= new CardListDBHelper(this.getActivity(), "CardList.db", null, 1);
         adapter = new CardlistRecyclerViewAdapter(mItems,getActivity());
@@ -74,7 +68,9 @@ public class CardListFragment extends BaseFragment {
 
         ( (MainActivity)getActivity()).updateToolbarTitle("CARD LIST");
 
-        setData();
+        if (count<=1){
+            setData();
+        }
         addCard = (Button)v.findViewById(R.id.addcard);
         adapter.setItemClick(new CardlistRecyclerViewAdapter.ItemClick() {
             @Override
@@ -115,6 +111,7 @@ public class CardListFragment extends BaseFragment {
         else{
             for(int i=0; i<cardDB.length;i++){
                 String[] cardDBCol = cardDB[i].split("@");
+
                 cardRef.child(cardDBCol[0].toLowerCase()).child("imgurl").addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
