@@ -1,18 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingTop="10dp"
     >
     <ProgressBar
         android:id="@+id/shop_progressbar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -22,7 +18,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
     <ScrollView
-        android:padding="5dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:scrollbars="none"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
             <LinearLayout
@@ -31,15 +29,23 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 >
+                <TextView
+                    android:text="쿠폰 구매"
+                    android:textColor="#000000"
+                    android:textSize="28dp"
+                    android:layout_marginLeft="7dp"
+                    android:layout_marginBottom="12dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
                 <android.support.constraint.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="15dp">
+                    android:layout_marginBottom="20dp">
 
                     <ImageView
                         android:id="@+id/imageView"
-                        android:layout_width="20dp"
-                        android:layout_height="15dp"
+                        android:layout_width="30dp"
+                        android:layout_height="22dp"
                         android:layout_marginEnd="8dp"
                         android:scaleType="fitXY"
                         android:src="@drawable/ethereumicon"
@@ -53,9 +59,10 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:layout_marginEnd="8dp"
-                        android:textSize="14dp"
+                        android:textSize="15dp"
                         app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toStartOf="@+id/textView" />
+                        app:layout_constraintEnd_toStartOf="@+id/textView"
+                        app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
                         android:id="@+id/textView"
@@ -63,17 +70,19 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:layout_marginEnd="8dp"
+                        android:layout_marginTop="8dp"
                         android:text="* 10^(-18)"
                         android:textColor="#cccccc"
                         android:textSize="7dp"
                         app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent" />
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
                 </android.support.constraint.ConstraintLayout>
                 <android.support.v7.widget.CardView
                     android:id="@+id/cardview_coffee"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="10dp"
+                    android:layout_marginBottom="7dp"
                     android:layout_marginEnd="@dimen/card_horizontal_margin"
                     android:layout_marginStart="@dimen/card_horizontal_margin"
                     android:layout_marginTop="@dimen/card_vertical_margin"
@@ -81,9 +90,9 @@
                     app:cardCornerRadius="@dimen/card_radius"
                     >
                     <TextView
-                        android:layout_margin="10dp"
+                        android:layout_margin="13dp"
                         android:id="@+id/txt_coffee"
-                        android:textSize="15dp"
+                        android:textSize="18dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />
                     <TextView
@@ -108,15 +117,16 @@
                     android:id="@+id/cardview_store"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/card_vertical_margin"
+                    android:layout_marginBottom="7dp"
                     android:layout_marginEnd="@dimen/card_horizontal_margin"
                     android:layout_marginStart="@dimen/card_horizontal_margin"
                     android:layout_marginTop="@dimen/card_vertical_margin"
                     app:cardBackgroundColor="@color/colorCards"
                     app:cardCornerRadius="@dimen/card_radius">
                     <TextView
+                        android:textSize="18dp"
                         android:id="@+id/txt_store"
-                        android:layout_margin="10dp"
+                        android:layout_margin="13dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />
                     <TextView
@@ -141,7 +151,7 @@
                     android:id="@+id/cardview_shop"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="10dp"
+                    android:layout_marginBottom="@dimen/card_vertical_margin"
                     android:layout_marginEnd="@dimen/card_horizontal_margin"
                     android:layout_marginStart="@dimen/card_horizontal_margin"
                     android:layout_marginTop="@dimen/card_vertical_margin"
@@ -149,8 +159,8 @@
                     app:cardCornerRadius="@dimen/card_radius">
                     <TextView
                         android:id="@+id/txt_travel"
-                        android:textSize="15dp"
-                        android:layout_margin="10dp"
+                        android:textSize="18dp"
+                        android:layout_margin="13dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />
                     <TextView
@@ -170,9 +180,6 @@
                         >
                     </android.support.v7.widget.RecyclerView>
                 </android.support.v7.widget.CardView>
-
-
-
             </LinearLayout>
     </ScrollView>
     </android.support.v4.widget.SwipeRefreshLayout>

@@ -20,6 +20,7 @@ import android.support.constraint.ConstraintLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatDialog;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -92,6 +93,7 @@ public class ShopFragment extends BaseFragment implements SwipeRefreshLayout.OnR
     private ProgressBar progressBar;
     private TextView txt_coffee, txt_travel, txt_store;
     private SwipeRefreshLayout swipeRefreshLayout;
+    private CardView cardCoffee, cardStore, cardTravel;
     private ConstraintLayout constraintLayout;
     private boolean refreshing=false;
 
@@ -110,6 +112,7 @@ public class ShopFragment extends BaseFragment implements SwipeRefreshLayout.OnR
 
         buildRecyclerView(v);
 
+        Log.d("tagg", String.valueOf(count));
         if (count <= 1) {
           originPageBuild();
         } else if (count>1){
@@ -119,6 +122,10 @@ public class ShopFragment extends BaseFragment implements SwipeRefreshLayout.OnR
     }
 
     private void originPageBuild(){
+        cardCoffee.setVisibility(View.INVISIBLE);
+        cardStore.setVisibility(View.INVISIBLE);
+        cardTravel.setVisibility(View.INVISIBLE);
+
         web3j = Web3jFactory.build(new HttpService(testnetAddess));
         mRealm = Realm.getDefaultInstance();
         alertDialogBuilder = new AlertDialog.Builder(getActivity());
@@ -132,9 +139,9 @@ public class ShopFragment extends BaseFragment implements SwipeRefreshLayout.OnR
 
     private void copyPageBuild(){
         progressBar.setVisibility(View.GONE);
-        txt_coffee.setText("Coffee");
-        txt_travel.setText("Travel");
-        txt_store.setText("Store");
+        txt_coffee.setText("커피");
+        txt_travel.setText("여행");
+        txt_store.setText("편의점");
         txt_balance.setText(walletBalance);
     }
 
@@ -152,12 +159,14 @@ public class ShopFragment extends BaseFragment implements SwipeRefreshLayout.OnR
         txt_coffee_more.setOnClickListener(this);
         txt_travel_more.setOnClickListener(this);
         txt_store_more.setOnClickListener(this);
-
+        cardCoffee = v.findViewById(R.id.cardview_coffee);
+        cardStore = v.findViewById(R.id.cardview_store);
+        cardTravel = v.findViewById(R.id.cardview_shop);
 
         swipeRefreshLayout = v.findViewById(R.id.shop_swipe_layout);
         swipeRefreshLayout.setOnRefreshListener(this);
 
-        ( (MainActivity)getActivity()).updateToolbarTitle("SHOP");
+        ( (MainActivity)getActivity()).updateToolbarTitle("");
     }
 
 
@@ -346,9 +355,14 @@ public class ShopFragment extends BaseFragment implements SwipeRefreshLayout.OnR
                 adapter_coffee.notifyDataSetChanged();
                 adapter_travel.notifyDataSetChanged();
                 progressBar.setVisibility(View.GONE);
-                txt_coffee.setText("Coffee");
-                txt_travel.setText("Travel");
-                txt_store.setText("Store");
+                txt_coffee.setText("커피");
+                txt_travel.setText("여행");
+                txt_store.setText("편의점");
+
+                cardCoffee.setVisibility(View.VISIBLE);
+                cardStore.setVisibility(View.VISIBLE);
+                cardTravel.setVisibility(View.VISIBLE);
+
                 finishRefreshing();
             }
         }.execute();

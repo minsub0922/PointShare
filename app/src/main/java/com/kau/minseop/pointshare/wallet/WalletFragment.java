@@ -80,21 +80,25 @@ import io.realm.RealmResults;
  * Created by eirlis on 29.06.17.
  */
 
-public class WalletFragment extends BaseFragment implements View.OnClickListener , RecyclerItemTouchHelper.RecyclerItemTouchHelperListener,SwipeRefreshLayout.OnRefreshListener {
+public class WalletFragment extends BaseFragment implements View.OnClickListener, SwipeRefreshLayout.OnRefreshListener {
+
+// RecyclerItemTouchHelper.RecyclerItemTouchHelperListener, {
 
     public static final String TAG = WalletFragment.class.getName();
 
     private CoordinatorLayout coordinatorLayout;
     private List<Credentials> credentials = new ArrayList<>();
     private Realm mRealm;
-    private Button btn_attachWallet, btn_attachContract, btn_sendether,btn_createCoupon, btn_mypage;
+    private Button btn_attachWallet, btn_attachContract, btn_sendether,btn_createCoupon, btnBeg;
+    private TextView txtOrdered;
     private RecyclerView rv;
     private WalletRecyclerViewAdapter adapter;
     private final List<WalletViewHolerModel> modelList = new ArrayList<>();
     private boolean isDeleted = false;
     private SwipeRefreshLayout swipeRefreshLayout;
     private boolean refreshing=false;
-
+    private DatabaseReference mDatabase;
+    private boolean isAsked = false;
 
 
     @SuppressLint("StaticFieldLeak")
@@ -110,6 +114,8 @@ public class WalletFragment extends BaseFragment implements View.OnClickListener
 
         buildRecyclerView(v);
 
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+
         coordinatorLayout = v.findViewById(R.id.coordinatorlayout);
 
         mRealm = Realm.getDefaultInstance();
@@ -121,17 +127,18 @@ public class WalletFragment extends BaseFragment implements View.OnClickListener
     }
 
     private void buildButtons(View v){
-        btn_attachWallet = v.findViewById(R.id.btn_attach_wallet);
+  //      btn_attachWallet = v.findViewById(R.id.btn_attach_wallet);
         //btn_attachContract = v.findViewById(R.id.btn_attach_contract);
-        btn_sendether = v.findViewById(R.id.btn_send_ether_other);
-
-        btn_mypage = v.findViewById(R.id.btn_mypage);
+        //btn_sendether = v.findViewById(R.id.btn_send_ether_other)
+        txtOrdered = v.findViewById(R.id.txt_ordered);
+        txtOrdered.setOnClickListener(this);
+        btnBeg = v.findViewById(R.id.btn_beg);
+        btnBeg.setOnClickListener(this);
        // btn_createCoupon = v.findViewById(R.id.btn_create_coupon);
-        btn_attachWallet.setOnClickListener(this);
-        btn_sendether.setOnClickListener(this);
-        btn_mypage.setOnClickListener(this);
+  //      btn_attachWallet.setOnClickListener(this);
+  //      btn_sendether.setOnClickListener(this);
         //btn_createCoupon.setOnClickListener(this);
-        ( (MainActivity)getActivity()).updateToolbarTitle("MY PAGE");
+        ( (MainActivity)getActivity()).updateToolbarTitle("");
 
         swipeRefreshLayout = v.findViewById(R.id.shop_swipe_layout);
         swipeRefreshLayout.setOnRefreshListener(this);
@@ -146,92 +153,92 @@ public class WalletFragment extends BaseFragment implements View.OnClickListener
         rv.setNestedScrollingEnabled(false);
         rv.setAdapter(adapter);
 
-        ItemTouchHelper.SimpleCallback itemTouchHelperCallback = new RecyclerItemTouchHelper(0, ItemTouchHelper.LEFT, this);
-        new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(rv);
+//        ItemTouchHelper.SimpleCallback itemTouchHelperCallback = new RecyclerItemTouchHelper(0, ItemTouchHelper.LEFT, this);
+//        new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(rv);
 
-        adapter.setOnItemClickListener(new WalletRecyclerViewAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(int position) {
-                WalletViewHolerModel model =  modelList.get(position);
-                setSeletWalletAdapter(model);
-            }
-        });
+//        adapter.setOnItemClickListener(new WalletRecyclerViewAdapter.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(int position) {
+//                WalletViewHolerModel model =  modelList.get(position);
+//                setSeletWalletAdapter(model);
+//            }
+//        });
     }
+//
+//    private void setSeletWalletAdapter(WalletViewHolerModel model){
+//        AlertDialog.Builder alertBuilder =new AlertDialog.Builder(getActivity());
+//        alertBuilder.setTitle("보내실 지갑을 선택하십시오.");
+//        int index =0;
+//
+//        final ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.select_dialog_singlechoice);
+//        for (int i=0; i<modelList.size(); i++){
+//            if (modelList.get(i).getWalletAddress()==model.getWalletAddress()) {
+//                index = i;
+//                continue;
+//            }
+//            adapter.add(modelList.get(i).getWalletAddress());
+//        }
+//
+//        alertBuilder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//                dialog.dismiss();
+//            }
+//        });
+//
+//        int finalIndex = index;
+//        alertBuilder.setAdapter(adapter, new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int position) {
+//                String strName = adapter.getItem(position);
+//                final EditText et = new EditText(getActivity());
+//                AlertDialog.Builder innBuilder = new AlertDialog.Builder(getActivity());
+//                innBuilder.setMessage(strName);
+//                innBuilder.setTitle("송금할 금액을 입력하십시오.");
+//                innBuilder.setView(et);
+//                innBuilder.setPositiveButton("송금", new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//                        //startProgresss();
+//                        sendEth(finalIndex, strName, et.getText().toString());
+//                        Log.d("TAG", strName+"   "+et.getText().toString());
+//                        dialog.dismiss();
+//                    }
+//                });
+//                innBuilder.show();
+//                dialog.dismiss();
+//            }
+//        });
+//        alertBuilder.show();
+//    }
 
-    private void setSeletWalletAdapter(WalletViewHolerModel model){
-        AlertDialog.Builder alertBuilder =new AlertDialog.Builder(getActivity());
-        alertBuilder.setTitle("보내실 지갑을 선택하십시오.");
-        int index =0;
-
-        final ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.select_dialog_singlechoice);
-        for (int i=0; i<modelList.size(); i++){
-            if (modelList.get(i).getWalletAddress()==model.getWalletAddress()) {
-                index = i;
-                continue;
-            }
-            adapter.add(modelList.get(i).getWalletAddress());
-        }
-
-        alertBuilder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
-
-        int finalIndex = index;
-        alertBuilder.setAdapter(adapter, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int position) {
-                String strName = adapter.getItem(position);
-                final EditText et = new EditText(getActivity());
-                AlertDialog.Builder innBuilder = new AlertDialog.Builder(getActivity());
-                innBuilder.setMessage(strName);
-                innBuilder.setTitle("송금할 금액을 입력하십시오.");
-                innBuilder.setView(et);
-                innBuilder.setPositiveButton("송금", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        //startProgresss();
-                        sendEth(finalIndex, strName, et.getText().toString());
-                        Log.d("TAG", strName+"   "+et.getText().toString());
-                        dialog.dismiss();
-                    }
-                });
-                innBuilder.show();
-                dialog.dismiss();
-            }
-        });
-        alertBuilder.show();
-    }
-
-    private void sendEth(int index, String othersAddress, String price){
-        new AsyncTask(){
-
-            @Override
-            protected Object doInBackground(Object[] objects) {
-                try {
-                    Transfer.sendFunds(
-                            web3j, credentials.get(index),
-                            othersAddress,  // you can put any address here
-                            BigDecimal.valueOf(Double.parseDouble( price)).multiply(BigDecimal.ONE), Convert.Unit.WEI)  // 1 wei = 10^-18 Ether
-                            .send();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                return null;
-            }
-
-            @Override
-            protected void onPostExecute(Object o) {
-                super.onPostExecute(o);
-                //progressOFF();
-                Log.d("TAG","done sned eth!");
-                for (int i=0; i<modelList.size(); i++) getWalletBallance(i);
-            }
-        }.execute();
-
-    }
+//    private void sendEth(int index, String othersAddress, String price){
+//        new AsyncTask(){
+//
+//            @Override
+//            protected Object doInBackground(Object[] objects) {
+//                try {
+//                    Transfer.sendFunds(
+//                            web3j, credentials.get(index),
+//                            othersAddress,  // you can put any address here
+//                            BigDecimal.valueOf(Double.parseDouble( price)).multiply(BigDecimal.ONE), Convert.Unit.WEI)  // 1 wei = 10^-18 Ether
+//                            .send();
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//                return null;
+//            }
+//
+//            @Override
+//            protected void onPostExecute(Object o) {
+//                super.onPostExecute(o);
+//                //progressOFF();
+//                Log.d("TAG","done sned eth!");
+//                for (int i=0; i<modelList.size(); i++) getWalletBallance(i);
+//            }
+//        }.execute();
+//
+//    }
 
     private void getObject(){
         mRealm.beginTransaction();
@@ -241,7 +248,6 @@ public class WalletFragment extends BaseFragment implements View.OnClickListener
             modelList.add(new WalletViewHolerModel("",walletModels.get(i).getWalletName(), walletModels.get(i).getWalletAddress(), ""));
             readyForRequest(walletModels.get(i).getPassword(), walletModels.get(i).getDetailPath());
             getWalletBallance(i);
-            Log.d("TAG", String.valueOf(walletModels.get(i)));
         }
         adapter.notifyDataSetChanged();
     }
@@ -294,17 +300,21 @@ public class WalletFragment extends BaseFragment implements View.OnClickListener
 
     @Override
     public void onClick(View v) {
-        if(v.getId()==R.id.btn_attach_wallet) startActivityForResult(new Intent(getActivity(), GenerationActivity.class),1);
-        //else if (v.getId()==R.id.btn_attach_contract) generateNewContract();
-        else if (v.getId()==R.id.btn_send_ether_other) sendEtherTo();
-        //else if (v.getId()==R.id.btn_get_contract) getMyContract();
-        /*else if(v.getId() == R.id.btn_create_coupon){
-            Intent intent = new Intent(getActivity(),CreateCouponActivity.class);
-            startActivity(intent);
-        }*/else if(v.getId() == R.id.btn_mypage){
+//        if(v.getId()==R.id.btn_attach_wallet) startActivityForResult(new Intent(getActivity(), GenerationActivity.class),1);
+//        //else if (v.getId()==R.id.btn_attach_contract) generateNewContract();
+//        else if (v.getId()==R.id.btn_send_ether_other) sendEtherTo();
+//        //else if (v.getId()==R.id.btn_get_contract) getMyContract();
+//        /*else if(v.getId() == R.id.btn_create_coupon){
+//            Intent intent = new Intent(getActivity(),CreateCouponActivity.class);
+//            startActivity(intent);
+//        }*/else
+        if(v.getId() == R.id.txt_ordered){
             listCoupon();
+        }else if(v.getId()== R.id.btn_beg && !isAsked){
+            isAsked = true;
+            mDatabase.child("EtherRequest").push().setValue(modelList.get(0).getWalletAddress());
+            Toast.makeText(getActivity(), "개발자에게 시범 토큰 요청이 접수되었습니다! 조금만 기다려 주세요", Toast.LENGTH_SHORT).show();
         }
-
     }
 
     private void listCoupon(){
@@ -314,67 +324,67 @@ public class WalletFragment extends BaseFragment implements View.OnClickListener
         fragment.setArguments(args);
         mFragmentNavigation.pushFragment(fragment);
     }
+//
+//    private void sendEtherTo(){
+//        final EditText et = new EditText(getActivity());
+//        final String[] address = new String[1];
+//        AlertDialog.Builder alertBuilder =new AlertDialog.Builder(getActivity());
+//        alertBuilder.setTitle("상대방의 지갑주소를 입력해주십시오.");
+//        alertBuilder.setView(et);
+//
+//        alertBuilder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//                address[0] =  et.getText().toString();
+//                final EditText et = new EditText(getActivity());
+//                AlertDialog.Builder innBuilder = new AlertDialog.Builder(getActivity());
+//                innBuilder.setTitle("송금할 금액을 입력하십시오.");
+//                innBuilder.setView(et);
+//                innBuilder.setPositiveButton("송금", new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+////                        startProgresss();
+//                        sendEth(0, address[0], et.getText().toString());
+//                        Log.d("TAG", address[0]+"   "+et.getText().toString());
+//                        dialog.dismiss();
+//                    }
+//                });
+//                innBuilder.show();
+//                dialog.dismiss();
+//            }
+//        }). setNegativeButton("취소", new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//                dialog.dismiss();
+//            }
+//        });
+//        alertBuilder.show();
+//    }
 
-    private void sendEtherTo(){
-        final EditText et = new EditText(getActivity());
-        final String[] address = new String[1];
-        AlertDialog.Builder alertBuilder =new AlertDialog.Builder(getActivity());
-        alertBuilder.setTitle("상대방의 지갑주소를 입력해주십시오.");
-        alertBuilder.setView(et);
-
-        alertBuilder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                address[0] =  et.getText().toString();
-                final EditText et = new EditText(getActivity());
-                AlertDialog.Builder innBuilder = new AlertDialog.Builder(getActivity());
-                innBuilder.setTitle("송금할 금액을 입력하십시오.");
-                innBuilder.setView(et);
-                innBuilder.setPositiveButton("송금", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-//                        startProgresss();
-                        sendEth(0, address[0], et.getText().toString());
-                        Log.d("TAG", address[0]+"   "+et.getText().toString());
-                        dialog.dismiss();
-                    }
-                });
-                innBuilder.show();
-                dialog.dismiss();
-            }
-        }). setNegativeButton("취소", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
-        alertBuilder.show();
-    }
-
-    @Override
-    public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction, int position) {
-        if (viewHolder instanceof WalletRecyclerViewAdapter.WalletViewHoler) {
-            isDeleted =true;
-            String name = modelList.get(viewHolder.getAdapterPosition()).getWalletName();
-
-            final WalletViewHolerModel deletedItem = modelList.get(viewHolder.getAdapterPosition());
-            final int deletedIndex = viewHolder.getAdapterPosition();
-
-            adapter.removeItem(viewHolder.getAdapterPosition());
-
-            Snackbar snackbar = Snackbar
-                    .make(coordinatorLayout, "your wallet '"+name + "' has been removed from your Wallet!", Snackbar.LENGTH_LONG);
-            snackbar.setAction("UNDO", new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    // undo is selected, restore the deleted item
-                  /*  adapter.restoreItem(deletedItem, deletedIndex);*/
-                }
-            });
-            snackbar.setActionTextColor(Color.YELLOW);
-            snackbar.show();
-        }
-    }
+//    @Override
+//    public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction, int position) {
+//        if (viewHolder instanceof WalletRecyclerViewAdapter.WalletViewHoler) {
+//            isDeleted =true;
+//            String name = modelList.get(viewHolder.getAdapterPosition()).getWalletName();
+//
+//            final WalletViewHolerModel deletedItem = modelList.get(viewHolder.getAdapterPosition());
+//            final int deletedIndex = viewHolder.getAdapterPosition();
+//
+//            adapter.removeItem(viewHolder.getAdapterPosition());
+//
+//            Snackbar snackbar = Snackbar
+//                    .make(coordinatorLayout, "your wallet '"+name + "' has been removed from your Wallet!", Snackbar.LENGTH_LONG);
+//            snackbar.setAction("UNDO", new View.OnClickListener() {
+//                @Override
+//                public void onClick(View view) {
+//                    // undo is selected, restore the deleted item
+//                  /*  adapter.restoreItem(deletedItem, deletedIndex);*/
+//                }
+//            });
+//            snackbar.setActionTextColor(Color.YELLOW);
+//            snackbar.show();
+//        }
+//    }
 
     @Subscribe
     public void onActivityResult(ActivityResultEvent activityResultEvent) {

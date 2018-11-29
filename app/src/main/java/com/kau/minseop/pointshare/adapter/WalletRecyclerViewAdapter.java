@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -58,8 +59,12 @@ public class WalletRecyclerViewAdapter extends  RecyclerView.Adapter<WalletRecyc
         else holder.imageView.setImageResource(R.drawable.wallet2);
 
         if(model.getWalletBalance()==""){
-            holder.txt_walletBalance.setText("getting Balance from the net....");
-        }else holder.txt_walletBalance.setText(model.getWalletBalance());
+            holder.txt_walletBalance.setText("");
+            holder.pb.setVisibility(View.VISIBLE);
+        }else {
+            holder.txt_walletBalance.setText(model.getWalletBalance());
+            holder.pb.setVisibility(View.GONE);
+        }
         holder.txt_walletAddress.setText(model.getWalletAddress());
     }
 
@@ -92,6 +97,7 @@ public class WalletRecyclerViewAdapter extends  RecyclerView.Adapter<WalletRecyc
         private TextView txt_walletName, txt_walletAddress, txt_walletBalance;
         public RelativeLayout viewForeground;
         public ConstraintLayout viewBackground;
+        private ProgressBar pb;
 
         public WalletViewHoler(View itemView, OnItemClickListener listener) {
             super(itemView);
@@ -102,6 +108,7 @@ public class WalletRecyclerViewAdapter extends  RecyclerView.Adapter<WalletRecyc
             txt_walletBalance= itemView.findViewById(R.id.txt_model_walletbalance);
             viewBackground = itemView.findViewById(R.id.view_background);
             viewForeground = itemView.findViewById(R.id.view_foreground);
+            pb = itemView.findViewById(R.id.wallet_progressbar);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override

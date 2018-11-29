@@ -1,6 +1,5 @@
 package com.kau.minseop.pointshare.mypage;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -17,16 +16,12 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.kau.minseop.pointshare.BaseFragment;
+import com.kau.minseop.pointshare.MainActivity;
 import com.kau.minseop.pointshare.R;
 import com.kau.minseop.pointshare.adapter.CouponRecyclerViewAdapter;
 import com.kau.minseop.pointshare.model.CouponModel;
 import com.kau.minseop.pointshare.model.PurchasingModel;
-import com.kau.minseop.pointshare.model.WalletModel;
 
-import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.CharBuffer;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 
 import io.realm.Realm;
@@ -59,7 +54,10 @@ public class MyPageFragment extends BaseFragment implements SwipeRefreshLayout.O
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        v = inflater.inflate(R.layout.fragment_mypage, container, false);
+        v = inflater.inflate(R.layout.fragment_ordered, container, false);
+
+        ( (MainActivity)getActivity()).updateToolbarTitle("구매 내역");
+
 
         swipeRefreshLayout = v.findViewById(R.id.shop_swipe_layout);
         swipeRefreshLayout.setOnRefreshListener(this);

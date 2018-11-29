@@ -5,7 +5,7 @@
     <color name="colorAccent">#f7861c</color>
     <color name="colorStatusBar">#E0E0E0</color>
     <color name="colorAppBar">#F5F5F5</color>
-    <color name="colorBackground">#FAFAFA</color>
+    <color name="colorBackground">#FFFFFF</color>
 
     <color name="colorCards">#FFFFFF</color>
     <color name="colorDialogs">#FFFFFF</color>

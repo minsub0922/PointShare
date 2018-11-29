@@ -66,7 +66,7 @@ public class CardListFragment extends BaseFragment {
         rv.setLayoutManager(new LinearLayoutManager(this.getContext()) );
         rv.setNestedScrollingEnabled(false);
 
-        ( (MainActivity)getActivity()).updateToolbarTitle("CARD LIST");
+        ( (MainActivity)getActivity()).updateToolbarTitle("");
 
         if (count<=1){
             setData();

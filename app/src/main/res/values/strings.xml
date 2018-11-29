@@ -1,9 +1,9 @@
 <resources>
     <string name="app_name">PointShare</string>
-    <string name="title_home">Shop</string>
+    <string name="title_home">쿠폰 상점</string>
     <string name="title_dashboard">Dashboard</string>
-    <string name="title_cardlist">Card List</string>
-    <string name="title_mypage">My Page</string>
+    <string name="title_cardlist">카드 리스트</string>
+    <string name="title_mypage">내 정보</string>
     <string name="title_notifications">Notifications</string>
     <string name="textview_generate_wallet">Generate wallet</string>
     <string name="textview_password">Password</string>
@@ -11,9 +11,9 @@
     <string name="textview_account_address">Account address</string>
     <string name="title_activity_main">MainActivity</string>
     <array name="tab_name">
-        <item>Shop</item>
-        <item>Card List</item>
-        <item>My Page</item>
+        <item>쿠폰 상점</item>
+        <item>나의 카드</item>
+        <item>나의 정보</item>
     </array>
 
     <!-- TODO: Remove or change this placeholder text -->

@@ -96,15 +96,15 @@ public class ShopDetailFragment extends BaseFragment {
         img_category = v.findViewById(R.id.img_category);
 
         if (index == 0) {
-            ( (MainActivity)getActivity()).updateToolbarTitle("COFFEE LIST");
+            ( (MainActivity)getActivity()).updateToolbarTitle("커피 List");
             img_category.setImageResource(R.drawable.coffee);
         }
         else if (index == 1) {
-            ( (MainActivity)getActivity()).updateToolbarTitle("TRAVEL LIST");
+            ( (MainActivity)getActivity()).updateToolbarTitle("여행 상품 List");
             img_category.setImageResource(R.drawable.travel);
         }
         else if (index == 2 ) {
-            ( (MainActivity)getActivity()).updateToolbarTitle("STORE LIST");
+            ( (MainActivity)getActivity()).updateToolbarTitle("편의점 상품 List");
             img_category.setImageResource(R.drawable.store);
         }
 

@@ -13,6 +13,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
@@ -43,6 +44,7 @@ public class AddCardListActivity extends AppCompatActivity {
     private DatabaseReference clistRef = database.getReference("carlist");
     private List<String> spinnerlist;
     private String [] list;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -129,8 +131,7 @@ public class AddCardListActivity extends AppCompatActivity {
             }
         });
 
-        Button insert = (Button)findViewById(R.id.insert);
-        Button delete = (Button)findViewById(R.id.delete);
+        TextView insert = findViewById(R.id.txt_insert);
         //result.setText(dbHelper.getResult());
         insert.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -168,16 +169,15 @@ public class AddCardListActivity extends AppCompatActivity {
                 finish();
             }
         });
-        delete.setOnClickListener(new View.OnClickListener() {
+
+        findViewById(R.id.img_exit).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-           //     String cardType = etCardtype.getText().toString();
-                dbHelper.delete(cardType);
-                result.setText(dbHelper.getResult());
-                Intent returnIntent = new Intent();
-                setResult(Activity.RESULT_OK,returnIntent);
+                finish();
             }
         });
+
+
     }
 
     @Override

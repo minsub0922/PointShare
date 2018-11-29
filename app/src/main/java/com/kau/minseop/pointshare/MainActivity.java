@@ -117,8 +117,8 @@ public class MainActivity extends AppCompatActivity implements BaseFragment.Frag
     }
 
     public void snackBarDismiss(){
-        snackbar.setText(msg);
-        snackbar.setAction("OK", new View.OnClickListener() {
+        snackbar.setText("성공하였습니다.");
+        snackbar.setAction("확인", new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                     }
@@ -159,7 +159,6 @@ public class MainActivity extends AppCompatActivity implements BaseFragment.Frag
 
         tb_title = findViewById(R.id.tb_title);
 
-        Realm.init(this);
     }
 
     private void initToolbar() {
